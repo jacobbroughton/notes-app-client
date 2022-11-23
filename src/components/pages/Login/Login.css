@@ -1,0 +1,11 @@
+.login-view {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-view form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

@@ -1,0 +1,24 @@
+nav {
+    position: fixed;
+    top: 0;
+    z-index: 3;
+    width: 100%;
+    background-color: #333;
+    height: 45px;
+}
+
+nav .container {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+nav .container .nav-links {
+    display: flex;
+    gap: 10px;
+}
+
+nav .container .nav-links .logout-btn {
+    margin-left: 2px;
+}
