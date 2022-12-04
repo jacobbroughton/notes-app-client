@@ -5,7 +5,6 @@ import Register from "./components/pages/Register/Register";
 import Navbar from "./components/ui/Navbar/Navbar";
 import Sidebar from "./components/ui/Sidebar/Sidebar";
 import { useSelector } from "react-redux"
-import "./App.css";
 
 function App() {
 

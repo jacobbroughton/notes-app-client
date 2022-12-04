@@ -21,4 +21,11 @@ nav .container .nav-links {
 
 nav .container .nav-links .logout-btn {
     margin-left: 2px;
+    font-size: 1rem;
+    padding: 0px 5px;
+    /* border: #535bf2 1px solid; */
+    background-color: #555;
+    border-radius: 3px;
+    border: 0;
+    cursor: pointer;
 }

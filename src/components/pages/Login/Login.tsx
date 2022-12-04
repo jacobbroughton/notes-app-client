@@ -37,8 +37,8 @@ const Login = () => {
     <div className='login-view'>
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
-        <Input onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
-        <Input onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
+        <Input type='text' placeholder='Username' onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
+        <Input type='password' placeholder='Password' onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
         <button type="submit">Submit</button>
       </form>
     </div>

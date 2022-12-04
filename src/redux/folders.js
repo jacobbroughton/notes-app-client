@@ -103,12 +103,10 @@ const foldersSlice = createSlice({
             SELECTED: folder.ID === expandedFolder.ID,
             ...(folder.ID === expandedFolder.ID && {
               EXPANDED_STATUS: !folder.EXPANDED_STATUS,
-              // SELECTED: true
             }),
             ...(idsToUpdateVisibility.includes(folder.ID) && {
               VISIBLE: !expandedFolder.EXPANDED_STATUS,
             }),
-            // parentFolder,
           };
         }),
       };
@@ -140,10 +138,21 @@ const foldersSlice = createSlice({
       return {
         ...state,
         list: state.list.map((folder) => {
+          let SELECTED;
+
+          if ((payload === null && folder?.SELECTED) || payload?.ID == selectedFolder?.ID) {
+            SELECTED = false;
+          } 
+          
+          if (folder?.ID === payload?.ID) {
+            SELECTED = true;
+          }
           return {
             ...folder,
-            ...(payload === null && folder.SELECTED && { SELECTED: false }),
-            ...(folder.ID === payload?.ID && { SELECTED: true }),
+            SELECTED,
+            // ...((payload === null && folder.SELECTED) ||
+            //   (payload.ID == selectedFolder.ID && { SELECTED: false })),
+            // ...(folder.ID === payload?.ID && { SELECTED: true }),
           };
         }),
         selected: selectedFolder,

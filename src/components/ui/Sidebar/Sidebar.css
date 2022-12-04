@@ -31,7 +31,7 @@
 
 
 .sidebar .folders-list {
-    height: calc(100% - 90px);
+    height: 100%;
     padding-bottom: 40px;
     overflow-y: scroll;
     z-index: 2;
@@ -68,10 +68,10 @@
 
 .sidebar .folder-container {
     display: flex;
-    /* flex-direction: column; */
     position: relative;
-    /* border: 1px solid transparent; */
     overflow: hidden;
+    cursor: pointer;
+    user-select: none;
 }
 
 
@@ -126,8 +126,6 @@
     align-items: center;
     width: 100%;
     padding: 1px 5px;
-    cursor: pointer;
-    user-select: none;
     /* position: relative; */
     overflow: hidden;
     width: calc(100% - 23px);
@@ -185,18 +183,17 @@
     border-radius: 3px;
 }
 
-/* .sidebar .header .sidebar-header-buttons button {
-    align-self: flex-end;
-} */
+.sidebar .name-and-buttons button:disabled,
 
-.sidebar .name-and-buttons button.hoverable:hover, 
-.sidebar .header .sidebar-header-buttons button.hoverable:hover {
+
+.sidebar .name-and-buttons button:not(:disabled):hover, 
+.sidebar .header .sidebar-header-buttons button:not(:disabled):hover {
     border: 1px solid #646cff;
     color: white;
 }
 
-.sidebar .name-and-buttons button:active, 
-.sidebar .header .sidebar-header-buttons button:active {
+.sidebar .name-and-buttons button:not(:disabled):active, 
+.sidebar .header .sidebar-header-buttons button:not(:disabled):active {
     background-color: #646cff;
 }
 

@@ -5,6 +5,8 @@ const pagesSlice = createSlice({
   initialState: {
     list: [],
     selected: null,
+    active: null,
+    staged: null
   },
   reducers: {
     setPages: (state, { payload }) => {
@@ -13,7 +15,12 @@ const pagesSlice = createSlice({
 
       return {
         ...state,
-        list: pages,
+        list: pages.map(page => {
+          return {
+            ...page,
+            IS_MODIFIED: false
+          }
+        }),
       };
 
       // return {
@@ -60,10 +67,46 @@ const pagesSlice = createSlice({
           };
         }),
         selected: selectedPage,
+        active: selectedPage || state.active,
       };
     },
+    updatePage: (state, { payload }) => {
+
+
+
+      return {
+        ...state,
+        list: state.list.map(page => {
+          return {
+            ...page,
+            ...(payload.PAGE_ID === page.PAGE_ID && {
+              ...payload
+            })
+          }
+        }),
+        active: {
+          ...state.active,
+          ...payload
+        },
+      };
+    },
+    setPageModified: (state, { payload }) => {
+      return {
+        ...state,
+        active: {
+          ...state.active,
+          IS_MODIFIED: payload
+        }
+      }
+    },
+    setPageStagedForSwitch: (state, { payload }) => {
+      return {
+        ...state,
+        staged: payload
+      }
+    }
   },
 });
 
 export default pagesSlice.reducer;
-export const { setPages, setPageEffStatus, selectPage } = pagesSlice.actions;
+export const { setPages, setPageEffStatus, selectPage, updatePage, setPageModified, setPageStagedForSwitch } = pagesSlice.actions;

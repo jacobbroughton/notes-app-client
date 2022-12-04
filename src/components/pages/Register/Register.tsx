@@ -28,8 +28,8 @@ const Login = () => {
     <div className='register-view'>
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
-        <Input onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}/>
-        <Input onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
+        <Input type='text' placeholder='Username' onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)} value={username}/>
+        <Input type='password' placeholder='Password' onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} value={password}/>
         <button type="submit">Submit</button>
       </form>
     </div>

@@ -3,13 +3,15 @@ import userReducer from "./user"
 import foldersReducer from "./folders"
 import sidebarReducer from "./sidebar"
 import pagesReducer from "./pages"
+import modalsReducer from "./modals"
 
 const store = configureStore({
     reducer: {
         user: userReducer,
         folders: foldersReducer,
         pages: pagesReducer,
-        sidebar: sidebarReducer
+        sidebar: sidebarReducer,
+        modals: modalsReducer
     }
 })
 
