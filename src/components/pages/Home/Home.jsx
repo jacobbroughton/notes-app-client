@@ -8,6 +8,7 @@ import { toggleModal } from "../../../redux/modals";
 import { getElapsedTime } from "../../../utils/getElapsedTime";
 import { formatFolders, formatPages } from "../../../utils/formatData";
 import Overlay from "../../ui/Overlay/Overlay";
+import PageIcon from "../../ui/Icons/PageIcon";
 
 import "./Home.css";
 
@@ -132,6 +133,8 @@ const Home = () => {
       return;
     }
 
+    console.log(body === null);
+
     fetch("http://localhost:3001/pages/new", {
       method: "POST",
       credentials: "include",
@@ -141,7 +144,7 @@ const Home = () => {
       body: JSON.stringify({
         parentFolderId: null,
         newPageName: title,
-        newPageBody: body,
+        newPageBody: body || "",
       }),
     })
       .then((res) => res.json())
@@ -189,16 +192,39 @@ const Home = () => {
   }
 
   function determineSavedStatus() {
-    return pageModified && pages.active?.MODIFIED_DTTM
-      ? `You have unsaved changes, last saved ${getElapsedTime(
-          pages.active?.MODIFIED_DTTM
-        )}`
-      : "Up to date";
+    if (pageModified && pages.active?.MODIFIED_DTTM) {
+      return `You have unsaved changes, last saved ${getElapsedTime(
+        pages.active?.MODIFIED_DTTM
+      )}`;
+    } else if (pageModified && !pages.active?.MODIFIED_DTTM) {
+      return "You have unsaved changes";
+    }
+
+    return "Up to date";
+  }
+
+  function determinePath(page) {
+    let parentFolders = [];
+
+    function getParentFolder(folderId) {
+      if (!folderId) return;
+      let parent = folders.list?.find((folder) => folder.ID === folderId);
+      parentFolders.unshift(parent);
+      getParentFolder(parent.PARENT_FOLDER_ID);
+    }
+
+    getParentFolder(page.FOLDER_ID);
+
+    return parentFolders;
   }
 
   useEffect(() => {
     testApi();
   }, []);
+
+  useEffect(() => {
+    console.log(body);
+  }, [body]);
 
   useEffect(() => {
     if (noTitleWarningToggled) {
@@ -212,7 +238,10 @@ const Home = () => {
 
   useEffect(() => {
     setTitle(pages.active?.TITLE || pages.active?.NAME);
-    setBody(pages.active?.BODY);
+
+    const newBody = pages.active?.BODY || "";
+
+    setBody(newBody);
 
     return () => {
       if (pages.active?.IS_MODIFIED) dispatch(toggleModal("unsavedWarning"));
@@ -299,6 +328,18 @@ const Home = () => {
       )}
       {pages.active && (
         <form className="editor-form" onSubmit={handleSubmit}>
+          {determinePath(pages.active).length !== 0 && <div className="page-path">
+            {determinePath(pages.active).map((folder) => (
+              <>
+                <p>{folder.NAME}</p>
+                <span className="path-divider">&nbsp;&gt;&nbsp;</span>
+              </>
+            ))}
+            <div className="current-page">
+              <PageIcon />
+              <p>{pages.active.NAME}</p>
+            </div>
+          </div>}
           <div className="heading">
             {noTitleWarningToggled && (
               <div className="no-title-warning">

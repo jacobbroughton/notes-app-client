@@ -4,7 +4,7 @@ nav {
     z-index: 3;
     width: 100%;
     background-color: #333;
-    height: 45px;
+    height: 50px;
 }
 
 nav .container {
@@ -19,13 +19,75 @@ nav .container .nav-links {
     gap: 10px;
 }
 
-nav .container .nav-links .logout-btn {
+/* nav .container .nav-links .logout-btn {
     margin-left: 2px;
     font-size: 1rem;
     padding: 0px 5px;
-    /* border: #535bf2 1px solid; */
     background-color: #555;
     border-radius: 3px;
     border: 0;
     cursor: pointer;
+} */
+
+nav .container .nav-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+    gap: 15px;
+    font-size: 1rem;
+    border-radius: 99px;
+    font-weight: 600;
+    padding: 5px 15px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    background-color: #555;
+}
+
+nav .container .nav-dropdown-toggle:hover {
+    background-color: #666;
+}
+
+nav .container .nav-dropdown-toggle img {
+    width: 18px; 
+    height: 18px;
+    /* background-color: white; */
+    border-radius: 3px;
+    /* padding: 1px; */
+    margin-right: -5px;
+}
+
+nav .container .nav-dropdown-toggle svg {
+    width: 15px;
+    height: 15px;
+    fill: #fff;
+}
+
+nav .container .nav-dropdown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 15px;
+    padding: 5px;
+    border: black solid 1px;
+    border-radius: 3px;
+    background-color: #444;
+    min-width: 150px;
+}
+
+nav .container .nav-dropdown button,
+nav .container .nav-dropdown a {
+    background-color: transparent;
+    border: 0;
+    color: #fff;
+    font-size: 1rem;
+    text-align: start;
+    padding: 5px 8px;
+    cursor: pointer;
+}
+
+nav .container .nav-dropdown button:hover,
+nav .container .nav-dropdown a:hover {
+    background-color: #555; 
 }

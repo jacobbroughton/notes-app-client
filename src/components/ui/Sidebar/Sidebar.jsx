@@ -9,7 +9,13 @@ import {
   deselectFolder,
   setFolderEffStatus,
 } from "../../../redux/folders";
-import { setPages, setPageEffStatus, selectPage, setPageStagedForSwitch } from "../../../redux/pages";
+import {
+  setPages,
+  setPageEffStatus,
+  selectPage,
+  setPageStagedForSwitch,
+  updateParentFolderId,
+} from "../../../redux/pages";
 import { setSidebarWidth } from "../../../redux/sidebar";
 import { formatFolders, formatPages } from "../../../utils/formatData";
 import { toggleModal } from "../../../redux/modals";
@@ -30,6 +36,11 @@ const Sidebar = () => {
   const [newFolderName, setNewFolderName] = useState("");
   const [newPageName, setNewPageName] = useState("");
   const [dragToggled, setDragToggled] = useState(false);
+  const [grabbedItem, setGrabbedItem] = useState(null);
+  const [draggedOverItem, setDraggedOverItem] = useState({
+    ID: null,
+    PAGE_ID: null,
+  });
   const [contextMenu, setContextMenu] = useState({
     position: {
       x: 0,
@@ -61,7 +72,6 @@ const Sidebar = () => {
       handleRootClick();
     }
 
-    console.log({ x: e.clientX, y: e.clientY, height: window.innerHeight });
     let x = e.clientX;
     let y = e.clientY;
 
@@ -114,6 +124,9 @@ const Sidebar = () => {
 
   function handleNewPageSubmit(e) {
     e.preventDefault();
+
+    console.log(inputPosition);
+
     fetch("http://localhost:3001/pages/new", {
       method: "POST",
       headers: {
@@ -160,7 +173,6 @@ const Sidebar = () => {
       let data = await response.json();
 
       data.deletedFolders.forEach((folderId) => {
-        console.log("FOLDER", folderId);
         dispatch(setFolderEffStatus(folderId));
       });
 
@@ -213,21 +225,11 @@ const Sidebar = () => {
     });
   }
 
-  // function switchPagesPromise(canContinue) {
-  //   return new Promise((resolve, reject) => {
-  //     if (canContinue) {
-  //       resolve();
-  //     } else {
-  //       reject();
-  //     }
-  //   });
-  // }
-
   function handlePageClick(page) {
     if (pages.active?.IS_MODIFIED) {
-      dispatch(setPageStagedForSwitch(page))
+      if (!pages.staged) dispatch(setPageStagedForSwitch(page));
       dispatch(toggleModal("unsavedWarning"));
-      return
+      return;
     }
     dispatch(selectPage(page));
     dispatch(selectFolder(null));
@@ -239,6 +241,7 @@ const Sidebar = () => {
   }
 
   function handleRootClick(e) {
+    e.stopPropagation();
     setInputPosition({
       referenceId: 0,
       toggled: false,
@@ -270,13 +273,97 @@ const Sidebar = () => {
 
   function handleNewFolderOnChange(e) {
     e.preventDefault();
-    console.log(e);
     setNewFolderName(e.target.value);
   }
 
   function handleNewPageOnChange(e) {
     e.preventDefault();
     setNewPageName(e.target.value);
+  }
+
+  function handleDragStart(e, pickedUpItem) {
+    e.stopPropagation();
+    setGrabbedItem(pickedUpItem);
+  }
+
+  function handleDrop(e, grabbedItem, droppedOntoItem) {
+    if (droppedOntoItem === "root") {
+      droppedOntoItem = {
+        ID: null,
+        TIER: 0,
+        EXPANDED_STATUS: true,
+      };
+    }
+    console.log(droppedOntoItem);
+
+    if (grabbedItem.IS_PAGE) {
+      dispatch(
+        updateParentFolderId({
+          folders: folders.list,
+          affectedPage: grabbedItem,
+          droppedOntoItem,
+        })
+      );
+
+      fetch("http://localhost:3001/pages/updateParentFolder", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          affectedPage: grabbedItem,
+          droppedOntoItem,
+        }),
+      });
+    }
+
+    setGrabbedItem(null);
+    setDraggedOverItem({
+      ID: null,
+      PAGE_ID: null,
+    });
+  }
+
+  function handleDragEnter(e, hoveredOverItem) {
+    e.stopPropagation();
+    let ID = null;
+    if (hoveredOverItem.IS_PAGE) {
+      ID = hoveredOverItem.FOLDER_ID;
+    } else if (hoveredOverItem === "root") {
+      ID = null;
+    } else {
+      ID = hoveredOverItem.ID;
+    }
+
+    setDraggedOverItem({
+      ID,
+      PAGE_ID: hoveredOverItem.PAGE_ID,
+    });
+  }
+
+  function determineFolderContainerClass(itemFromList) {
+    let className = "folder-container";
+
+    if (!dragToggled || inputPosition.referenceId !== itemFromList.ID)
+      className += " hoverable";
+
+    if (itemFromList.SELECTED) className += " selected";
+
+    if (
+      draggedOverItem.ID === itemFromList?.ID ||
+      (draggedOverItem.ID === itemFromList?.FOLDER_ID && itemFromList.FOLDER_ID !== null)
+    ) {
+      if (itemFromList.IS_PAGE && itemFromList.FOLDER_ID !== grabbedItem?.FOLDER_ID) {
+        className += " under-drag";
+      }
+
+      if (!itemFromList.IS_PAGE && itemFromList.ID !== grabbedItem?.FOLDER_ID) {
+        className += " under-drag";
+      }
+    }
+
+    return className;
   }
 
   useEffect(() => {
@@ -360,10 +447,18 @@ const Sidebar = () => {
           <button
             className={`${dragToggled ? "" : "hoverable"}`}
             onClick={() => {
-              const selectedFolder = folders.list.find((folder) => folder.SELECTED);
+              // const selectedFolder = folders.list.find((folder) => folder.SELECTED);
+
+              let referenceId = 0;
+
+              if (folders.selected) {
+                referenceId = folders.selected.ID;
+              } else if (pages.selected && pages.selected.FOLDER_ID) {
+                referenceId = pages.selected.FOLDER_ID;
+              }
 
               setInputPosition({
-                referenceId: selectedFolder ? selectedFolder.ID : 0,
+                referenceId,
                 toggled: true,
                 forFolder: false,
               });
@@ -376,11 +471,17 @@ const Sidebar = () => {
             className={`${dragToggled ? "" : "hoverable"}`}
             onClick={() => {
               const selectedFolder = folders.list.find((folder) => folder.SELECTED);
+
+              let referenceId = 0;
+
+              if (folders.selected) {
+                referenceId = folders.selected.ID;
+              } else if (pages.selected && pages.selected.FOLDER_ID) {
+                referenceId = pages.selected.FOLDER_ID;
+              }
+
               setInputPosition({
-                referenceId:
-                  inputPosition.referenceId && selectedFolder
-                    ? inputPosition.referenceId
-                    : 0,
+                referenceId,
                 toggled: true,
                 forFolder: true,
               });
@@ -452,9 +553,12 @@ const Sidebar = () => {
 
             return (
               <div
-                className={`folder-container  ${
-                  dragToggled || inputPosition.referenceId === item.ID ? "" : "hoverable"
-                } ${item.SELECTED ? "selected" : ""}`}
+                draggable={item.IS_PAGE}
+                onDragStart={(e) => handleDragStart(e, item)}
+                onDragEnter={(e) => handleDragEnter(e, item)}
+                onDrop={(e) => handleDrop(e, grabbedItem, item)}
+                onDragOver={(e) => e.preventDefault()}
+                className={determineFolderContainerClass(item)}
                 style={{
                   ...(inputPosition.referenceId === item.ID &&
                     inputPosition.toggled && { overflow: "visible" }),
@@ -484,7 +588,10 @@ const Sidebar = () => {
                       {item.EXPANDED_STATUS && !item.IS_PAGE && <DownCaret />}
                       {item.IS_PAGE && <PageIcon />}
                     </div>
-                    <p>{item.NAME}</p>
+                    <p>
+                      {/* {item.IS_PAGE ? item.FOLDER_ID : item.ID}  */}
+                      {item.NAME}
+                    </p>
                   </div>
                 </div>
                 {inputPosition.referenceId === item.ID && inputPosition.toggled && (
@@ -498,7 +605,7 @@ const Sidebar = () => {
                     className="new-folder-form"
                   >
                     <input
-                      name="new-page-folder-input"
+                      // name="new-page-folder-input"
                       ref={inputPositionRef}
                       onClick={(e) => e.stopPropagation()}
                       onChange={
@@ -529,6 +636,11 @@ const Sidebar = () => {
           className="sidebar-root-click-checker"
           onContextMenu={(e) => handleOnContextMenu(e, null)}
           onClick={handleRootClick}
+          draggable
+          onDragStart={(e) => e.preventDefault()}
+          onDragEnter={(e) => handleDragEnter(e, "root")}
+          onDrop={(e) => handleDrop(e, grabbedItem, "root")}
+          onDragOver={(e) => e.preventDefault()}
           style={{
             height: `calc(100% - ${
               combinedFoldersAndPages?.filter((folder) => folder?.VISIBLE).length * 26 +
@@ -565,8 +677,18 @@ const Sidebar = () => {
             onClick: (e, item) => {
               const selectedFolder = folders.list.find((folder) => folder.SELECTED);
 
+              let referenceId = 0;
+
+              if (folders.selected) {
+                referenceId = folders.selected.ID;
+              } else if (pages.selected && pages.selected.FOLDER_ID) {
+                referenceId = pages.selected.FOLDER_ID;
+              }
+
+              console.log(referenceId);
+
               setInputPosition({
-                referenceId: selectedFolder ? selectedFolder.ID : 0,
+                referenceId,
                 toggled: true,
                 forFolder: false,
               });

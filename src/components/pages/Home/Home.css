@@ -19,6 +19,50 @@
     /* padding: 5px 10px; */
 }
 
+.home-view .page-path {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-top: -10px;
+    margin-left: -15px;
+    /* margin-bottom: -15px; */
+    width: calc(100% + 30px);
+    min-height: 26px;
+    height: 26px;
+    background: #555;
+    border-left: 1px solid #111;
+    overflow-x: auto;
+}
+
+.home-view .page-path p {
+    font-size: 0.875rem;
+    color: #fff;
+    white-space: nowrap;
+
+}
+
+.home-view .page-path .path-divider {
+    opacity: 0.5;
+}
+
+.home-view .page-path .current-page {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.home-view .page-path .current-page svg {
+    fill: #E3BD27;
+    width: 10px;
+    height: 10px;
+}
+
+.home-view .page-path button:hover {
+    text-decoration: underline;
+}
+
 .home-view .heading {
     width: 100%;
     display: flex;
@@ -28,6 +72,7 @@
 
 .home-view .editor-form textarea,
 .home-view .heading input {
+    box-shadow: var(--container-shadow);
     width: 100%;
     background-color: transparent;
     border: 1px solid transparent;
@@ -72,6 +117,7 @@
     border-radius: 3px;
     cursor: help;
     transition: 0.15s ease background-color;
+    box-shadow: var(--container-shadow);
 }
 
 .home-view .heading .status-indicator.unsaved {
@@ -82,9 +128,9 @@
     background-color: #03c04a;
 }
 
-.home-view .editor-form button {
+/* .home-view .editor-form button {
     margin-bottom: 10px;
-}
+} */
 
 .home-view .unsaved-warning-modal {
     position: fixed;

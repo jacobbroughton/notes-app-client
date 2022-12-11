@@ -9,3 +9,19 @@
     flex-direction: column;
     gap: 10px;
 }
+
+.login-view .redirected-from-info {
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+}
+
+.login-view .redirected-from-info.success {
+    background-color: green;
+    color: white;
+}
+
+.login-view .redirected-from-info.error {
+    background-color: crimson;
+    color: white;
+}
