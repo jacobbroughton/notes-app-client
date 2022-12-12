@@ -11,6 +11,7 @@ const Login = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
   const [searchParams] = useSearchParams();
 
@@ -30,8 +31,14 @@ const Login = () => {
     });
     const data = await result.json();
     if (data.user) {
+      if (loginError) setLoginError("")
       dispatch(setUser(data.user));
       navigate("/");
+    } else {
+      setLoginError(data.message);
+      setTimeout(() => {
+        setLoginError("")
+      }, 5000)
     }
   }
 
@@ -48,6 +55,7 @@ const Login = () => {
           <p>{searchParams.get("message")}</p>
         </div>
       )}
+      {loginError && <div className='login-error'>{loginError}</div>}
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <input

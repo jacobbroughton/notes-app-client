@@ -1,13 +1,37 @@
 .login-view {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    align-self: center;
+    gap: 20px;
+    padding-top: 75px;
+    width: 100%;
+    max-width: 350px;
+}
+
+.login-view .login-error {
+    background-color: crimson;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
 }
 
 .login-view form {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.login-view input {
+    padding: 5px 10px;
+    font-size: 1rem;
+}
+
+.login-view button {
+    background-color: #646cff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 0;
+    cursor: pointer;
 }
 
 .login-view .redirected-from-info {

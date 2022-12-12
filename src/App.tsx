@@ -9,12 +9,13 @@ import { useSelector } from "react-redux"
 function App() {
 
   const sidebar = useSelector(state => state.sidebar)
+  const user = useSelector(state => state.user)
 
   return (
     <div className="App">
       <Navbar/>
-      <Sidebar/>
-      <main style={{ marginLeft:  `${sidebar.width}px`}}>
+      {user && <Sidebar/>}
+      <main style={{ marginLeft:  user ? `${sidebar.width}px` : '0'}}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

@@ -83,6 +83,7 @@
     height: 100%;
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
     font-size: 1rem;
+    resize: none;
 }
 
 .home-view .heading input {
