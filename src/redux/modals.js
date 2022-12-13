@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit"
 const modalsSlice = createSlice({
   name: "modals",
   initialState: {
-    unsavedWarningVisible: false
+    unsavedWarningVisible: false,
+    deleteModalVisible: false
   },
   reducers: {
     toggleModal: (state, { payload }) => {

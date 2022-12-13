@@ -7,6 +7,7 @@ const pagesSlice = createSlice({
     selected: null,
     active: null,
     staged: null,
+    stagedToDelete: null
   },
   reducers: {
     setPages: (state, { payload }) => {
@@ -153,6 +154,12 @@ const pagesSlice = createSlice({
         staged: state.staged,
       };
     },
+    setStagedPageToDelete: (state, { payload }) => {
+      return {
+        ...state,
+        stagedToDelete: payload
+      }
+    }
   },
 });
 
@@ -165,4 +172,5 @@ export const {
   setPageModified,
   setPageStagedForSwitch,
   updateParentFolderId,
+  setStagedPageToDelete
 } = pagesSlice.actions;

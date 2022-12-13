@@ -9,7 +9,7 @@ import { getElapsedTime } from "../../../utils/getElapsedTime";
 import { formatFolders, formatPages } from "../../../utils/formatData";
 import Overlay from "../../ui/Overlay/Overlay";
 import PageIcon from "../../ui/Icons/PageIcon";
-
+import { DeleteModal } from "../../ui/DeleteModal/DeleteModal";
 import "./Home.css";
 
 const Home = () => {
@@ -291,6 +291,7 @@ const Home = () => {
           </div>
         </>
       )}
+      {modals.deleteModalVisible && <DeleteModal />}
       {!pages.active && (
         <form className="editor-form" onSubmit={handleNewPageSubmit}>
           <div className="heading">
@@ -328,18 +329,20 @@ const Home = () => {
       )}
       {pages.active && (
         <form className="editor-form" onSubmit={handleSubmit}>
-          {determinePath(pages.active).length !== 0 && <div className="page-path">
-            {determinePath(pages.active).map((folder) => (
-              <>
-                <p>{folder.NAME}</p>
-                <span className="path-divider">&nbsp;&gt;&nbsp;</span>
-              </>
-            ))}
-            <div className="current-page">
-              <PageIcon />
-              <p>{pages.active.NAME}</p>
+          {determinePath(pages.active).length !== 0 && (
+            <div className="page-path">
+              {determinePath(pages.active).map((folder) => (
+                <>
+                  <p>{folder.NAME}</p>
+                  <span className="path-divider">&nbsp;&gt;&nbsp;</span>
+                </>
+              ))}
+              <div className="current-page">
+                <PageIcon />
+                <p>{pages.active.NAME}</p>
+              </div>
             </div>
-          </div>}
+          )}
           <div className="heading">
             {noTitleWarningToggled && (
               <div className="no-title-warning">

@@ -6,6 +6,7 @@ import { createSlice, current } from "@reduxjs/toolkit";
 const initialState = {
   list: [],
   selected: null,
+  stagedToDelete: null
 };
 
 const foldersSlice = createSlice({
@@ -180,6 +181,12 @@ const foldersSlice = createSlice({
         }),
       };
     },
+    setStagedFolderToDelete: (state, { payload }) => {
+      return {
+        ...state,
+        stagedToDelete: payload
+      }
+    }
   },
 });
 
@@ -191,5 +198,6 @@ export const {
   selectFolder,
   deselectFolder,
   setFolderEffStatus,
+  setStagedFolderToDelete
 } = foldersSlice.actions;
 export default foldersSlice.reducer;

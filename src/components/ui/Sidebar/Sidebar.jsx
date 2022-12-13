@@ -8,6 +8,7 @@ import {
   selectFolder,
   deselectFolder,
   setFolderEffStatus,
+  setStagedFolderToDelete,
 } from "../../../redux/folders";
 import {
   setPages,
@@ -15,6 +16,7 @@ import {
   selectPage,
   setPageStagedForSwitch,
   updateParentFolderId,
+  setStagedPageToDelete,
 } from "../../../redux/pages";
 import { setSidebarWidth } from "../../../redux/sidebar";
 import { formatFolders, formatPages } from "../../../utils/formatData";
@@ -158,61 +160,47 @@ const Sidebar = () => {
       .catch((err) => console.log(err));
   }
 
-  async function deleteFolder(folderId) {
-    try {
-      let response = await fetch("http://localhost:3001/folders/delete", {
-        method: "post",
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          folderId,
-        }),
-      });
-      let data = await response.json();
+  // async function deleteFolder(folderId) {
+  //   try {
+  //     let response = await fetch("http://localhost:3001/folders/delete", {
+  //       method: "post",
+  //       headers: {
+  //         "content-type": "application/json;charset=UTF-8",
+  //       },
+  //       credentials: "include",
+  //       body: JSON.stringify({
+  //         folderId,
+  //       }),
+  //     });
+  //     let data = await response.json();
 
-      data.deletedFolders.forEach((folderId) => {
-        dispatch(setFolderEffStatus(folderId));
-      });
+  //     data.deletedFolders.forEach((folderId) => {
+  //       dispatch(setFolderEffStatus(folderId));
+  //     });
 
-      setContextMenu({
-        position: {
-          x: 0,
-          y: 0,
-        },
-        toggled: false,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
 
-  async function deletePage(pageId) {
-    try {
-      let response = await fetch("http://localhost:3001/pages/delete", {
-        method: "post",
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          pageId,
-        }),
-      });
-      let data = await response.json();
-      dispatch(setPageEffStatus(pageId));
-      setContextMenu({
-        position: {
-          x: 0,
-          y: 0,
-        },
-        toggled: false,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  // async function deletePage(pageId) {
+  //   try {
+  //     let response = await fetch("http://localhost:3001/pages/delete", {
+  //       method: "post",
+  //       headers: {
+  //         "content-type": "application/json;charset=UTF-8",
+  //       },
+  //       credentials: "include",
+  //       body: JSON.stringify({
+  //         pageId,
+  //       }),
+  //     });
+  //     let data = await response.json();
+  //     dispatch(setPageEffStatus(pageId));
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
 
   function handleFolderClick(folder, changeExpandedStatus = false) {
     changeExpandedStatus && dispatch(setExpandedStatus(folder));
@@ -240,12 +228,38 @@ const Sidebar = () => {
     });
   }
 
+  function handleDelete(e, item) {
+    e.stopPropagation();
+    dispatch(toggleModal("deleteModal"));
+    if (item.IS_PAGE) {
+      dispatch(setStagedPageToDelete(item));
+    } else {
+      dispatch(setStagedFolderToDelete(item));
+    }
+    setContextMenu({
+      position: {
+        x: 0,
+        y: 0,
+      },
+      toggled: false,
+    });
+    // if (!item.IS_PAGE) deleteFolder(item.ID);
+    // if (item.IS_PAGE) deletePage(item.PAGE_ID);
+  }
+
   function handleRootClick(e) {
     e.stopPropagation();
     setInputPosition({
       referenceId: 0,
       toggled: false,
       forFolder: true,
+    });
+    setContextMenu({
+      position: {
+        x: 0,
+        y: 0,
+      },
+      toggled: false,
     });
     dispatch(selectFolder(null));
     dispatch(selectPage(null));
@@ -716,11 +730,7 @@ const Sidebar = () => {
             text: "Delete this",
             icon: "-",
             active: inputPosition.referenceId !== 0,
-            onClick: (e, item) => {
-              e.stopPropagation();
-              if (!item.IS_PAGE) deleteFolder(item.ID);
-              if (item.IS_PAGE) deletePage(item.PAGE_ID);
-            },
+            onClick: handleDelete,
           },
         ]}
       />
