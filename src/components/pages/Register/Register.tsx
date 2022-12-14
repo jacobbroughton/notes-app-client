@@ -45,6 +45,7 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
+          spellCheck="false"
           placeholder="Username"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setUsername(e.target.value)
@@ -55,6 +56,7 @@ const Login = () => {
         />
         <input
           type="password"
+          spellCheck="false"
           placeholder="Password"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setPassword(e.target.value)

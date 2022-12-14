@@ -7,7 +7,7 @@ import {
   expandFolders,
   selectFolder,
   deselectFolder,
-  setFolderEffStatus,
+  renameFolder,
   setStagedFolderToDelete,
 } from "../../../redux/folders";
 import {
@@ -17,6 +17,7 @@ import {
   setPageStagedForSwitch,
   updateParentFolderId,
   setStagedPageToDelete,
+  renamePage,
 } from "../../../redux/pages";
 import { setSidebarWidth } from "../../../redux/sidebar";
 import { formatFolders, formatPages } from "../../../utils/formatData";
@@ -29,11 +30,12 @@ import PageIcon from "../Icons/PageIcon";
 import Draggable from "react-draggable";
 import "./Sidebar.css";
 
-const Sidebar = () => {
+function Sidebar() {
   const sidebarRef = useRef();
   const inputPositionRef = useRef();
   const contextMenuRef = useRef(null);
   const draggableRef = useRef(null);
+  const renameInputRef = useRef(null);
   const [combinedFoldersAndPages, setCombinedFoldersAndPages] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [newPageName, setNewPageName] = useState("");
@@ -55,6 +57,8 @@ const Sidebar = () => {
     toggled: false,
     forFolder: false,
   });
+  const [renameInputToggled, setRenameInputToggled] = useState(false);
+  const [newName, setNewName] = useState("");
 
   const folders = useSelector((state) => state.folders);
   const pages = useSelector((state) => state.pages);
@@ -112,13 +116,7 @@ const Sidebar = () => {
           forFolder: false,
         });
         // getFolders(false);
-        setContextMenu({
-          position: {
-            x: 0,
-            y: 0,
-          },
-          toggled: false,
-        });
+        resetContextMenu();
         getData(false);
       })
       .catch((err) => console.log(err));
@@ -148,59 +146,11 @@ const Sidebar = () => {
           toggled: false,
           forFolder: false,
         });
-        setContextMenu({
-          position: {
-            x: 0,
-            y: 0,
-          },
-          toggled: false,
-        });
+        resetContextMenu();
         getData(false);
       })
       .catch((err) => console.log(err));
   }
-
-  // async function deleteFolder(folderId) {
-  //   try {
-  //     let response = await fetch("http://localhost:3001/folders/delete", {
-  //       method: "post",
-  //       headers: {
-  //         "content-type": "application/json;charset=UTF-8",
-  //       },
-  //       credentials: "include",
-  //       body: JSON.stringify({
-  //         folderId,
-  //       }),
-  //     });
-  //     let data = await response.json();
-
-  //     data.deletedFolders.forEach((folderId) => {
-  //       dispatch(setFolderEffStatus(folderId));
-  //     });
-
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }
-
-  // async function deletePage(pageId) {
-  //   try {
-  //     let response = await fetch("http://localhost:3001/pages/delete", {
-  //       method: "post",
-  //       headers: {
-  //         "content-type": "application/json;charset=UTF-8",
-  //       },
-  //       credentials: "include",
-  //       body: JSON.stringify({
-  //         pageId,
-  //       }),
-  //     });
-  //     let data = await response.json();
-  //     dispatch(setPageEffStatus(pageId));
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }
 
   function handleFolderClick(folder, changeExpandedStatus = false) {
     changeExpandedStatus && dispatch(setExpandedStatus(folder));
@@ -230,37 +180,126 @@ const Sidebar = () => {
 
   function handleDelete(e, item) {
     e.stopPropagation();
+
+    resetContextMenu();
+
     dispatch(toggleModal("deleteModal"));
     if (item.IS_PAGE) {
       dispatch(setStagedPageToDelete(item));
     } else {
       dispatch(setStagedFolderToDelete(item));
     }
-    setContextMenu({
-      position: {
-        x: 0,
-        y: 0,
-      },
-      toggled: false,
-    });
-    // if (!item.IS_PAGE) deleteFolder(item.ID);
-    // if (item.IS_PAGE) deletePage(item.PAGE_ID);
+    resetContextMenu();
   }
 
-  function handleRootClick(e) {
+  function handleRename(e, item) {
     e.stopPropagation();
+
+    resetContextMenu();
+
+    new Promise((resolve) => {
+      setRenameInputToggled(true);
+      setNewName(item.NAME);
+      resetContextMenu();
+      resolve();
+    }).then(() => {
+      if (renameInputRef.current) {
+        renameInputRef?.current.focus();
+        renameInputRef?.current.select();
+      }
+    });
+  }
+
+  function handleNewPage(e, item) {
+    resetContextMenu();
+
+    let referenceId = 0;
+
+    if (folders.selected) {
+      referenceId = folders.selected.ID;
+    } else if (pages.selected && pages.selected.FOLDER_ID) {
+      referenceId = pages.selected.FOLDER_ID;
+    }
+
+    console.log(referenceId);
+
+    setInputPosition({
+      referenceId,
+      toggled: true,
+      forFolder: false,
+    });
+  }
+
+  function handleNewFolder(e, item) {
+    const selectedFolder = folders.list.find((folder) => folder.SELECTED);
+
+    resetContextMenu();
+
+    setInputPosition({
+      referenceId:
+        inputPosition.referenceId && selectedFolder ? inputPosition.referenceId : 0,
+      toggled: true,
+      forFolder: true,
+    });
+    if (inputPosition.referenceId === null) dispatch(deselectFolder());
+  }
+
+  function handleRenameSubmit(e, item) {
+    e.preventDefault();
+    if (item.IS_PAGE) {
+      const pageInfo = {
+        newName: e.target.newName.value,
+        pageId: item.PAGE_ID,
+      };
+
+      fetch("http://localhost:3001/pages/rename", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify(pageInfo),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          dispatch(renamePage(pageInfo));
+          renameInputRef.current.blur();
+          setRenameInputToggled(false);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      const folderInfo = {
+        newName: e.target.newName.value,
+        folderId: item.ID,
+      };
+
+      fetch("http://localhost:3001/folders/rename", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify(folderInfo),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          dispatch(renameFolder(folderInfo));
+          renameInputRef.current.blur();
+          setRenameInputToggled(false);
+        })
+        .catch((err) => console.log(err));
+    }
+  }
+
+  function handleRootClick() {
     setInputPosition({
       referenceId: 0,
       toggled: false,
       forFolder: true,
     });
-    setContextMenu({
-      position: {
-        x: 0,
-        y: 0,
-      },
-      toggled: false,
-    });
+    resetContextMenu();
     dispatch(selectFolder(null));
     dispatch(selectPage(null));
   }
@@ -308,7 +347,6 @@ const Sidebar = () => {
         EXPANDED_STATUS: true,
       };
     }
-    console.log(droppedOntoItem);
 
     if (grabbedItem.IS_PAGE) {
       dispatch(
@@ -353,6 +391,16 @@ const Sidebar = () => {
     setDraggedOverItem({
       ID,
       PAGE_ID: hoveredOverItem.PAGE_ID,
+    });
+  }
+
+  function resetContextMenu() {
+    setContextMenu({
+      position: {
+        x: 0,
+        y: 0,
+      },
+      toggled: false,
     });
   }
 
@@ -416,14 +464,12 @@ const Sidebar = () => {
   }, [folders]);
 
   useEffect(() => {
-    window.addEventListener("click", function (e) {
-      setNewFolderName("");
-      setNewPageName("");
-      setContextMenu({
-        ...contextMenu,
-        toggled: false,
-      });
-    });
+    // window.addEventListener("mousedown", function (e) {
+    //   console.log('asdfasdf')
+    //   setNewFolderName("");
+    //   setNewPageName("");
+    //   resetContextMenu()
+    // });
 
     getData(true);
   }, []);
@@ -432,14 +478,32 @@ const Sidebar = () => {
     const inputPositionHandler = (event) => {
       if (
         inputPositionRef.current &&
-        !inputPositionRef.current.contains(event.target) &&
+        !inputPositionRef.current?.contains(event.target) &&
         !event.target.classList.contains("new-folder-button")
       ) {
+        setNewFolderName("");
+        setNewPageName("");
+        resetContextMenu();
         setInputPosition({
           referenceId: null,
           toggled: false,
           forFolder: false,
         });
+      }
+
+      // if (!event.target.classList.contains("context-menu-button")) {
+      //   setNewFolderName("");
+      //   setNewPageName("");
+      //   setContextMenu({
+      //     position: {
+      //       x: 0,
+      //       y: 0,
+      //     },
+      //   });
+      // }
+
+      if (renameInputToggled && !event.target.classList.contains("rename-input")) {
+        setRenameInputToggled(false);
       }
     };
 
@@ -462,7 +526,6 @@ const Sidebar = () => {
             className={`${dragToggled ? "" : "hoverable"}`}
             onClick={() => {
               // const selectedFolder = folders.list.find((folder) => folder.SELECTED);
-
               let referenceId = 0;
 
               if (folders.selected) {
@@ -537,6 +600,7 @@ const Sidebar = () => {
           >
             <input
               ref={inputPositionRef}
+              spellCheck="false"
               onChange={(e) => {
                 inputPosition.forFolder
                   ? setNewFolderName(e.target.value)
@@ -602,10 +666,24 @@ const Sidebar = () => {
                       {item.EXPANDED_STATUS && !item.IS_PAGE && <DownCaret />}
                       {item.IS_PAGE && <PageIcon />}
                     </div>
-                    <p>
-                      {/* {item.IS_PAGE ? item.FOLDER_ID : item.ID}  */}
-                      {item.NAME}
-                    </p>
+                    {renameInputToggled &&
+                    inputPosition.referenceId === (item.PAGE_ID || item.ID) ? (
+                      <form onSubmit={(e) => handleRenameSubmit(e, item)}>
+                        <input
+                          value={newName}
+                          name="newName"
+                          spellCheck="false"
+                          onChange={(e) => setNewName(e.target.value)}
+                          className="rename-input"
+                          ref={renameInputRef}
+                        />
+                      </form>
+                    ) : (
+                      <p>
+                        {/* {item.IS_PAGE ? item.FOLDER_ID : item.ID}  */}
+                        {item.NAME}
+                      </p>
+                    )}
                   </div>
                 </div>
                 {inputPosition.referenceId === item.ID && inputPosition.toggled && (
@@ -622,6 +700,7 @@ const Sidebar = () => {
                       // name="new-page-folder-input"
                       ref={inputPositionRef}
                       onClick={(e) => e.stopPropagation()}
+                      spellCheck="false"
                       onChange={
                         inputPosition.forFolder
                           ? handleNewFolderOnChange
@@ -688,46 +767,30 @@ const Sidebar = () => {
             text: "New page",
             icon: "++",
             active: true,
-            onClick: (e, item) => {
-              const selectedFolder = folders.list.find((folder) => folder.SELECTED);
-
-              let referenceId = 0;
-
-              if (folders.selected) {
-                referenceId = folders.selected.ID;
-              } else if (pages.selected && pages.selected.FOLDER_ID) {
-                referenceId = pages.selected.FOLDER_ID;
-              }
-
-              console.log(referenceId);
-
-              setInputPosition({
-                referenceId,
-                toggled: true,
-                forFolder: false,
-              });
-            },
+            onClick: handleNewPage,
           },
           {
             text: "New folder",
             icon: "+",
             active: true,
-            onClick: (e, item) => {
-              const selectedFolder = folders.list.find((folder) => folder.SELECTED);
-
-              setInputPosition({
-                referenceId:
-                  inputPosition.referenceId && selectedFolder
-                    ? inputPosition.referenceId
-                    : 0,
-                toggled: true,
-                forFolder: true,
-              });
-              if (inputPosition.referenceId === null) dispatch(deselectFolder());
-            },
+            onClick: handleNewFolder,
           },
           {
-            text: "Delete this",
+            active: inputPosition.referenceId !== 0,
+            isSpacer: true,
+          },
+          {
+            text: "Rename",
+            icon: "",
+            active: inputPosition.referenceId !== 0,
+            onClick: handleRename,
+          },
+          {
+            active: inputPosition.referenceId !== 0,
+            isSpacer: true,
+          },
+          {
+            text: "Delete",
             icon: "-",
             active: inputPosition.referenceId !== 0,
             onClick: handleDelete,
@@ -736,6 +799,6 @@ const Sidebar = () => {
       />
     </aside>
   );
-};
+}
 
 export default Sidebar;

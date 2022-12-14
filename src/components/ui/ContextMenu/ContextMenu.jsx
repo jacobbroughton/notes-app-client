@@ -15,13 +15,14 @@ const ContextMenu = forwardRef(
       >
         {buttons.filter(button => button.active).map((button, index) => {
           function handleClick(e) {
+            e.stopPropagation()
             button.onClick(e, item);
           }
 
           if (button.isSpacer) return <hr></hr>
 
           return (
-            <button onClick={handleClick} key={index}>
+            <button onClick={handleClick} key={index} className='context-menu-button'>
               <span>{button.text}</span> <span>{button.icon}</span>
             </button>
           );

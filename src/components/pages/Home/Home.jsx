@@ -223,10 +223,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    console.log(body);
-  }, [body]);
-
-  useEffect(() => {
     if (noTitleWarningToggled) {
       let timeout = setTimeout(() => {
         clearTimeout(noTitleWarningTimeout);

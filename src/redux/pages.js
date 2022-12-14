@@ -159,7 +159,20 @@ const pagesSlice = createSlice({
         ...state,
         stagedToDelete: payload
       }
-    }
+    },
+    renamePage: (state, { payload }) => {
+      return {
+        ...state,
+        list: state.list.map(page => {
+          return {
+            ...page,
+            ...(page.PAGE_ID === payload.pageId && {
+              NAME: payload.newName
+            })
+          }
+        })
+      };
+    },
   },
 });
 
@@ -172,5 +185,6 @@ export const {
   setPageModified,
   setPageStagedForSwitch,
   updateParentFolderId,
-  setStagedPageToDelete
+  setStagedPageToDelete,
+  renamePage
 } = pagesSlice.actions;

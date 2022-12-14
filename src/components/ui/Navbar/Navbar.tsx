@@ -26,10 +26,10 @@ const Navbar = () => {
       }
     }
 
-    window.addEventListener("click", handler);
+    window.addEventListener("mousedown", handler);
 
     return () => {
-      window.removeEventListener("click", handler);
+      window.removeEventListener("mousedown", handler);
     };
   });
 
@@ -42,6 +42,7 @@ const Navbar = () => {
     const data = await result.json();
 
     dispatch(setUser(null));
+    setNavDropdownToggled(false);
     navigate("/login");
   }
 

@@ -70,7 +70,7 @@ nav .container .nav-dropdown {
     top: calc(100% + 5px);
     right: 15px;
     padding: 5px;
-    border: black solid 1px;
+    border: #646cff solid 1px;
     border-radius: 3px;
     background-color: #444;
     min-width: 150px;

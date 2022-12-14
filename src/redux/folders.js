@@ -6,7 +6,7 @@ import { createSlice, current } from "@reduxjs/toolkit";
 const initialState = {
   list: [],
   selected: null,
-  stagedToDelete: null
+  stagedToDelete: null,
 };
 
 const foldersSlice = createSlice({
@@ -18,57 +18,6 @@ const foldersSlice = createSlice({
         ...state,
         list: folders,
       };
-
-      // return {
-      //   ...state,
-      //   list: data?.map((folder) => {
-      //     let existingFolderThatMatches = state.list?.find(
-      //       (innerFolder) => innerFolder.ID === folder.ID
-      //     );
-
-      //     let existingIdArray = [];
-      //     let newFolder = null;
-      //     let parentOfNewFolder = null;
-
-      //     if (!isInitial) {
-      //       existingIdArray = state.list?.map((innerFolder) => innerFolder.ID);
-      //       newFolder = data?.find(
-      //         (innerFolder) => !existingIdArray.includes(innerFolder.ID)
-      //       );
-      //       parentOfNewFolder = state.list?.find(
-      //         (innerFolder) => innerFolder.ID === newFolder?.PARENT_FOLDER_ID
-      //       );
-      //     }
-
-      //     let EXPANDED_STATUS = existingFolderThatMatches?.EXPANDED_STATUS
-
-      //     let VISIBLE = existingFolderThatMatches?.VISIBLE;
-      //     console.log(current(state.list).find((innerFolder) => innerFolder.ID === newFolder?.PARENT_FOLDER_ID))
-
-      //     if (folder.EFF_STATUS) {
-      //       if (isInitial) {
-      //         if (existingFolderThatMatches?.VISIBLE || !folder.PARENT_FOLDER_ID) {
-      //           VISIBLE = true;
-      //         }
-      //       } else if (
-      //           newFolder?.PARENT_FOLDER_ID === null && folder.ID === newFolder.ID ||
-      //           parentOfNewFolder?.EXPANDED_STATUS && folder.PARENT_FOLDER_ID === parentOfNewFolder.ID
-      //         ) {
-      //           VISIBLE = true;
-      //         }
-      //     }
-      //     return {
-      //       ...folder,
-      //       EXPANDED_STATUS,
-      //       VISIBLE,
-      //       // :
-      //       //   folder.EFF_STATUS &&
-      //       //   (!isInitial && newFolder?.ID === folder.ID && (folder.PARENT_FOLDER_ID === null ? true : parentOfNewFolder?.EXPANDED_STATUS))
-      //       //   || existingFolderThatMatches?.VISIBLE
-      //       //   || !folder.PARENT_FOLDER_ID,
-      //     };
-      //   }),
-      // };
     },
     setExpandedStatus: (state, { payload }) => {
       const expandedFolder = payload;
@@ -141,10 +90,13 @@ const foldersSlice = createSlice({
         list: state.list.map((folder) => {
           let SELECTED;
 
-          if ((payload === null && folder?.SELECTED) || payload?.ID == selectedFolder?.ID) {
+          if (
+            (payload === null && folder?.SELECTED) ||
+            payload?.ID == selectedFolder?.ID
+          ) {
             SELECTED = false;
-          } 
-          
+          }
+
           if (folder?.ID === payload?.ID) {
             SELECTED = true;
           }
@@ -184,9 +136,22 @@ const foldersSlice = createSlice({
     setStagedFolderToDelete: (state, { payload }) => {
       return {
         ...state,
-        stagedToDelete: payload
-      }
-    }
+        stagedToDelete: payload,
+      };
+    },
+    renameFolder: (state, { payload }) => {
+      return {
+        ...state,
+        list: state.list.map((folder) => {
+          return {
+            ...folder,
+            ...(folder.ID === payload.folderId && {
+              NAME: payload.newName,
+            }),
+          };
+        }),
+      };
+    },
   },
 });
 
@@ -198,6 +163,7 @@ export const {
   selectFolder,
   deselectFolder,
   setFolderEffStatus,
-  setStagedFolderToDelete
+  setStagedFolderToDelete,
+  renameFolder,
 } = foldersSlice.actions;
 export default foldersSlice.reducer;

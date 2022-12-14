@@ -36,6 +36,8 @@
 }
 
 .context-menu hr {
-  border: 1px solid #333;
+  border: 0;
+  border-bottom: 1px solid #555;
+  background-color: transparent;
   margin: 5px 0;
 }
