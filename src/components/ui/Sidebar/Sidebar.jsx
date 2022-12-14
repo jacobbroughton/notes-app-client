@@ -235,9 +235,16 @@ function Sidebar() {
 
     resetContextMenu();
 
+    let referenceId = 0;
+
+    if (folders.selected) {
+      referenceId = folders.selected.ID;
+    } else if (pages.selected && pages.selected.FOLDER_ID) {
+      referenceId = pages.selected.FOLDER_ID;
+    }
+
     setInputPosition({
-      referenceId:
-        inputPosition.referenceId && selectedFolder ? inputPosition.referenceId : 0,
+      referenceId,
       toggled: true,
       forFolder: true,
     });
@@ -456,6 +463,7 @@ function Sidebar() {
   }, [folders.list, pages.list]);
 
   useEffect(() => {
+    console.log(inputPosition);
     if (inputPosition.toggled) inputPositionRef?.current.focus();
   }, [inputPosition.toggled]);
 
@@ -636,6 +644,7 @@ function Sidebar() {
                 onDragEnter={(e) => handleDragEnter(e, item)}
                 onDrop={(e) => handleDrop(e, grabbedItem, item)}
                 onDragOver={(e) => e.preventDefault()}
+                onDoubleClick={(e) => handleRename(e, item)}
                 className={determineFolderContainerClass(item)}
                 style={{
                   ...(inputPosition.referenceId === item.ID &&
