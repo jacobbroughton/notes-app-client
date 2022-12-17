@@ -74,6 +74,7 @@
 .home-view .heading input {
     box-shadow: var(--container-shadow);
     width: 100%;
+    color: var(--color-input-placeholder);
     background-color: transparent;
     border: 1px solid transparent;
     padding: 5px 10px;
@@ -86,11 +87,31 @@
     resize: none;
 }
 
+.home-view .editor-form textarea::placeholder,
+.home-view .heading input::placeholder,
+.home-view .editor-form textarea::-ms-input-placeholder,
+.home-view .heading input::-ms-input-placeholder {
+    color: var(--color-input-placeholder);
+}
+
+
 .home-view .heading input {
     width: 100%;
     font-size: 1.25rem;
     font-weight: 600;
     transition: border-color 0.15s ease;
+}
+
+.home-view .heading input:focus,
+.home-view .heading input:active,
+.home-view .heading input:focus-within,
+.home-view .heading input:focus-visible,
+.home-view .editor-form textarea:focus,
+.home-view .editor-form textarea:active,
+.home-view .editor-form textarea:focus-within,
+.home-view .editor-form textarea:focus-visible {
+    border: 1px solid var(--tertiary-bg) !important;
+    outline: none;
 }
 
 .home-view .heading input.error,
@@ -140,9 +161,9 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: var(--lightest-bg);
-    border: white 1px solid;
+    border: var(--color-text-primary) 1px solid;
     padding: 20px;
-    color: white;
+    color: var(--color-text-primary);
     border-radius: 3px;
     z-index: 5;
     display: flex;

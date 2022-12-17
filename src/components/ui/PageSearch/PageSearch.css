@@ -87,7 +87,7 @@
 .page-search .name-and-buttons svg {
   width: 8px;
   height: 8px;
-  fill: white;
+  fill: var(--color-text-primary);
   margin-right: 5px;
 }
 

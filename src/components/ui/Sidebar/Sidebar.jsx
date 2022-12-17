@@ -292,8 +292,8 @@ function Sidebar() {
             {viewOption.id === 2 && <SearchIcon />}
           </button>
         ))}
-        <button onClick={() => dispatch(setTheme(theme === "dark" ? "light" : "dark"))}>
-          {theme === "dark" ? "light" : "dark"}
+        <button className='theme-button' onClick={() => dispatch(setTheme(theme === "dark" ? "light" : "dark"))}>
+          {theme === "dark" ? "☀️" : "🌙"}
         </button>
       </div>
       <div className="sidebar-body">

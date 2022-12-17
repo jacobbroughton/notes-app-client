@@ -74,11 +74,11 @@
 }
 
 .folders-list .folder-container.hoverable:hover {
-  background-color: var(--tertiary-bg-hover);
+  background-color: var(--tertiary-bg);
 }
 
 .folders-list .folder-container.selected {
-  background-color: var(--tertiary-bg-hover);
+  background-color: var(--tertiary-bg);
   /* border: 1px solid var(--lightest-bg); */
 }
 
@@ -126,7 +126,7 @@
 .folders-list .name-and-buttons button:not(:disabled):hover,
 .folders-list .header .folders-list-header-buttons button:not(:disabled):hover {
   border: 1px solid var(--color-accent-primary);
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .folders-list .name-and-buttons button:not(:disabled):active,
@@ -137,7 +137,7 @@
 .folders-list .name-and-buttons svg {
   width: 8px;
   height: 8px;
-  fill: white;
+  fill: var(--color-text-primary);
   margin-right: 5px;
 }
 
@@ -162,9 +162,10 @@
 }
 
 .folders-list .name-and-buttons p {
-  white-space: nowrap;
+  var(--color-text-primary)-space: nowrap;
   font-size: 0.875rem;
   font-weight: 500;
   text-overflow: ellipsis;
   overflow: hidden;
+  color: var(--color-text-primary);
 }
