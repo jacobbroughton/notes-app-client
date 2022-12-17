@@ -15,7 +15,8 @@
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.4.3"
+    "react-router-dom": "^6.4.3",
+    "redux-batched-subscribe": "^0.1.6"
   },
   "devDependencies": {
     "@types/react": "^18.0.24",

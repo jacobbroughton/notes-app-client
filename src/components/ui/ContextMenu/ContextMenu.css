@@ -1,12 +1,12 @@
 .context-menu {
   display: none;
-  background: #444;
+  background-color: var(--tertiary-bg);
   position: fixed;
   z-index: 5;
   color: white;
   padding: 5px;
   border-radius: 3px;
-  border: 1px solid #646cff;
+  border: 1px solid var(--color-accent-primary);
   font-size: 0.875rem;
   width: 100%;
   max-width: 250px;
@@ -32,12 +32,12 @@
 }
 
 .context-menu button:hover {
-  background-color: #646cff;
+  background-color: var(--color-accent-primary);
 }
 
 .context-menu hr {
   border: 0;
-  border-bottom: 1px solid #555;
+  border-bottom: 1px solid var(--lightest-bg);
   background-color: transparent;
   margin: 5px 0;
 }

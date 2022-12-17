@@ -10,7 +10,7 @@
 
 .login-view .login-error {
     background-color: crimson;
-    color: #fff;
+    color: var(--color-text-secondary);
     padding: 5px 10px;
     border-radius: 3px;
 }
@@ -27,7 +27,7 @@
 }
 
 .login-view button {
-    background-color: #646cff;
+    background-color: var(--color-accent-primary);
     padding: 5px 10px;
     border-radius: 3px;
     border: 0;

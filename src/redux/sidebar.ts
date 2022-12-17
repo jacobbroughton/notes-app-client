@@ -1,13 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { useState } from "react";
+import SearchIcon from "../components/ui/Icons/SearchIcon"
 
 type SidebarState = {
   width: number
+  view: object,
+  viewOptions: object[]
 };
 
+const viewOptionsForState = [
+  {
+    id: 1,
+    name: "Notes",
+  },
+  {
+    id: 2,
+    name: "Search",
+  },
+];
+
 const initialState: SidebarState = {
-  width: 225
+  width: 275,
+  view: viewOptionsForState[0],
+  viewOptions: viewOptionsForState,
 };
 
 const sidebarSlice = createSlice({
@@ -31,8 +47,16 @@ const sidebarSlice = createSlice({
         width: payload
       }
     },
+    setSidebarView: (state, { payload }) => {
+      if (!viewOptionsForState.find((option) => option.id === payload.id)) return state;
+
+      return {
+        ...state,
+        view: payload,
+      };
+    },
   },
 });
 
-export const { setSidebarWidth } = sidebarSlice.actions;
+export const { setSidebarWidth, setSidebarView } = sidebarSlice.actions;
 export default sidebarSlice.reducer;

@@ -20,7 +20,7 @@
 }
 
 .register-view button {
-    background-color: #646cff;
+    background-color: var(--color-accent-primary);
     /* align-self: center; */
     padding: 5px 10px;
     border-radius: 3px;

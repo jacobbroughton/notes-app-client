@@ -370,6 +370,7 @@ const Home = () => {
           />
         </form>
       )}
+      {/* <div>Excel-like page selector here</div> */}
 
       {/* <button onClick={testProtectedRoute}>Protected Route</button>
       <button onClick={testAdminRoute}>Admin Route</button> */}

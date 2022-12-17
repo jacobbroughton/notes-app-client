@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./components/pages/Home/Home";
 import Login from "./components/pages/Login/Login";
@@ -10,10 +11,17 @@ function App() {
 
   const sidebar = useSelector(state => state.sidebar)
   const user = useSelector(state => state.user)
+  const theme = useSelector(state => state.theme)
+
+  useEffect(() => {
+    console.log(theme)
+    localStorage.setItem('theme', theme);
+    document.body.dataset.theme = theme
+  },[theme])
+
 
   return (
     <div className="App">
-      <Navbar/>
       {user && <Sidebar/>}
       <main style={{ marginLeft:  user ? `${sidebar.width}px` : '0'}}>
         <Routes>

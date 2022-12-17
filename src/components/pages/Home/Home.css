@@ -31,14 +31,14 @@
     width: calc(100% + 30px);
     min-height: 26px;
     height: 26px;
-    background: #555;
-    border-left: 1px solid #111;
+    background: var(--tertiary-bg);
+    border-left: var(--border);
     overflow-x: auto;
 }
 
 .home-view .page-path p {
     font-size: 0.875rem;
-    color: #fff;
+    /* color: var(--light-background-text); */
     white-space: nowrap;
 
 }
@@ -54,7 +54,7 @@
 }
 
 .home-view .page-path .current-page svg {
-    fill: #E3BD27;
+    fill: var(--color-accent-secondary);
     width: 10px;
     height: 10px;
 }
@@ -77,8 +77,8 @@
     background-color: transparent;
     border: 1px solid transparent;
     padding: 5px 10px;
-    outline-color: #444;
-    background-color: #333;
+    outline-color: var(--tertiary-bg);
+    background-color: var(--secondary-bg);
     border-radius: 3px;
     height: 100%;
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
@@ -87,6 +87,7 @@
 }
 
 .home-view .heading input {
+    width: 100%;
     font-size: 1.25rem;
     font-weight: 600;
     transition: border-color 0.15s ease;
@@ -102,7 +103,7 @@
 }
 
 .home-view .heading .no-title-warning {
-    background: #333;
+    background: var(--secondary-bg);
     border: crimson 1px solid;
     border-radius: 3px;
     position: absolute;
@@ -122,11 +123,11 @@
 }
 
 .home-view .heading .status-indicator.unsaved {
-    background-color: #ffd300;
+    background-color: var(--color-unsaved);
 }
 
 .home-view .heading .status-indicator.saved {
-    background-color: #03c04a;
+    background-color: var(--color-saved);
 }
 
 /* .home-view .editor-form button {
@@ -138,7 +139,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #555;
+    background-color: var(--lightest-bg);
     border: white 1px solid;
     padding: 20px;
     color: white;
@@ -163,5 +164,5 @@
 }
 
 .home-view .unsaved-warning-modal .buttons button.save-btn {
-    background-color: #646cff;
+    background-color: var(--color-accent-primary);
 }

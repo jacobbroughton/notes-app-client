@@ -1,0 +1,170 @@
+
+.folders-list  {
+  height: 100%;
+  padding-bottom: 40px;
+  overflow-y: scroll;
+  background-color: var(--primary-bg);
+  border: 1px solid transparent;
+}
+
+.folders-list.selected {
+  border: 1px solid var(--lightest-bg);
+}
+
+.folders-list .folder-container {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+}
+
+.folders-list .folder-container.under-drag {
+  background-color: var(--tertiary-bg);
+}
+
+.folders-list .rename-input {
+  padding: 1px 3px;
+}
+
+.folders-list .new-folder-form,
+.folders-list .new-page-form {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 5px;
+  left: 5px;
+  z-index: 4;
+}
+
+.folders-list .new-folder-form input,
+.folders-list .new-page-form input {
+  background: var(--secondary-bg);
+  border: 1px solid var(--color-accent-primary);
+  padding: 3px 5px;
+  width: 100%;
+}
+
+
+.folders-list .folder-container .tier-blocks {
+  display: flex;
+  /* gap: 5px; */
+}
+
+.folders-list .folder-container .tier-blocks .tier-block {
+  transition: border-color 0.05s ease, background-color 0.05s ease;
+}
+
+.folders-list .folder-container .tier-blocks .tier-block:not(:first-child) {
+  width: 10px;
+  border-right: 1px solid rgba(211, 211, 211, 0.292);
+  /* border-right: 1px solid var(--color-accent-primary); */
+}
+
+.folders-list .name-and-buttons {
+  height: 100%;
+  display: flex;
+  gap: 30px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1px 5px;
+  /* position: relative; */
+  overflow: hidden;
+  width: calc(100% - 23px);
+}
+
+.folders-list .folder-container.hoverable:hover {
+  background-color: var(--tertiary-bg-hover);
+}
+
+.folders-list .folder-container.selected {
+  background-color: var(--tertiary-bg-hover);
+  /* border: 1px solid var(--lightest-bg); */
+}
+
+.folders-list .folder-container.selected .tier-block:first-child {
+  background-color: var(--color-accent-primary);
+}
+
+.folders-list .folder-container.selected .tier-block:not(:first-child) {
+  border-color: var(--color-accent-primary);
+}
+
+.folders-list .folder-container .name-and-buttons .folder-buttons,
+.folders-list .header .folders-list-header-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: auto;
+  gap: 3px;
+  padding: 0px 3px;
+}
+
+.folders-list .folder-container:not(.selected):not(:hover) .name-and-buttons .folder-buttons {
+  background-color: var(--primary-bg);
+}
+
+.folders-list .name-and-buttons button,
+.folders-list .header .folders-list-header-buttons button {
+  /* width: 17px; */
+  min-width: 17px;
+  padding: 0px 3px;
+  height: 17px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid transparent;
+  transition: 0.05s ease-in-out border-color, 0.05s ease-in-out background-color;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.folders-list .name-and-buttons button:disabled,
+.folders-list .name-and-buttons button:not(:disabled):hover,
+.folders-list .header .folders-list-header-buttons button:not(:disabled):hover {
+  border: 1px solid var(--color-accent-primary);
+  color: white;
+}
+
+.folders-list .name-and-buttons button:not(:disabled):active,
+.folders-list .header .folders-list-header-buttons button:not(:disabled):active {
+  background-color: var(--color-accent-primary);
+}
+
+.folders-list .name-and-buttons svg {
+  width: 8px;
+  height: 8px;
+  fill: white;
+  margin-right: 5px;
+}
+
+.folders-list .name-and-caret {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.folders-list .caret-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  width: 20px;
+}
+
+.folders-list .caret-container .page-icon {
+  width: 10px;
+  height: 10px;
+  fill: var(--color-accent-secondary);
+}
+
+.folders-list .name-and-buttons p {
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

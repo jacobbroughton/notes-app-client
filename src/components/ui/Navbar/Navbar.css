@@ -3,7 +3,7 @@ nav {
     top: 0;
     z-index: 3;
     width: 100%;
-    background-color: #333;
+    background-color: var(--secondary-bg);
     height: 50px;
 }
 
@@ -23,7 +23,7 @@ nav .container .nav-links {
     margin-left: 2px;
     font-size: 1rem;
     padding: 0px 5px;
-    background-color: #555;
+    background-color: var(--lightest-bg);
     border-radius: 3px;
     border: 0;
     cursor: pointer;
@@ -41,7 +41,7 @@ nav .container .nav-dropdown-toggle {
     padding: 5px 15px;
     cursor: pointer;
     transition: background-color 0.1s ease;
-    background-color: #555;
+    background-color: var(--lightest-bg);
 }
 
 nav .container .nav-dropdown-toggle:hover {
@@ -70,9 +70,9 @@ nav .container .nav-dropdown {
     top: calc(100% + 5px);
     right: 15px;
     padding: 5px;
-    border: #646cff solid 1px;
+    border: var(--color-accent-primary) solid 1px;
     border-radius: 3px;
-    background-color: #444;
+    background-color: var(--tertiary-bg);
     min-width: 150px;
 }
 
@@ -80,7 +80,7 @@ nav .container .nav-dropdown button,
 nav .container .nav-dropdown a {
     background-color: transparent;
     border: 0;
-    color: #fff;
+    color: var(--color-text-secondary);
     font-size: 1rem;
     text-align: start;
     padding: 5px 8px;
@@ -89,5 +89,5 @@ nav .container .nav-dropdown a {
 
 nav .container .nav-dropdown button:hover,
 nav .container .nav-dropdown a:hover {
-    background-color: #555; 
+    background-color: var(--lightest-bg); 
 }

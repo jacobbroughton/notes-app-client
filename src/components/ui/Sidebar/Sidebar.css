@@ -1,272 +1,164 @@
 .sidebar {
-    background-color: #444;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 50px;
-    height: 100%;
-    width: inherit;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 20%);
-    z-index: 2;
-    /* padding: 10px; */
-    overflow: hidden;
+  background-color: var(--tertiary-bg);
+  display: flex;
+  position: fixed;
+  height: 100%;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 20%);
+  z-index: 2;
+  overflow: hidden;
+}
+
+.sidebar .sidebar-nav {
+  display: flex;
+  flex-direction: column;
+height: 100%;
+}
+
+.sidebar .sidebar-nav button {
+  padding: 15px;
+  background-color: transparent;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 50px;
+  cursor: pointer;
+  max-height: 50px;
+  position: relative;
+}
+
+.sidebar .sidebar-nav button.current::before {
+  content: "";
+  width: 3px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: var(--color-icon-hover-light-bg);
+}
+
+.sidebar .sidebar-nav button.current,
+.sidebar .sidebar-nav button.current svg,
+.sidebar .sidebar-nav button:hover svg {
+  fill: var(--color-icon-hover-light-bg);
+}
+
+.sidebar .sidebar-nav button svg {
+  width: 20px;
+  fill: var(--color-icon-light-bg);
+  transition: 0.1s ease fill;
+}
+
+.sidebar .sidebar-body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar .sidebar-body .current-view {
+  padding: 2px 10px;
+  background-color: var(--secondary-bg);
+  font-size: 0.875rem;
 }
 
 .sidebar .sidebar-root-click-checker {
-    /* margin-top: 26px;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0; */
-    height: auto;
-    padding: 20px;
-    width: 100%;
-    background-color: transparent;
-    z-index: 1;
-    border: 1px solid transparent;
+  height: auto;
+  padding: 20px;
+  width: 100%;
+  background-color: transparent;
+  border: 1px solid transparent;
 }
 
 
-.sidebar .folders-list {
-    height: 100%;
-    padding-bottom: 40px;
-    overflow-y: scroll;
-    z-index: 2;
-    background-color: #2f2f2f;
-    border: 1px solid transparent;
-}
-
-.sidebar .folders-list.selected {
-    border: 1px solid #555;
+.sidebar .header {
+  position: sticky;
+  height: 100%;
+  max-height: 26px;
+  top: 0;
+  padding: 1px 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3px;
+  background: var(--tertiary-bg);
+  border-left: var(--border);
 }
 
 .sidebar .header {
-    position: sticky;
-    min-height: 26px;
-    top: 0;
-    padding: 1px 5px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 3px;
-    z-index: 4;
-    background: #444;
-    box-shadow:1px 1px 2px rgba(0, 0, 0, 0.148);
-}
-
-.sidebar .header {
-    display: flex;
-    gap: 15px;
+  display: flex;
+  gap: 15px;
 }
 
 .sidebar .header p {
-    font-size: 0.875rem;
-}
-
-.sidebar .folder-container {
-    display: flex;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    user-select: none;
-}
-
-
-.sidebar .folder-container.under-drag {
-    background-color: #444;
-}
-
-.sidebar .rename-input {
-    padding: 1px 3px;
-}
-
-
-.sidebar .new-folder-form,
-.sidebar .new-page-form {
-    position: absolute;
-    top: calc(100% + 5px);
-    right: 5px;
-    left: 5px;
-    z-index: 4;
-}
-
-.sidebar .new-folder-form input,
-.sidebar .new-page-form input {
-    background: #313131;
-    border: 1px solid #646cff;
-    padding: 3px 5px;
-    width: 100%;
+  font-size: 0.875rem;
 }
 
 .sidebar .sidebar-overlay {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    height: 100%;
-    /* width: 100%; */
-    background-color: #2f2f2f;
-    opacity: 0.5;
-    z-index: 2;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  background-color: var(--primary-bg);
+  opacity: 0.5;
+  z-index: 2;
 }
 
-.sidebar .folder-container .tier-blocks {
-    display: flex;
-    /* gap: 5px; */
-}
-
-.sidebar .folder-container .tier-blocks .tier-block {
-    transition: border-color 0.05s ease, background-color 0.05s ease;
-}
-
-.sidebar .folder-container .tier-blocks .tier-block:not(:first-child) {
-    width: 10px; 
-    border-right: 1px solid rgba(211, 211, 211, 0.292);
-    /* border-right: 1px solid #646cff; */
-}
-
-.sidebar .name-and-buttons {
-    height: 100%;
-    display: flex;
-    gap: 30px;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 1px 5px;
-    /* position: relative; */
-    overflow: hidden;
-    width: calc(100% - 23px);
-}
-
-.sidebar .folder-container.hoverable:hover {
-    background-color: #3d3d3d;
-}
-
-.sidebar .folder-container.selected{
-    background-color: #3d3d3d;
-    /* border: 1px solid #555; */
-}
-
-.sidebar .folder-container.selected .tier-block:first-child {
-    background-color:  #646cff;
-}
-
-.sidebar .folder-container.selected .tier-block:not(:first-child) {
-    border-color:  #646cff;
-}
-
-.sidebar .folder-container .name-and-buttons .folder-buttons,
-.sidebar .header .sidebar-header-buttons {
-    /* position: absolute;
-    right: 0; */
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    height: 100%;
-    width: auto;
-    gap: 3px;
-    padding: 0px 3px;
-    z-index: 2;
-}
-
-.sidebar .folder-container:not(.selected):not(:hover) .name-and-buttons .folder-buttons {
-    background-color: #2f2f2f;
-}
-
-.sidebar .name-and-buttons button,
-.sidebar .header .sidebar-header-buttons button {
-    /* width: 17px; */
-    min-width: 17px;
-    padding: 0px 3px;
-    height: 17px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    border: 1px solid transparent;
-    transition: 0.05s ease-in-out border-color,  0.05s ease-in-out background-color;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-.sidebar .name-and-buttons button:disabled,
-
-
-.sidebar .name-and-buttons button:not(:disabled):hover, 
-.sidebar .header .sidebar-header-buttons button:not(:disabled):hover {
-    border: 1px solid #646cff;
-    color: white;
-}
-
-.sidebar .name-and-buttons button:not(:disabled):active, 
-.sidebar .header .sidebar-header-buttons button:not(:disabled):active {
-    background-color: #646cff;
-}
-
-.sidebar .name-and-buttons svg {
-    width: 8px;
-    height: 8px;
-    fill: white;
-    margin-right: 5px;
-}
-
-.sidebar .name-and-caret {
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-}
-
-
-
-.sidebar .caret-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 20px;
-    width: 20px;
-}
-
-.sidebar .caret-container .page-icon {
-    width: 10px;
-    height: 10px;
-    fill: #E3BD27;
-}
-
-
-
-
-.sidebar .name-and-buttons p {
-    white-space: nowrap;
-    font-size: 0.875rem;
-    font-weight: 500;
-     text-overflow: ellipsis;
-     overflow: hidden;
-}
 
 .sidebar .drag-sidebar-button {
-    position: absolute;
-    right: 0;
-    width: 1px;
-    background-color: #444;
-    border: 0;
-    height: 100%;
-    z-index: 5;
-    cursor: e-resize;
-    transition: 0.1s ease background-color;
+  position: absolute;
+  right: 0;
+  width: 1px;
+  background-color: var(--tertiary-bg);
+  border: 0;
+  height: 100%;
+  z-index: 5;
+  cursor: e-resize;
+  transition: 0.1s ease background-color;
 }
 
 .sidebar .drag-sidebar-button:hover {
-    background-color: #646cff;
+  background-color: var(--color-accent-primary);
 }
 
 .sidebar .drag-sidebar-button:active,
 .sidebar .drag-sidebar-button.active {
-    width: 2px;
-    background-color: #646cff;
+  width: 2px;
+  background-color: var(--color-accent-primary);
 }
 
+.sidebar .header .sidebar-header-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: auto;
+  gap: 3px;
+  padding: 0px 3px;
+}
+
+.sidebar .header .sidebar-header-buttons button:not(:disabled):hover {
+  border: 1px solid var(--color-accent-primary);
+  color: white;
+}
+
+.sidebar .header .sidebar-header-buttons button:not(:disabled):active {
+  background-color: var(--color-accent-primary);
+}
+
+.sidebar .header .sidebar-header-buttons button {
+  /* width: 17px; */
+  min-width: 17px;
+  padding: 0px 3px;
+  height: 17px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid transparent;
+  transition: 0.05s ease-in-out border-color, 0.05s ease-in-out background-color;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 3px;
+}
