@@ -8,7 +8,7 @@
 }
 
 .folders-list.selected {
-  border: 1px solid var(--lightest-bg);
+  border: 1px solid var(--tertiary-bg);
 }
 
 .folders-list .folder-container {
@@ -25,20 +25,16 @@
 
 .folders-list .rename-input {
   padding: 1px 3px;
-}
-
-.folders-list .new-folder-form,
-.folders-list .new-page-form {
-  position: absolute;
-  top: calc(100% + 5px);
-  right: 5px;
-  left: 5px;
-  z-index: 4;
+  color: var(--color-text-primary);
+  background-color: var(--secondary-bg);
+  border: var(--tertiary-bg) 1px solid;
+  border-radius: 3px;
 }
 
 .folders-list .new-folder-form input,
 .folders-list .new-page-form input {
   background: var(--secondary-bg);
+  color: var(--color-text-primary);
   border: 1px solid var(--color-accent-primary);
   padding: 3px 5px;
   width: 100%;
@@ -79,7 +75,7 @@
 
 .folders-list .folder-container.selected {
   background-color: var(--tertiary-bg);
-  /* border: 1px solid var(--lightest-bg); */
+  /* border: 1px solid var(--tertiary-bg); */
 }
 
 .folders-list .folder-container.selected .tier-block:first-child {
@@ -162,7 +158,7 @@
 }
 
 .folders-list .name-and-buttons p {
-  var(--color-text-primary)-space: nowrap;
+  white-space: nowrap;
   font-size: 0.875rem;
   font-weight: 500;
   text-overflow: ellipsis;

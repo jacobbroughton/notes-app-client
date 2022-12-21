@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import Input from "../../ui/Input/Input";
 import "./Register.css";
 
@@ -38,7 +38,7 @@ const Login = () => {
       console.log(err);
     }
   }
-
+  
   return (
     <div className="register-view">
       <h1>Register</h1>
@@ -67,6 +67,8 @@ const Login = () => {
         />
         <button type="submit">Submit</button>
       </form>
+      <p>Already have an account? <Link to='/login'>Sign in</Link></p>
+          
     </div>
   );
 };

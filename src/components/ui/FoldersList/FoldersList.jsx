@@ -1,15 +1,18 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setExpandedStatus, selectFolder } from "../../../redux/folders";
+import { toggleModal } from "../../../redux/modals";
 import {
   selectPage,
   setPageStagedForSwitch,
   updateParentFolderId,
+  renamePage,
 } from "../../../redux/pages";
+
 import RightCaret from "../Icons/RightCaret";
 import PageIcon from "../Icons/PageIcon";
-import DownCaret from "../Icons/DownCaret";
 
+import DownCaret from "../Icons/DownCaret";
 import "./FoldersList.css";
 
 const FoldersList = ({
@@ -18,6 +21,7 @@ const FoldersList = ({
   combinedFoldersAndPages,
   setCombinedFoldersAndPages,
   dragToggled,
+  setRenameInputToggled,
   renameInputToggled,
   setContextMenu,
   handleNewFolderSubmit,
@@ -27,8 +31,12 @@ const FoldersList = ({
   newPageName,
   setNewPageName,
   setNewFolderName,
+  resetContextMenu,
+  handleRename,
+  setNewName,
+  newName,
+  renameInputRef,
 }) => {
-  // const inputPositionRef = useRef();
   const dispatch = useDispatch();
   const folders = useSelector((state) => state.folders);
   const pages = useSelector((state) => state.pages);
@@ -245,8 +253,7 @@ const FoldersList = ({
   }
 
   useEffect(() => {
-    console.log(inputPositionRef)
-    if (inputPosition.toggled) inputPositionRef?.current.focus();
+    if (inputPosition.toggled) inputPositionRef?.current?.focus();
   }, [inputPosition.toggled]);
 
   useEffect(() => {
@@ -299,7 +306,7 @@ const FoldersList = ({
               onDragEnter={(e) => handleDragEnter(e, item)}
               onDrop={(e) => handleDrop(e, grabbedItem, item)}
               onDragOver={(e) => e.preventDefault()}
-              onDoubleClick={(e) => handleRename(e, item)}
+              onDoubleClick={(e) => (item.IS_PAGE ? handleRename(e, item) : null)}
               className={determineFolderContainerClass(item)}
               style={{
                 ...(inputPosition.referenceId === item.ID &&

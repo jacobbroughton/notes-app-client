@@ -40,11 +40,13 @@
     font-size: 0.875rem;
     /* color: var(--light-background-text); */
     white-space: nowrap;
+    color: var(--color-text-primary);
 
 }
 
 .home-view .page-path .path-divider {
     opacity: 0.5;
+    color: var(--color-text-primary);
 }
 
 .home-view .page-path .current-page {
@@ -160,8 +162,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: var(--lightest-bg);
-    border: var(--color-text-primary) 1px solid;
+    background-color: var(--primary-bg);
+    box-shadow: var(--large-shadow);
+    /* border: var(--color-text-primary) 1px solid; */
     padding: 20px;
     color: var(--color-text-primary);
     border-radius: 3px;

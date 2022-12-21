@@ -24,19 +24,22 @@ import { toggleModal } from "../../../redux/modals";
 import { setTheme } from "../../../redux/theme";
 
 import ContextMenu from "../ContextMenu/ContextMenu";
+import UserMenu from "../UserMenu/UserMenu";
 import FoldersList from "../FoldersList/FoldersList";
 import PageSearch from "../PageSearch/PageSearch";
 import SearchIcon from "../Icons/SearchIcon";
+import UserIcon from "../Icons/UserIcon";
 import PageIcon from "../Icons/PageIcon";
 import Draggable from "react-draggable";
 import "./Sidebar.css";
 
 function Sidebar() {
-  const sidebarRef = useRef();
-  const inputPositionRef = useRef();
+  const sidebarRef = useRef(null);
+  const inputPositionRef = useRef(null);
   const contextMenuRef = useRef(null);
   const draggableRef = useRef(null);
   const renameInputRef = useRef(null);
+  const userMenuRef = useRef(null);
   const [combinedFoldersAndPages, setCombinedFoldersAndPages] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [newPageName, setNewPageName] = useState("");
@@ -54,6 +57,7 @@ function Sidebar() {
     forFolder: false,
   });
   const [renameInputToggled, setRenameInputToggled] = useState(false);
+  const [userMenuToggled, setUserMenuToggled] = useState(false);
   const [newName, setNewName] = useState("");
 
   const folders = useSelector((state) => state.folders);
@@ -126,14 +130,17 @@ function Sidebar() {
   function handleDelete(e, item) {
     e.stopPropagation();
 
-    resetContextMenu();
-
     dispatch(toggleModal("deleteModal"));
     if (item.IS_PAGE) {
       dispatch(setStagedPageToDelete(item));
     } else {
       dispatch(setStagedFolderToDelete(item));
     }
+    setInputPosition({
+      referenceId: null,
+      toggled: false,
+      forFolder: false,
+    });
     resetContextMenu();
   }
 
@@ -227,7 +234,8 @@ function Sidebar() {
   }
 
   useEffect(() => {
-    if (inputPosition.toggled) inputPositionRef?.current.focus();
+    if (inputPositionRef.current && inputPosition.toggled)
+      inputPositionRef?.current.focus();
   }, [inputPosition.toggled]);
 
   useEffect(() => {
@@ -255,10 +263,7 @@ function Sidebar() {
         });
       }
 
-      if (
-        !contextMenuRef.current?.contains(event.target) &&
-        !event.target.classList.contains("context-menu-button")
-      ) {
+      if (!contextMenuRef.current?.contains(event.target)) {
         setNewFolderName("");
         setNewPageName("");
         resetContextMenu();
@@ -276,6 +281,8 @@ function Sidebar() {
     };
   });
 
+
+
   return (
     <aside
       ref={sidebarRef}
@@ -283,113 +290,123 @@ function Sidebar() {
       style={{ width: `${sidebar.width ? `${sidebar.width}px` : "275px"}` }}
     >
       <div className="sidebar-nav">
-        {sidebar.viewOptions.map((viewOption) => (
+        {sidebar.viewOptions.map((viewOption, index) => (
           <button
             onClick={() => dispatch(setSidebarView(viewOption))}
-            className={viewOption.id === sidebar.view.id && "current"}
+            className={viewOption.id === sidebar.view.id ? "current" : ""}
+            key={index}
           >
             {viewOption.id === 1 && <PageIcon />}
             {viewOption.id === 2 && <SearchIcon />}
           </button>
         ))}
-        <button className='theme-button' onClick={() => dispatch(setTheme(theme === "dark" ? "light" : "dark"))}>
+        <button
+          className="theme-button"
+          onClick={() => dispatch(setTheme(theme === "dark" ? "light" : "dark"))}
+        >
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
+        <button className="user-button" onClick={() => setUserMenuToggled(!userMenuToggled)}>
+          <UserIcon />
+        </button>
+        {userMenuToggled && <UserMenu setUserMenuToggled={setUserMenuToggled}/> }
       </div>
       <div className="sidebar-body">
         <div className="current-view">
           <p>{sidebar.view.name}</p>
         </div>
-        <div className="header">
-          <div className="sidebar-header-buttons">
-            <button
-              className={`${dragToggled ? "" : "hoverable"}`}
-              onClick={() => {
-                let referenceId = 0;
+        {sidebar.view.name === "Notes" && (
+          <div className="header">
+            <div className="sidebar-header-buttons">
+              <button
+                className={`${dragToggled ? "" : "hoverable"}`}
+                onClick={() => {
+                  let referenceId = 0;
 
-                if (folders.selected) {
-                  referenceId = folders.selected.ID;
-                } else if (pages.selected && pages.selected.FOLDER_ID) {
-                  referenceId = pages.selected.FOLDER_ID;
-                }
+                  if (folders.selected) {
+                    referenceId = folders.selected.ID;
+                  } else if (pages.selected && pages.selected.FOLDER_ID) {
+                    referenceId = pages.selected.FOLDER_ID;
+                  }
 
-                setInputPosition({
-                  referenceId,
-                  toggled: true,
-                  forFolder: false,
-                });
-              }}
-              title="Create a new page"
-            >
-              ++
-            </button>
-            <button
-              className={`${dragToggled ? "" : "hoverable"}`}
-              onClick={() => {
-                const selectedFolder = folders.list.find((folder) => folder.SELECTED);
-
-                let referenceId = 0;
-
-                if (folders.selected) {
-                  referenceId = folders.selected.ID;
-                } else if (pages.selected && pages.selected.FOLDER_ID) {
-                  referenceId = pages.selected.FOLDER_ID;
-                }
-
-                setInputPosition({
-                  referenceId,
-                  toggled: true,
-                  forFolder: true,
-                });
-                if (inputPosition.referenceId === null) dispatch(deselectFolder());
-              }}
-              title="Create a new folder"
-            >
-              +
-            </button>
-            <button
-              className={`${dragToggled ? "" : "hoverable"}`}
-              onClick={() => dispatch(expandFolders())}
-              title="Expand Folders"
-              disabled={
-                !dragToggled &&
-                combinedFoldersAndPages.filter((item) => !item.IS_PAGE).length === 0
-              }
-            >
-              &lt; &gt;
-            </button>
-            <button
-              className={`${dragToggled ? "" : "hoverable"}`}
-              onClick={() => dispatch(collapseFolders())}
-              title="Collapse Folders"
-              disabled={
-                !dragToggled &&
-                combinedFoldersAndPages.filter((item) => !item.IS_PAGE).length === 0
-              }
-            >
-              &gt; &lt;
-            </button>
-          </div>
-          {inputPosition.referenceId === 0 && inputPosition.toggled && (
-            <form
-              className="new-folder-form"
-              onSubmit={
-                inputPosition.forFolder ? handleNewFolderSubmit : handleNewPageSubmit
-              }
-            >
-              <input
-                ref={inputPositionRef}
-                spellCheck="false"
-                onChange={(e) => {
-                  inputPosition.forFolder
-                    ? setNewFolderName(e.target.value)
-                    : setNewPageName(e.target.value);
+                  setInputPosition({
+                    referenceId,
+                    toggled: true,
+                    forFolder: false,
+                  });
                 }}
-                value={inputPosition.forFolder ? newFolderName : newPageName}
-              />
-            </form>
-          )}
-        </div>
+                title="Create a new page"
+              >
+                ++
+              </button>
+              <button
+                className={`${dragToggled ? "" : "hoverable"}`}
+                onClick={() => {
+                  const selectedFolder = folders.list.find((folder) => folder.SELECTED);
+
+                  let referenceId = 0;
+
+                  if (folders.selected) {
+                    referenceId = folders.selected.ID;
+                  } else if (pages.selected && pages.selected.FOLDER_ID) {
+                    referenceId = pages.selected.FOLDER_ID;
+                  }
+
+                  setInputPosition({
+                    referenceId,
+                    toggled: true,
+                    forFolder: true,
+                  });
+                  if (inputPosition.referenceId === null) dispatch(deselectFolder());
+                }}
+                title="Create a new folder"
+              >
+                +
+              </button>
+              <button
+                className={`${dragToggled ? "" : "hoverable"}`}
+                onClick={() => dispatch(expandFolders())}
+                title="Expand Folders"
+                disabled={
+                  !dragToggled &&
+                  combinedFoldersAndPages.filter((item) => !item.IS_PAGE).length === 0
+                }
+              >
+                &lt; &gt;
+              </button>
+              <button
+                className={`${dragToggled ? "" : "hoverable"}`}
+                onClick={() => dispatch(collapseFolders())}
+                title="Collapse Folders"
+                disabled={
+                  !dragToggled &&
+                  combinedFoldersAndPages.filter((item) => !item.IS_PAGE).length === 0
+                }
+              >
+                &gt; &lt;
+              </button>
+            </div>
+            {inputPosition.referenceId === 0 && inputPosition.toggled && (
+              <form
+                className="new-folder-form"
+                onSubmit={
+                  inputPosition.forFolder ? handleNewFolderSubmit : handleNewPageSubmit
+                }
+              >
+                <input
+                  ref={inputPositionRef}
+                  spellCheck="false"
+                  onChange={(e) => {
+                    inputPosition.forFolder
+                      ? setNewFolderName(e.target.value)
+                      : setNewPageName(e.target.value);
+                  }}
+                  value={inputPosition.forFolder ? newFolderName : newPageName}
+                />
+              </form>
+            )}
+          </div>
+        )}
         {sidebar.view.name === "Notes" && (
           <FoldersList
             inputPosition={inputPosition}
@@ -397,6 +414,7 @@ function Sidebar() {
             combinedFoldersAndPages={combinedFoldersAndPages}
             setCombinedFoldersAndPages={setCombinedFoldersAndPages}
             dragToggled={dragToggled}
+            setRenameInputToggled={setRenameInputToggled}
             renameInputToggled={renameInputToggled}
             setContextMenu={setContextMenu}
             handleNewFolderSubmit={handleNewFolderSubmit}
@@ -406,6 +424,11 @@ function Sidebar() {
             newPageName={newPageName}
             setNewPageName={setNewPageName}
             setNewFolderName={setNewFolderName}
+            resetContextMenu={resetContextMenu}
+            handleRename={handleRename}
+            setNewName={setNewName}
+            newName={newName}
+            renameInputRef={renameInputRef}
           />
         )}
         {sidebar.view.name === "Search" && <PageSearch />}

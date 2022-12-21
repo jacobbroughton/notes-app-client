@@ -32,8 +32,14 @@ export function DeleteModal() {
       });
       let data = await response.json();
 
+      console.log(data)
+
       data.deletedFolders.forEach((folderId) => {
+        console.log('Deleting folder - ', folderId)
         dispatch(setFolderEffStatus(folderId));
+        pages.list.forEach((page) => {
+          if (page.FOLDER_ID === folderId) dispatch(setPageEffStatus(page.PAGE_ID))
+        })
       });
       dispatch(toggleModal("deleteModal"));
     } catch (err) {

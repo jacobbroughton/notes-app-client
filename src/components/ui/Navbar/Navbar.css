@@ -19,17 +19,7 @@ nav .container .nav-links {
     gap: 10px;
 }
 
-/* nav .container .nav-links .logout-btn {
-    margin-left: 2px;
-    font-size: 1rem;
-    padding: 0px 5px;
-    background-color: var(--lightest-bg);
-    border-radius: 3px;
-    border: 0;
-    cursor: pointer;
-} */
-
-nav .container .nav-dropdown-toggle {
+/* nav .container .nav-dropdown-toggle {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -41,7 +31,7 @@ nav .container .nav-dropdown-toggle {
     padding: 5px 15px;
     cursor: pointer;
     transition: background-color 0.1s ease;
-    background-color: var(--lightest-bg);
+    background-color: var(--tertiary-bg);
 }
 
 nav .container .nav-dropdown-toggle:hover {
@@ -89,5 +79,5 @@ nav .container .nav-dropdown a {
 
 nav .container .nav-dropdown button:hover,
 nav .container .nav-dropdown a:hover {
-    background-color: var(--lightest-bg); 
-}
+    background-color: var(--tertiary-bg); 
+} */

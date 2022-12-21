@@ -31,9 +31,10 @@ body[data-theme="dark"] {
   --icon-hover: #aaa;
   --color-accent-primary: #646cff;
   --color-accent-secondary: #e3bd27;
+  --color-matching-highlight: #e3bd27;
   --color-unsaved: #ffd300;
   --color-saved: #03c04a;
-  --color-icon-light-bg: #ddd;
+  --color-icon-light-bg: #ccc;
   --color-icon-hover-light-bg: #fff;
   --border: #181818 1px solid;
   --small-shadow: 1px 1px 2px rgba(0, 0, 0, 0.148);
@@ -51,9 +52,10 @@ body[data-theme="light"] {
   --color-text-secondary: #fff;
   --color-accent-secondary: #333;
   --color-accent-primary: #646cff;
+  --color-matching-highlight: #e3bd27;
   --color-unsaved: #ffd300;
   --color-saved: #03c04a;
-  --color-icon-light-bg: #eee;
+  --color-icon-light-bg: #ccc;
   --color-icon-hover-light-bg: #fff;
   --border: #2e5266 1px solid;
   --small-shadow: 1px 1px 2px rgba(0, 0, 0, 0.148);

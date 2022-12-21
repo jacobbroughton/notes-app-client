@@ -1,66 +1,79 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setSearchValue } from "../../../redux/sidebar";
 import PageIcon from "../Icons/PageIcon";
 import "./PageSearch.css";
 
 const PageSearch = () => {
-  const [searchValue, setSearchValue] = useState("");
-
+  const sidebar = useSelector((state) => state.sidebar);
   const pages = useSelector((state) => state.pages);
+  const dispatch = useDispatch();
 
   function handleSearchInputChange(e) {
-    setSearchValue(e.target.value);
+    dispatch(setSearchValue(e.target.value));
   }
 
-  let searchResults = pages.list.filter((page) => page.BODY.includes(searchValue));
+  let searchResults = pages.list.filter(
+    (page) => page.EFF_STATUS && page.BODY.includes(sidebar.searchValue)
+  );
 
   return (
     <div className="page-search">
       <form>
         <input
           placeholder="Search"
-          value={searchValue}
+          value={sidebar.searchValue}
           onChange={handleSearchInputChange}
         />
       </form>
-      {searchValue !== "" &&
+      {sidebar.searchValue !== "" &&
         searchResults.map((page) => {
-          // Get the start and end index (2nd param of indexOf is the index to start at)
-          // After the first one, look for more and push to an array to display similar to vs code
+          let body = page.BODY;
 
-          let matchingIndexes = [];
-          let idCounter = 0;
+          let startingMatchIndexes = [];
 
-          function checkForMatch(string, lastMatchingIndex) {
-            const matchingIndex = string.indexOf(searchValue, lastMatchingIndex);
+          function findStartingMatchIndex(string, lastMatchingIndex) {
+            const matchingStartingIndex = string.indexOf(
+              sidebar.searchValue,
+              lastMatchingIndex
+            );
 
-            if (matchingIndex < 0) return;
+            if (matchingStartingIndex < 0) return;
 
             if (lastMatchingIndex + 1 >= string.length) return;
 
-            console.log(matchingIndexes, matchingIndex);
-
-            const indexAlreadyInArray = matchingIndexes.find(
-              (index) => index.matchingIndex === matchingIndex
+            const indexAlreadyInArray = startingMatchIndexes.find(
+              (match) => match.startingIndex === matchingStartingIndex
             );
 
-            if (!indexAlreadyInArray) {
-              matchingIndexes.push({
-                id: idCounter,
-                matchingIndex,
-                char: string[matchingIndex],
-              });
-              idCounter += 1;
-            }
+            if (indexAlreadyInArray) return;
 
-            checkForMatch(string, lastMatchingIndex + 1);
+            let matchingCharacters = [
+              ...string.slice(
+                matchingStartingIndex,
+                matchingStartingIndex + sidebar.searchValue.length
+              ),
+            ];
+
+            matchingCharacters = matchingCharacters.map((char, index) => {
+              return {
+                startingIndex: matchingStartingIndex,
+                index: matchingStartingIndex + index,
+                char,
+              };
+            });
+
+            startingMatchIndexes.push({
+              startingIndex: matchingStartingIndex,
+              matchingCharacters,
+            });
+
+            // startingMatchIndexes.push(...matchingCharacters);
+
+            findStartingMatchIndex(string, lastMatchingIndex + 1);
           }
 
-          if (searchValue !== "") {
-            checkForMatch(page.BODY, 0);
-          }
-
-          console.log({ searchValue, body: page.BODY, matchingIndexes });
+          if (sidebar.searchValue !== "") findStartingMatchIndex(body, 0);
 
           return (
             <div draggable="true" className="page-container hoverable">
@@ -71,40 +84,23 @@ const PageSearch = () => {
                 <p>{page.NAME}</p>
               </div>
               <div className="matching-body-examples">
-                {matchingIndexes.map((matchingIndex, index) => {
-                  let startIndex;
-                  let endIndex;
-                  let diffBetweenFirstMatchAndCurrent = 0;
-
-                  if (matchingIndex.matchingIndex - 5 <= 0) {
-                    startIndex = 0;
-                    endIndex = 5;
-                  } else {
-                    startIndex = matchingIndex.matchingIndex - 5;
-                    endIndex = matchingIndex.matchingIndex + 5;
-                  }
-
+                {startingMatchIndexes.map((match, i) => {
+                  console.log(match);
                   return (
-                    <p>
-                      {[...page.BODY]
-                        // .filter(
-                        //   (letter, index) =>
-                        //     index > matchingIndex.matchingIndex - 5 &&
-                        //     index < matchingIndex.matchingIndex + 5
-                        // )
-                        .map((char, index) => {
+                    <p key={i}>
+                      {[...body].map((char, charIndex) => {
+                        let matching = false;
 
-                          return (
-                            <span
-                              className={
-                                index === matchingIndex.matchingIndex ? "matching" : ""
-                              }
-                            >
-                              {char}
-                            </span>
-                          );
-                        })}{" "}
-                      {matchingIndex.matchingIndex}
+                        if (charIndex === match.index) matching = true;
+
+                        let matchingCharacter = match.matchingCharacters[charIndex - match.startingIndex]
+
+                        if (matchingCharacter?.index == charIndex) {
+                          matching = true
+                        }
+
+                        return <span className={matching ? "matching" : ""}>{char}</span>;
+                      })}
                     </p>
                   );
                 })}

@@ -15,6 +15,7 @@ const Navbar = () => {
   const user = useSelector((state: RootState) => state.user);
   const [navDropdownToggled, setNavDropdownToggled] = useState(false);
 
+
   useEffect(() => {
     function handler(e) {
       if (

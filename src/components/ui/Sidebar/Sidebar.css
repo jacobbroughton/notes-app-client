@@ -15,7 +15,27 @@
   background-color: var(--color-sidebar-nav);
 }
 
-.sidebar .sidebar-nav button {
+.sidebar .new-folder-form,
+.sidebar .new-page-form {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 5px;
+  left: 5px;
+  z-index: 5;
+  width: 100%;
+}
+
+.sidebar .new-folder-form input,
+.sidebar .new-page-form input {
+  width: calc(100% - 10px);
+  background: var(--secondary-bg);
+  border: 1px solid var(--color-accent-primary);
+  padding: 3px 5px;
+  border-radius: 3px;
+  color: var(--color-text-primary);
+}
+
+.sidebar .sidebar-nav > button {
   padding: 15px;
   background-color: transparent;
   border: 0;
@@ -38,19 +58,27 @@
   background-color: var(--color-icon-hover-light-bg);
 }
 
-.sidebar .sidebar-nav button.current,
-.sidebar .sidebar-nav button.current svg,
-.sidebar .sidebar-nav button:hover svg {
+.sidebar .sidebar-nav > button.current,
+.sidebar .sidebar-nav > button.current svg,
+.sidebar .sidebar-nav > button:hover svg {
   fill: var(--color-icon-hover-light-bg);
 }
 
-.sidebar .sidebar-nav button svg {
+.sidebar .sidebar-nav > button svg {
   width: 20px;
+  height: 20px;
   fill: var(--color-icon-light-bg);
   transition: 0.1s ease fill;
 }
 
-.sidebar .sidebar-nav button.theme-button {
+.sidebar .sidebar-nav > button.theme-button {
+  padding: 10px;
+  font-size: 1.3rem;
+  position: absolute;
+  bottom: 50px;
+}
+
+.sidebar .sidebar-nav > button.user-button {
   padding: 10px;
   font-size: 1.3rem;
   position: absolute;
@@ -98,6 +126,7 @@
 .sidebar .header {
   display: flex;
   gap: 15px;
+  z-index: 3;
 }
 
 .sidebar .header p {

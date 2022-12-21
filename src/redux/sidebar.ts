@@ -6,7 +6,8 @@ import SearchIcon from "../components/ui/Icons/SearchIcon"
 type SidebarState = {
   width: number
   view: object,
-  viewOptions: object[]
+  viewOptions: object[],
+  searchValue: string
 };
 
 const viewOptionsForState = [
@@ -24,6 +25,7 @@ const initialState: SidebarState = {
   width: 275,
   view: viewOptionsForState[0],
   viewOptions: viewOptionsForState,
+  searchValue: ''
 };
 
 const sidebarSlice = createSlice({
@@ -55,8 +57,14 @@ const sidebarSlice = createSlice({
         view: payload,
       };
     },
+    setSearchValue: (state, { payload }) => {
+      return {
+        ...state,
+        searchValue: payload
+      }
+    }
   },
 });
 
-export const { setSidebarWidth, setSidebarView } = sidebarSlice.actions;
+export const { setSidebarWidth, setSidebarView, setSearchValue } = sidebarSlice.actions;
 export default sidebarSlice.reducer;

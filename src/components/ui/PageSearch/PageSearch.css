@@ -18,6 +18,7 @@
   width: 100%;
   padding: 5px;
   background-color:  var(--secondary-bg);
+  color: var(--color-text-primary);
   border: 0;
   border-radius: 3px;
 }
@@ -27,12 +28,9 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  cursor: pointer;
   user-select: none;
-}
+  color: var(--color-text-primary);
 
-.page-search .page-container.under-drag {
-  background-color: var(--tertiary-bg);
 }
 
 .page-search .page-container .matching-body-examples {
@@ -43,13 +41,13 @@
 .page-search .page-container .matching-body-examples p {
   white-space: nowrap;
   text-overflow: ellipsis;
-  /* width: calc(100% - 40px); */
   display: block;
-  overflow: hidden
+  overflow: hidden;
+  color: var(--color-text-primary);
 }
 
 .page-search .page-container .matching-body-examples p span.matching {
-  background-color: var(--color-accent-secondary);
+  background-color: var(--color-matching-highlight);
 }
 
 .page-search .page-container .tier-blocks {
@@ -65,15 +63,6 @@
   width: 10px;
   border-right: 1px solid rgba(211, 211, 211, 0.292);
   /* border-right: 1px solid var(--color-accent-primary); */
-}
-
-.page-search .page-container.hoverable:hover {
-  background-color: var(--tertiary-bg-hover);
-}
-
-.page-search .page-container.selected {
-  background-color: var(--tertiary-bg-hover);
-  /* border: 1px solid var(--lightest-bg); */
 }
 
 .page-search .page-container.selected .tier-block:first-child {

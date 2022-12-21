@@ -5,7 +5,7 @@
   right: 0;
   left: 0;
   bottom: 0;
-  background-color: var(--lightest-bg);
+  background-color: var(--tertiary-bg);
 }
 
 .delete-modal {
@@ -16,7 +16,7 @@
   transform: translate(-50%, -50%);
   left: 50%;
   top: 50%;
-  background-color: var(--lightest-bg);
+  background-color: var(--tertiary-bg);
   border-radius: 3px;
   z-index: 5;
   padding: 15px;

@@ -1,6 +1,6 @@
 import { FormEvent, ReactEventHandler, useEffect, useState } from "react";
 import { setUser } from "../../../redux/user";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Input from "../../ui/Input/Input";
 import "./Login.css";
@@ -80,6 +80,7 @@ const Login = () => {
         />
         <button type="submit">Submit</button>
       </form>
+      <p>New here? <Link to='/register'>Create an account</Link></p>
     </div>
   );
 };

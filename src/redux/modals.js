@@ -16,5 +16,6 @@ const modalsSlice = createSlice({
   }
 })
 
+
 export default modalsSlice.reducer
 export const { toggleModal } = modalsSlice.actions

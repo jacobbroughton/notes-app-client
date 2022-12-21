@@ -1,29 +1,35 @@
 .register-view {
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    gap: 20px;
-    padding-top: 75px;
-    width: 100%;
-    max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  gap: 20px;
+  padding-top: 75px;
+  width: 100%;
+  max-width: 350px;
 }
 
 .register-view form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .register-view input {
-    padding: 5px 10px;
-    font-size: 1rem;
+  padding: 5px 10px;
+  font-size: 1rem;
+  background-color: var(--secondary-bg);
+  border: 1px solid var(--tertiary-bg);
 }
 
 .register-view button {
-    background-color: var(--color-accent-primary);
-    /* align-self: center; */
-    padding: 5px 10px;
-    border-radius: 3px;
-    border: 0;
-    cursor: pointer;
+  background-color: var(--color-accent-primary);
+  /* align-self: center; */
+  padding: 5px 10px;
+  border-radius: 3px;
+  border: 0;
+  cursor: pointer;
+}
+
+.register-view a {
+  color: var(--color-accent-primary);
 }

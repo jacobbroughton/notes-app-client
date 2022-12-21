@@ -209,6 +209,7 @@ const Home = () => {
     function getParentFolder(folderId) {
       if (!folderId) return;
       let parent = folders.list?.find((folder) => folder.ID === folderId);
+      if (!parent) return
       parentFolders.unshift(parent);
       getParentFolder(parent.PARENT_FOLDER_ID);
     }
@@ -279,7 +280,6 @@ const Home = () => {
               <button onClick={handleSubmit} className="save-btn">
                 Save Changes
               </button>
-              {/* <button>Discard Changes</button> */}
               <button onClick={() => dispatch(toggleModal("unsavedWarning"))}>
                 Cancel
               </button>
@@ -309,7 +309,7 @@ const Home = () => {
               onChange={handleTitleChange}
               ref={titleFieldRef}
               className={noTitleWarningToggled ? "error" : ""}
-              tabIndex="0"
+              // tabIndex="0"
             />
           </div>
 
@@ -320,6 +320,9 @@ const Home = () => {
             spellCheck="false"
             onChange={handleBodyChange}
             ref={bodyFieldRef}
+            data-gramm="false"
+            data-gramm_editor="false"
+            data-enable-grammarly="false"
           />
         </form>
       )}
@@ -354,6 +357,7 @@ const Home = () => {
               placeholder="Title / Topic"
               value={title}
               spellCheck="false"
+              required
               onChange={handleTitleChange}
               ref={titleFieldRef}
               className={noTitleWarningToggled ? "error" : ""}
@@ -367,6 +371,9 @@ const Home = () => {
             spellCheck="false"
             onChange={handleBodyChange}
             ref={bodyFieldRef}
+            data-gramm="false"
+            data-gramm_editor="false"
+            data-enable-grammarly="false"
           />
         </form>
       )}

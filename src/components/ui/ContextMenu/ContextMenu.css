@@ -1,6 +1,6 @@
 .context-menu {
   display: none;
-  background-color: var(--tertiary-bg);
+  background-color: var(--secondary-bg);
   position: fixed;
   z-index: 5;
   color: var(--color-text-primary);
@@ -29,15 +29,17 @@
   gap: 30px;
   padding: 5px 8px;
   cursor: pointer;
+  color: var(--color-text-primary);
 }
 
 .context-menu button:hover {
   background-color: var(--color-accent-primary);
+  color: white;
 }
 
 .context-menu hr {
   border: 0;
-  border-bottom: 1px solid var(--lightest-bg);
+  border-bottom: 1px solid var(--tertiary-bg);
   background-color: transparent;
   margin: 5px 0;
 }

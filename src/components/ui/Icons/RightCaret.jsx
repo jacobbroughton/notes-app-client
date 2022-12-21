@@ -6,4 +6,6 @@ const RightCaret = () => {
   );
 };
 
+
+
 export default RightCaret;
