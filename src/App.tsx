@@ -14,7 +14,6 @@ function App() {
   const theme = useSelector(state => state.theme)
 
   useEffect(() => {
-    console.log(theme)
     localStorage.setItem('theme', theme);
     document.body.dataset.theme = theme
   },[theme])

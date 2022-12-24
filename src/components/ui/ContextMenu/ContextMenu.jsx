@@ -19,7 +19,7 @@ const ContextMenu = forwardRef(
             button.onClick(e, item);
           }
 
-          if (button.isSpacer) return <hr></hr>
+          if (button.isSpacer) return <hr key={index}></hr>
 
           return (
             <button onClick={handleClick} key={index} className='context-menu-button'>
@@ -38,7 +38,7 @@ ContextMenu.propTypes = {
   toggled: PropTypes.bool.isRequired,
   buttons: PropTypes.arrayOf(
     PropTypes.shape({
-      text: PropTypes.string.isRequired,
+      text: PropTypes.string,
       icon: PropTypes.string,
       onClick: PropTypes.func,
       active: PropTypes.bool,

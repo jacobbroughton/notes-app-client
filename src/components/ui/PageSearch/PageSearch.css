@@ -9,6 +9,11 @@
   font-size: 0.875rem;
 }
 
+.page-search .no-results-found {
+  color: var(--color-text-primary);
+  margin-left: 10px;
+}
+
 .page-search form {
   width: calc(100% - 10px);
   margin: 5px;

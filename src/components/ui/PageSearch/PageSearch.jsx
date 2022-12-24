@@ -26,8 +26,9 @@ const PageSearch = () => {
           onChange={handleSearchInputChange}
         />
       </form>
+      {searchResults.length === 0 && <p className='no-results-found'>No results found.</p>}
       {sidebar.searchValue !== "" &&
-        searchResults.map((page) => {
+        searchResults.map((page, i) => {
           let body = page.BODY;
 
           let startingMatchIndexes = [];
@@ -68,15 +69,13 @@ const PageSearch = () => {
               matchingCharacters,
             });
 
-            // startingMatchIndexes.push(...matchingCharacters);
-
             findStartingMatchIndex(string, lastMatchingIndex + 1);
           }
 
           if (sidebar.searchValue !== "") findStartingMatchIndex(body, 0);
 
           return (
-            <div draggable="true" className="page-container hoverable">
+            <div draggable="true" className="page-container hoverable" key={i}>
               <div className="name-and-caret">
                 <div className="caret-container">
                   &nbsp; <PageIcon />
@@ -93,13 +92,14 @@ const PageSearch = () => {
 
                         if (charIndex === match.index) matching = true;
 
-                        let matchingCharacter = match.matchingCharacters[charIndex - match.startingIndex]
+                        let matchingCharacter =
+                          match.matchingCharacters[charIndex - match.startingIndex];
 
                         if (matchingCharacter?.index == charIndex) {
-                          matching = true
+                          matching = true;
                         }
 
-                        return <span className={matching ? "matching" : ""}>{char}</span>;
+                        return <span className={matching ? "matching" : ""} key={charIndex}>{char}</span>;
                       })}
                     </p>
                   );

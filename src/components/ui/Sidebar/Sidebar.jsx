@@ -40,7 +40,7 @@ function Sidebar() {
   const draggableRef = useRef(null);
   const renameInputRef = useRef(null);
   const userMenuRef = useRef(null);
-  const [combinedFoldersAndPages, setCombinedFoldersAndPages] = useState([]);
+  // const [combinedFoldersAndPages, setCombinedFoldersAndPages] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [newPageName, setNewPageName] = useState("");
   const [dragToggled, setDragToggled] = useState(false);
@@ -64,6 +64,7 @@ function Sidebar() {
   const pages = useSelector((state) => state.pages);
   const sidebar = useSelector((state) => state.sidebar);
   const theme = useSelector((state) => state.theme);
+  const combined = useSelector((state) => state.combined);
   const dispatch = useDispatch();
 
   function onDragSidebar(e, data) {
@@ -100,8 +101,6 @@ function Sidebar() {
   function handleNewPageSubmit(e) {
     e.preventDefault();
 
-    console.log(inputPosition);
-
     fetch("http://localhost:3001/pages/new", {
       method: "POST",
       headers: {
@@ -127,7 +126,7 @@ function Sidebar() {
       .catch((err) => console.log(err));
   }
 
-  function handleDelete(e, item) {
+  function handleDeleteSingle(e, item) {
     e.stopPropagation();
 
     dispatch(toggleModal("deleteModal"));
@@ -136,6 +135,18 @@ function Sidebar() {
     } else {
       dispatch(setStagedFolderToDelete(item));
     }
+    setInputPosition({
+      referenceId: null,
+      toggled: false,
+      forFolder: false,
+    });
+    resetContextMenu();
+  }
+
+  function handleDeleteMultiple(e) {
+    e.stopPropagation();
+
+    dispatch(toggleModal("deleteModal"));
     setInputPosition({
       referenceId: null,
       toggled: false,
@@ -172,8 +183,6 @@ function Sidebar() {
     } else if (pages.selected && pages.selected.FOLDER_ID) {
       referenceId = pages.selected.FOLDER_ID;
     }
-
-    console.log(referenceId);
 
     setInputPosition({
       referenceId,
@@ -234,6 +243,7 @@ function Sidebar() {
   }
 
   useEffect(() => {
+    console.log(inputPosition);
     if (inputPositionRef.current && inputPosition.toggled)
       inputPositionRef?.current.focus();
   }, [inputPosition.toggled]);
@@ -251,7 +261,8 @@ function Sidebar() {
       if (
         inputPositionRef.current &&
         !inputPositionRef.current?.contains(event.target) &&
-        !event.target.classList.contains("new-folder-button")
+        !event.target.classList.contains("new-folder-button") &&
+        !event.target.classList.contains("new-page-button")
       ) {
         setNewFolderName("");
         setNewPageName("");
@@ -274,14 +285,91 @@ function Sidebar() {
       }
     };
 
-    document.addEventListener("mousedown", inputPositionHandler);
+    document.addEventListener("click", inputPositionHandler);
 
     return () => {
-      document.removeEventListener("mousedown", inputPositionHandler);
+      document.removeEventListener("click", inputPositionHandler);
     };
   });
 
+  const sidebarHeaderButtons = [
+    {
+      symbol: "++",
+      title: "Create a new page",
+      disabled: "",
+      visible: true,
+      className: "new-page-button",
+      onClick: () => {
+        let referenceId = 0;
 
+        if (inputPosition.toggled) {
+          setInputPosition({
+            ...inputPosition,
+            referenceId: null,
+            toggled: false,
+          });
+        } else {
+          if (folders.selected) {
+            referenceId = folders.selected.ID;
+          } else if (pages.selected && pages.selected.FOLDER_ID) {
+            referenceId = pages.selected.FOLDER_ID;
+          }
+
+          setInputPosition({
+            referenceId,
+            toggled: true,
+            forFolder: false,
+          });
+        }
+      },
+    },
+    {
+      symbol: "+",
+      title: "Create a new folder",
+      disabled: "",
+      visible: true,
+      className: "new-folder-button",
+      onClick: () => {
+        let referenceId = 0;
+
+        if (inputPosition.toggled) {
+          setInputPosition({
+            ...inputPosition,
+            referenceId: null,
+            toggled: false,
+          });
+        } else {
+          if (folders.selected) {
+            referenceId = folders.selected.ID;
+          } else if (pages.selected && pages.selected.FOLDER_ID) {
+            referenceId = pages.selected.FOLDER_ID;
+          }
+
+          setInputPosition({
+            referenceId,
+            toggled: true,
+            forFolder: true,
+          });
+        }
+
+        if (inputPosition.referenceId === null) dispatch(deselectFolder());
+      },
+    },
+    {
+      symbol: "< >",
+      title: "Expand folders",
+      disabled: dragToggled,
+      visible: combined.filter((item) => !item.IS_PAGE).length !== 0,
+      onClick: () => dispatch(expandFolders()),
+    },
+    {
+      symbol: "> <",
+      title: "Collapse folders",
+      disabled: dragToggled,
+      visible: combined.filter((item) => !item.IS_PAGE).length !== 0,
+      onClick: () => dispatch(collapseFolders()),
+    },
+  ];
 
   return (
     <aside
@@ -306,130 +394,82 @@ function Sidebar() {
         >
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
-        <button className="user-button" onClick={() => setUserMenuToggled(!userMenuToggled)}>
+        <button
+          className="user-button"
+          onClick={() => setUserMenuToggled(!userMenuToggled)}
+        >
           <UserIcon />
         </button>
-        {userMenuToggled && <UserMenu setUserMenuToggled={setUserMenuToggled}/> }
+        {userMenuToggled && <UserMenu setUserMenuToggled={setUserMenuToggled} />}
       </div>
       <div className="sidebar-body">
         <div className="current-view">
           <p>{sidebar.view.name}</p>
         </div>
         {sidebar.view.name === "Notes" && (
-          <div className="header">
-            <div className="sidebar-header-buttons">
-              <button
-                className={`${dragToggled ? "" : "hoverable"}`}
-                onClick={() => {
-                  let referenceId = 0;
-
-                  if (folders.selected) {
-                    referenceId = folders.selected.ID;
-                  } else if (pages.selected && pages.selected.FOLDER_ID) {
-                    referenceId = pages.selected.FOLDER_ID;
+          <>
+            <div className="header">
+              <div className="sidebar-header-buttons">
+                {sidebarHeaderButtons.map((button, i) => {
+                  if (button.visible) {
+                    return (
+                      <button
+                        className={button.className}
+                        disabled={button.disabled}
+                        onClick={button.onClick}
+                        title={button.title}
+                        key={i}
+                      >
+                        {button.symbol}
+                      </button>
+                    );
                   }
-
-                  setInputPosition({
-                    referenceId,
-                    toggled: true,
-                    forFolder: false,
-                  });
-                }}
-                title="Create a new page"
-              >
-                ++
-              </button>
-              <button
-                className={`${dragToggled ? "" : "hoverable"}`}
-                onClick={() => {
-                  const selectedFolder = folders.list.find((folder) => folder.SELECTED);
-
-                  let referenceId = 0;
-
-                  if (folders.selected) {
-                    referenceId = folders.selected.ID;
-                  } else if (pages.selected && pages.selected.FOLDER_ID) {
-                    referenceId = pages.selected.FOLDER_ID;
+                })}
+              </div>
+              {inputPosition.referenceId === 0 && inputPosition.toggled && (
+                <form
+                  className="new-folder-form"
+                  onSubmit={
+                    inputPosition.forFolder ? handleNewFolderSubmit : handleNewPageSubmit
                   }
-
-                  setInputPosition({
-                    referenceId,
-                    toggled: true,
-                    forFolder: true,
-                  });
-                  if (inputPosition.referenceId === null) dispatch(deselectFolder());
-                }}
-                title="Create a new folder"
-              >
-                +
-              </button>
-              <button
-                className={`${dragToggled ? "" : "hoverable"}`}
-                onClick={() => dispatch(expandFolders())}
-                title="Expand Folders"
-                disabled={
-                  !dragToggled &&
-                  combinedFoldersAndPages.filter((item) => !item.IS_PAGE).length === 0
-                }
-              >
-                &lt; &gt;
-              </button>
-              <button
-                className={`${dragToggled ? "" : "hoverable"}`}
-                onClick={() => dispatch(collapseFolders())}
-                title="Collapse Folders"
-                disabled={
-                  !dragToggled &&
-                  combinedFoldersAndPages.filter((item) => !item.IS_PAGE).length === 0
-                }
-              >
-                &gt; &lt;
-              </button>
+                >
+                  <input
+                    ref={inputPositionRef}
+                    spellCheck="false"
+                    onChange={(e) => {
+                      inputPosition.forFolder
+                        ? setNewFolderName(e.target.value)
+                        : setNewPageName(e.target.value);
+                    }}
+                    value={inputPosition.forFolder ? newFolderName : newPageName}
+                  />
+                </form>
+              )}
             </div>
-            {inputPosition.referenceId === 0 && inputPosition.toggled && (
-              <form
-                className="new-folder-form"
-                onSubmit={
-                  inputPosition.forFolder ? handleNewFolderSubmit : handleNewPageSubmit
-                }
-              >
-                <input
-                  ref={inputPositionRef}
-                  spellCheck="false"
-                  onChange={(e) => {
-                    inputPosition.forFolder
-                      ? setNewFolderName(e.target.value)
-                      : setNewPageName(e.target.value);
-                  }}
-                  value={inputPosition.forFolder ? newFolderName : newPageName}
-                />
-              </form>
-            )}
-          </div>
-        )}
-        {sidebar.view.name === "Notes" && (
-          <FoldersList
-            inputPosition={inputPosition}
-            setInputPosition={setInputPosition}
-            combinedFoldersAndPages={combinedFoldersAndPages}
-            setCombinedFoldersAndPages={setCombinedFoldersAndPages}
-            dragToggled={dragToggled}
-            setRenameInputToggled={setRenameInputToggled}
-            renameInputToggled={renameInputToggled}
-            setContextMenu={setContextMenu}
-            handleNewFolderSubmit={handleNewFolderSubmit}
-            handleNewPageSubmit={handleNewPageSubmit}
-            newFolderName={newFolderName}
-            inputPositionRef={inputPositionRef}
-            newPageName={newPageName}
-            setNewPageName={setNewPageName}
-            setNewFolderName={setNewFolderName}
-            resetContextMenu={resetContextMenu}
-            handleRename={handleRename}
-            setNewName={setNewName}
-            newName={newName}
-            renameInputRef={renameInputRef}
-          />
+
+            <FoldersList
+              inputPosition={inputPosition}
+              setInputPosition={setInputPosition}
+              // combinedFoldersAndPages={combinedFoldersAndPages}
+              // setCombinedFoldersAndPages={setCombinedFoldersAndPages}
+              dragToggled={dragToggled}
+              setRenameInputToggled={setRenameInputToggled}
+              renameInputToggled={renameInputToggled}
+              setContextMenu={setContextMenu}
+              handleNewFolderSubmit={handleNewFolderSubmit}
+              handleNewPageSubmit={handleNewPageSubmit}
+              newFolderName={newFolderName}
+              inputPositionRef={inputPositionRef}
+              newPageName={newPageName}
+              setNewPageName={setNewPageName}
+              setNewFolderName={setNewFolderName}
+              resetContextMenu={resetContextMenu}
+              handleRename={handleRename}
+              setNewName={setNewName}
+              newName={newName}
+              renameInputRef={renameInputRef}
+            />
+          </>
         )}
         {sidebar.view.name === "Search" && <PageSearch />}
       </div>
@@ -459,34 +499,39 @@ function Sidebar() {
           {
             text: "New page",
             icon: "++",
-            active: true,
+            active: sidebar.shiftClickItems.end === null,
             onClick: handleNewPage,
           },
           {
             text: "New folder",
             icon: "+",
-            active: true,
+            active: sidebar.shiftClickItems.end === null,
             onClick: handleNewFolder,
           },
           {
-            active: inputPosition.referenceId !== 0,
+            active:
+              sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,
             isSpacer: true,
           },
           {
             text: "Rename",
             icon: "",
-            active: inputPosition.referenceId !== 0,
+            active:
+              sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,
             onClick: handleRename,
           },
           {
-            active: inputPosition.referenceId !== 0,
+            active:
+              sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,
             isSpacer: true,
           },
           {
             text: "Delete",
             icon: "-",
             active: inputPosition.referenceId !== 0,
-            onClick: handleDelete,
+            onClick: sidebar.shiftClickItems.end
+              ? handleDeleteMultiple
+              : handleDeleteSingle,
           },
         ]}
       />

@@ -17,6 +17,7 @@ const foldersSlice = createSlice({
       return {
         ...state,
         list: folders,
+        selected: folders.find(folder => folder.SELECTED)
       };
     },
     setExpandedStatus: (state, { payload }) => {
@@ -97,15 +98,12 @@ const foldersSlice = createSlice({
             SELECTED = false;
           }
 
-          if (folder?.ID === payload?.ID) {
+          if (folder?.ID === selectedFolder?.ID) {
             SELECTED = true;
           }
           return {
             ...folder,
             SELECTED,
-            // ...((payload === null && folder.SELECTED) ||
-            //   (payload.ID == selectedFolder.ID && { SELECTED: false })),
-            // ...(folder.ID === payload?.ID && { SELECTED: true }),
           };
         }),
         selected: selectedFolder,
@@ -128,9 +126,10 @@ const foldersSlice = createSlice({
         list: state.list.map((folder) => {
           return {
             ...folder,
-            ...(folder.ID === folderId && { EFF_STATUS: 0 }),
+            ...(folder.ID === folderId && { EFF_STATUS: 0, SELECTED: false }),
           };
         }),
+        selected: null
       };
     },
     setStagedFolderToDelete: (state, { payload }) => {

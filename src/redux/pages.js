@@ -46,9 +46,11 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === pageId && { EFF_STATUS: 0 }),
+            ...(page.PAGE_ID === pageId && { EFF_STATUS: 0, SELECTED: false }),
           };
         }),
+        selected: null,
+        active: null
       };
     },
     selectPage: (state, { payload }) => {

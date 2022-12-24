@@ -36,6 +36,11 @@
     overflow-x: auto;
 }
 
+.home-view .page-path .folder-name-and-divider {
+    display: flex;
+    align-items: center;
+}
+
 .home-view .page-path p {
     font-size: 0.875rem;
     /* color: var(--light-background-text); */

@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setExpandedStatus, selectFolder } from "../../../redux/folders";
+import { setExpandedStatus, selectFolder, renameFolder } from "../../../redux/folders";
 import { toggleModal } from "../../../redux/modals";
+import { setShiftClickItems } from "../../../redux/sidebar";
 import {
   selectPage,
   setPageStagedForSwitch,
@@ -12,14 +13,14 @@ import {
 import RightCaret from "../Icons/RightCaret";
 import PageIcon from "../Icons/PageIcon";
 
-import DownCaret from "../Icons/DownCaret";
+// import DownCaret from "../Icons/DownCaret";
+import Caret from "../Icons/Caret";
 import "./FoldersList.css";
+import { setCombined } from "../../../redux/combined";
 
 const FoldersList = ({
   inputPosition,
   setInputPosition,
-  combinedFoldersAndPages,
-  setCombinedFoldersAndPages,
   dragToggled,
   setRenameInputToggled,
   renameInputToggled,
@@ -40,6 +41,8 @@ const FoldersList = ({
   const dispatch = useDispatch();
   const folders = useSelector((state) => state.folders);
   const pages = useSelector((state) => state.pages);
+  const sidebar = useSelector((state) => state.sidebar);
+  const combined = useSelector((state) => state.combined);
 
   const [grabbedItem, setGrabbedItem] = useState(null);
   const [draggedOverItem, setDraggedOverItem] = useState({
@@ -102,6 +105,7 @@ const FoldersList = ({
       toggled: false,
       forFolder: true,
     });
+    dispatch(setShiftClickItems({ start: null, end: null, list: [] }));
     resetContextMenu();
     dispatch(selectFolder(null));
     dispatch(selectPage(null));
@@ -135,11 +139,13 @@ const FoldersList = ({
 
   function handleOnContextMenu(e, item) {
     e.preventDefault();
-    if (item) {
-      if (!item.IS_PAGE) handleFolderClick(item, false);
-      if (item.IS_PAGE) handlePageClick(item);
-    } else {
-      handleRootClick();
+    if (!sidebar.shiftClickItems.end) {
+      if (item) {
+        if (!item.IS_PAGE) handleFolderClick(item, false);
+        if (item.IS_PAGE) handlePageClick(item);
+      } else {
+        handleRootClick();
+      }
     }
 
     let x = e.clientX;
@@ -234,7 +240,17 @@ const FoldersList = ({
     if (!dragToggled || inputPosition.referenceId !== itemFromList.ID)
       className += " hoverable";
 
-    if (itemFromList.SELECTED) className += " selected";
+    if (
+      itemFromList.SELECTED ||
+      (sidebar.shiftClickItems.start !== null &&
+        sidebar.shiftClickItems.end !== null &&
+        ((itemFromList.ORDER >= sidebar.shiftClickItems.start &&
+          itemFromList.ORDER <= sidebar.shiftClickItems.end) ||
+          (itemFromList.ORDER >= sidebar.shiftClickItems.end &&
+            itemFromList.ORDER <= sidebar.shiftClickItems.start)))
+    ) {
+      className += " selected";
+    }
 
     if (
       draggedOverItem.ID === itemFromList?.ID ||
@@ -257,7 +273,7 @@ const FoldersList = ({
   }, [inputPosition.toggled]);
 
   useEffect(() => {
-    let combined = [...folders?.list].filter((folder) => folder.EFF_STATUS);
+    let pagesAndFolders = [...folders?.list].filter((folder) => folder.EFF_STATUS);
     let effFolders = [...folders?.list].filter((folder) => folder.EFF_STATUS);
 
     const pagesInRoot = pages.list.filter(
@@ -272,20 +288,28 @@ const FoldersList = ({
       );
 
       if (pagesInFolder.length > 0) {
-        combined.splice(indexAfterAddingPages, 0, ...pagesInFolder);
+        pagesAndFolders.splice(indexAfterAddingPages, 0, ...pagesInFolder);
       }
 
       indexAfterAddingPages += pagesInFolder.length + 1;
     });
 
-    combined.push(...pagesInRoot);
+    pagesAndFolders.push(...pagesInRoot);
 
-    setCombinedFoldersAndPages(combined);
+    pagesAndFolders = pagesAndFolders.map((item, i) => {
+      return {
+        ...item,
+        ORDER: i,
+      };
+    });
+
+    // setCombinedFoldersAndPages(combined);
+    dispatch(setCombined(pagesAndFolders));
   }, [folders.list, pages.list]);
 
   return (
     <div className={`folders-list ${inputPosition.referenceId === 0 ? "selected" : ""}`}>
-      {combinedFoldersAndPages
+      {combined
         ?.filter((folder) => folder?.VISIBLE)
 
         .map((item, index) => {
@@ -315,8 +339,27 @@ const FoldersList = ({
               key={index}
               onContextMenu={(e) => handleOnContextMenu(e, item)}
               onClick={(e) => {
-                if (!item.IS_PAGE) handleFolderClick(item, true);
-                if (item.IS_PAGE) handlePageClick(item);
+                if (e.shiftKey) {
+                  if (sidebar.shiftClickItems.start !== null) {
+                    dispatch(
+                      setShiftClickItems({
+                        ...sidebar.shiftClickItems,
+                        end: item.ORDER,
+                        list: combined,
+                      })
+                    );
+                  }
+                } else {
+                  dispatch(
+                    setShiftClickItems({
+                      start: item.ORDER,
+                      end: null,
+                      list: combined,
+                    })
+                  );
+                  if (!item.IS_PAGE) handleFolderClick(item, true);
+                  if (item.IS_PAGE) handlePageClick(item);
+                }
               }}
             >
               <div className="tier-blocks">
@@ -332,9 +375,12 @@ const FoldersList = ({
               >
                 <div className="name-and-caret">
                   <div className="caret-container">
-                    {!hasChildren && <>&nbsp;</>}
-                    {!item.EXPANDED_STATUS && !item.IS_PAGE && <RightCaret />}{" "}
-                    {item.EXPANDED_STATUS && !item.IS_PAGE && <DownCaret />}
+                    {/* {!hasChildren && <>&nbsp;</>} */}
+                    {/* {!item.EXPANDED_STATUS && !item.IS_PAGE && <RightCaret />}{" "} */}
+                    {/* {item.EXPANDED_STATUS && !item.IS_PAGE && <DownCaret />} */}
+                    {!item.IS_PAGE && (
+                      <Caret direction={item.EXPANDED_STATUS ? "down" : "right"} />
+                    )}
                     {item.IS_PAGE && <PageIcon />}
                   </div>
                   {renameInputToggled &&
@@ -350,10 +396,7 @@ const FoldersList = ({
                       />
                     </form>
                   ) : (
-                    <p>
-                      {/* {item.IS_PAGE ? item.FOLDER_ID : item.ID}  */}
-                      {item.NAME}
-                    </p>
+                    <p>{item.NAME}</p>
                   )}
                 </div>
               </div>
@@ -405,7 +448,7 @@ const FoldersList = ({
         onDragOver={(e) => e.preventDefault()}
         style={{
           height: `calc(100% - ${
-            combinedFoldersAndPages?.filter((folder) => folder?.VISIBLE).length * 26 + 40
+            combined?.filter((folder) => folder?.VISIBLE).length * 26 + 40
           }px)`,
         }}
       ></div>

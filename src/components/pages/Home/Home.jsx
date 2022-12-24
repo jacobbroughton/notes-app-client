@@ -27,7 +27,11 @@ const Home = () => {
   const folders = useSelector((state) => state.folders);
   const [loading, setLoading] = useState(true);
   const modals = useSelector((state) => state.modals);
-  const pageModified = body !== pages.active?.BODY || title !== pages.active?.TITLE;
+  let pageModified = false;
+
+  if (pages.active) {
+    if (pages.active.BODY !== body || title !== pages.active?.TITLE) pageModified = true;
+  }
 
   async function testApi() {
     const result = await fetch("http://localhost:3001", {
@@ -111,11 +115,6 @@ const Home = () => {
         if (modals.unsavedWarningVisible) {
           dispatch(selectPage(pages.staged));
           dispatch(selectFolder(null));
-          // setInputPosition({
-          //   referenceId: page.PAGE_ID,
-          //   toggled: false,
-          //   forFolder: false,
-          // });
           dispatch(toggleModal("unsavedWarning"));
         }
       })
@@ -181,7 +180,6 @@ const Home = () => {
 
   function handleBodyChange(e) {
     e.preventDefault();
-    // dispatch(setPageModified(e.target.value !== pages.active.BODY));
     setBody(e.target.value);
   }
 
@@ -209,7 +207,7 @@ const Home = () => {
     function getParentFolder(folderId) {
       if (!folderId) return;
       let parent = folders.list?.find((folder) => folder.ID === folderId);
-      if (!parent) return
+      if (!parent) return;
       parentFolders.unshift(parent);
       getParentFolder(parent.PARENT_FOLDER_ID);
     }
@@ -234,7 +232,13 @@ const Home = () => {
   }, [noTitleWarningToggled]);
 
   useEffect(() => {
-    setTitle(pages.active?.TITLE || pages.active?.NAME);
+    let newTitle = "";
+    if (pages.active?.TITLE) {
+      newTitle = pages.active?.TITLE;
+    } else if (pages.active?.NAME) {
+      newTitle = pages.active?.NAME;
+    }
+    setTitle(newTitle);
 
     const newBody = pages.active?.BODY || "";
 
@@ -251,15 +255,18 @@ const Home = () => {
       clearTimeout(noTitleWarningTimeout);
       setNoTitleWarningToggled(false);
     }
-    if (pages.active)
+    if (pages.active) {
       dispatch(
         setPageModified(body !== pages.active?.BODY || title !== pages.active?.TITLE)
       );
+    }
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [body, title]);
+
+  useEffect(() => {});
 
   if (loading && !user) {
     return <p>Loading...</p>;
@@ -330,11 +337,11 @@ const Home = () => {
         <form className="editor-form" onSubmit={handleSubmit}>
           {determinePath(pages.active).length !== 0 && (
             <div className="page-path">
-              {determinePath(pages.active).map((folder) => (
-                <>
+              {determinePath(pages.active).map((folder, i) => (
+                <div className="folder-name-and-divider" key={i}>
                   <p>{folder.NAME}</p>
                   <span className="path-divider">&nbsp;&gt;&nbsp;</span>
-                </>
+                </div>
               ))}
               <div className="current-page">
                 <PageIcon />

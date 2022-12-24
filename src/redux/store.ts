@@ -5,6 +5,7 @@ import sidebarReducer from "./sidebar";
 import pagesReducer from "./pages";
 import modalsReducer from "./modals";
 import themeReducer from "./theme";
+import combinedReducer from "./combined";
 import { saveState } from "../utils/localStorage.js";
 import { batchedSubscribe } from "redux-batched-subscribe";
 
@@ -13,6 +14,7 @@ const store = configureStore({
     user: userReducer,
     folders: foldersReducer,
     pages: pagesReducer,
+    combined: combinedReducer,
     sidebar: sidebarReducer,
     modals: modalsReducer,
     theme: themeReducer,

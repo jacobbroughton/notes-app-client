@@ -11,7 +11,6 @@
 .delete-modal {
   position: absolute;
   left: 0;
-  /* width: 80%; */
   max-width: 250px;
   transform: translate(-50%, -50%);
   left: 50%;
@@ -23,14 +22,38 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: var(--color-text-primary);
   box-shadow: var(--large-shadow);
-
   gap: 10px;
 }
 
 .delete-modal .sure-question {
   text-align: center;
   font-weight: 600;
+}
+
+.delete-modal .items-to-delete-list {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.delete-modal .items-to-delete-list li {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.delete-modal .items-to-delete-list li svg {
+  width: 100%;
+  min-width: 10px;
+  max-width: 10px;
+  fill: var(--color-accent-secondary);
 }
 
 .delete-modal .buttons {

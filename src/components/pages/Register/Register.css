@@ -6,6 +6,7 @@
   padding-top: 75px;
   width: 100%;
   max-width: 350px;
+  color: var(--color-text-primary);
 }
 
 .register-view form {
@@ -19,6 +20,8 @@
   font-size: 1rem;
   background-color: var(--secondary-bg);
   border: 1px solid var(--tertiary-bg);
+  box-shadow: var(--small-shadow);
+
 }
 
 .register-view button {
