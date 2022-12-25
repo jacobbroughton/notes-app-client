@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { selectPage } from "../../../redux/pages";
 import { setSearchValue } from "../../../redux/sidebar";
 import PageIcon from "../Icons/PageIcon";
 import "./PageSearch.css";
@@ -13,6 +14,9 @@ const PageSearch = () => {
     dispatch(setSearchValue(e.target.value));
   }
 
+  function handlePageClick(e, page) {
+    dispatch(selectPage(page));
+  }
   let searchResults = pages.list.filter(
     (page) => page.EFF_STATUS && page.BODY.includes(sidebar.searchValue)
   );
@@ -26,7 +30,9 @@ const PageSearch = () => {
           onChange={handleSearchInputChange}
         />
       </form>
-      {searchResults.length === 0 && <p className='no-results-found'>No results found.</p>}
+      {searchResults.length === 0 && (
+        <p className="no-results-found">No results found.</p>
+      )}
       {sidebar.searchValue !== "" &&
         searchResults.map((page, i) => {
           let body = page.BODY;
@@ -75,12 +81,22 @@ const PageSearch = () => {
           if (sidebar.searchValue !== "") findStartingMatchIndex(body, 0);
 
           return (
-            <div draggable="true" className="page-container hoverable" key={i}>
-              <div className="name-and-caret">
-                <div className="caret-container">
-                  &nbsp; <PageIcon />
+            <div
+              draggable="true"
+              className={`page-container hoverable ${page.SELECTED ? 'selected' : ''}`}
+              key={i}
+              onClick={(e) => handlePageClick(e, page)}
+            >
+              <div className='tier-block-and-name'>
+                <div key={i} className="tier-block">
+                  &nbsp;
                 </div>
-                <p>{page.NAME}</p>
+                <div className="name-and-caret">
+                  <div className="caret-container">
+                    &nbsp; <PageIcon />
+                  </div>
+                  <p>{page.NAME}</p>
+                </div>
               </div>
               <div className="matching-body-examples">
                 {startingMatchIndexes.map((match, i) => {
@@ -99,7 +115,11 @@ const PageSearch = () => {
                           matching = true;
                         }
 
-                        return <span className={matching ? "matching" : ""} key={charIndex}>{char}</span>;
+                        return (
+                          <span className={matching ? "matching" : ""} key={charIndex}>
+                            {char}
+                          </span>
+                        );
                       })}
                     </p>
                   );

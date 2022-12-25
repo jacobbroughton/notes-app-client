@@ -294,6 +294,20 @@ function Sidebar() {
 
   const sidebarHeaderButtons = [
     {
+      symbol: "< >",
+      title: "Expand folders",
+      disabled: dragToggled,
+      visible: combined.filter((item) => !item.IS_PAGE).length !== 0,
+      onClick: () => dispatch(expandFolders()),
+    },
+    {
+      symbol: "> <",
+      title: "Collapse folders",
+      disabled: dragToggled,
+      visible: combined.filter((item) => !item.IS_PAGE).length !== 0,
+      onClick: () => dispatch(collapseFolders()),
+    },
+    {
       symbol: "++",
       title: "Create a new page",
       disabled: "",
@@ -354,20 +368,6 @@ function Sidebar() {
 
         if (inputPosition.referenceId === null) dispatch(deselectFolder());
       },
-    },
-    {
-      symbol: "< >",
-      title: "Expand folders",
-      disabled: dragToggled,
-      visible: combined.filter((item) => !item.IS_PAGE).length !== 0,
-      onClick: () => dispatch(expandFolders()),
-    },
-    {
-      symbol: "> <",
-      title: "Collapse folders",
-      disabled: dragToggled,
-      visible: combined.filter((item) => !item.IS_PAGE).length !== 0,
-      onClick: () => dispatch(collapseFolders()),
     },
   ];
 

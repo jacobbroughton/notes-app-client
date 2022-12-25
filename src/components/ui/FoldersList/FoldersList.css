@@ -52,7 +52,7 @@
 
 .folders-list .folder-container .tier-blocks .tier-block:not(:first-child) {
   width: 10px;
-  border-right: 1px solid rgba(211, 211, 211, 0.292);
+  border-right: 1px solid var(--color-tier-block-border);
   /* border-right: 1px solid var(--color-accent-primary); */
 }
 

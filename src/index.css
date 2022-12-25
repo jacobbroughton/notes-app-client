@@ -37,6 +37,7 @@ body[data-theme="dark"] {
   --color-icon-light-bg: #ccc;
   --color-icon-hover-light-bg: #fff;
   --border: #181818 1px solid;
+  --color-tier-block-border: rgba(211, 211, 211, 0.292);
   --small-shadow: 1px 1px 2px rgba(0, 0, 0, 0.148);
   --large-shadow: 0px 0px 20px 2px #1818183c;
   --color-input-placeholder: white;
@@ -58,6 +59,7 @@ body[data-theme="light"] {
   --color-icon-light-bg: #ccc;
   --color-icon-hover-light-bg: #fff;
   --border: #2e5266 1px solid;
+  --color-tier-block-border: #bbb;
   --small-shadow: 1px 1px 2px rgba(0, 0, 0, 0.148);
   --large-shadow: 0px 0px 20px 2px #1818183c;
   --color-input-placeholder: black;

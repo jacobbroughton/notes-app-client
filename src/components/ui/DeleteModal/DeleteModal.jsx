@@ -5,6 +5,7 @@ import { setStagedPageToDelete, setPageEffStatus } from "../../../redux/pages";
 import Overlay from "../Overlay/Overlay";
 import "./DeleteModal.css";
 import PageIcon from "../Icons/PageIcon";
+import { setShiftClickItems } from "../../../redux/sidebar";
 
 export function DeleteModal() {
   const dispatch = useDispatch();
@@ -113,6 +114,7 @@ export function DeleteModal() {
           dispatch(setPageEffStatus(deletePagesData.deletedPageIds[i]));
         }
       }
+      dispatch(setShiftClickItems({ start: null, end: null, list: [] }))
       dispatch(toggleModal("deleteModal"));
     } catch (err) {
       console.log(err);
@@ -120,12 +122,12 @@ export function DeleteModal() {
   }
 
   function handleDelete() {
-    if (pages.stagedToDelete) {
+    if (sidebar.shiftClickItems.list.length > 1) {
+      deleteMultiple(sidebar.shiftClickItems.list);
+    } else if (pages.stagedToDelete) {
       deletePage(pages.stagedToDelete.PAGE_ID);
     } else if (folders.stagedToDelete) {
       deleteFolder(folders.stagedToDelete.ID);
-    } else if (sidebar.shiftClickItems.list) {
-      deleteMultiple(sidebar.shiftClickItems.list);
     }
   }
 
@@ -135,8 +137,8 @@ export function DeleteModal() {
     dispatch(toggleModal("deleteModal"));
   }
 
-  function determinePromptText() {
-    if (sidebar.shiftClickItems.list) {
+  function determinePromptText(itemToDelete) {
+    if (sidebar.shiftClickItems.list.length > 1) {
       return `Are you sure you'd like to delete the following ${sidebar.shiftClickItems.list.length} items?`;
     }
     if (itemToDelete.IS_PAGE) {
@@ -149,7 +151,7 @@ export function DeleteModal() {
   return (
     <>
       <div className="delete-modal">
-        <p className="sure-question">{determinePromptText()}</p>
+        <p className="sure-question">{determinePromptText(itemToDelete)}</p>
         {sidebar.shiftClickItems.list && (
           <ul className="items-to-delete-list">
             {sidebar.shiftClickItems.list.map((item, index) => (
