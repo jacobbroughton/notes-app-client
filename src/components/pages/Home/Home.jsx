@@ -11,6 +11,8 @@ import Overlay from "../../ui/Overlay/Overlay";
 import PageIcon from "../../ui/Icons/PageIcon";
 import { DeleteModal } from "../../ui/DeleteModal/DeleteModal";
 import "./Home.css";
+import TagsModal from "../../ui/TagsModal/TagsModal";
+import { setTags } from "../../../redux/tags";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -63,23 +65,40 @@ const Home = () => {
   // }
 
   async function getData() {
-    let foldersResponse = await fetch("http://localhost:3001/folders", {
-      method: "GET",
-      credentials: "include",
-    });
-    let pagesResponse = await fetch("http://localhost:3001/pages", {
-      method: "GET",
-      credentials: "include",
-    });
+    try {
+      let foldersResponse = await fetch("http://localhost:3001/folders", {
+        method: "GET",
+        credentials: "include",
+      });
+      let pagesResponse = await fetch("http://localhost:3001/pages", {
+        method: "GET",
+        credentials: "include",
+      });
 
-    let foldersData = await foldersResponse.json();
-    let pagesData = await pagesResponse.json();
+      let foldersData = await foldersResponse.json();
+      let pagesData = await pagesResponse.json();
 
-    let formattedFolders = formatFolders(foldersData.folders, folders.list, pages.list);
-    let formattedPages = formatPages(pagesData.pages, formattedFolders);
+      let formattedFolders = formatFolders(foldersData.folders, folders.list, pages.list);
+      let formattedPages = formatPages(pagesData.pages, formattedFolders);
 
-    dispatch(setFolders(formattedFolders));
-    dispatch(setPages(formattedPages));
+      dispatch(setFolders(formattedFolders));
+      dispatch(setPages(formattedPages));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function getTags() {
+    try {
+      let tagsResponse = await fetch("http://localhost:3001/tags", {
+        method: "GET",
+        credentials: "include",
+      });
+      let tagsData = await tagsResponse.json();
+      dispatch(setTags(tagsData.tags));
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   function handleSubmit(e) {
@@ -219,6 +238,7 @@ const Home = () => {
 
   useEffect(() => {
     testApi();
+    getTags();
   }, []);
 
   useEffect(() => {
@@ -266,7 +286,7 @@ const Home = () => {
     };
   }, [body, title]);
 
-  useEffect(() => {});
+  // useEffect(() => {});
 
   if (loading && !user) {
     return <p>Loading...</p>;
@@ -295,6 +315,7 @@ const Home = () => {
         </>
       )}
       {modals.deleteModalVisible && <DeleteModal />}
+      {modals.tagsModalVisible && <TagsModal />}
       {!pages.active && (
         <form className="editor-form" onSubmit={handleNewPageSubmit}>
           <div className="heading">

@@ -20,6 +20,10 @@ const viewOptionsForState = [
     id: 2,
     name: "Search",
   },
+  {
+    id: 3,
+    name: "Tags",
+  },
 ];
 
 const initialState: SidebarState = {

@@ -24,8 +24,8 @@
   padding: 5px;
   background-color:  var(--secondary-bg);
   color: var(--color-text-primary);
-  border: 0;
   border-radius: 3px;
+  border: 1px solid var(--tertiary-bg);
 }
 
 .page-search .page-container {

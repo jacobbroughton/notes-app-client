@@ -1,0 +1,194 @@
+.tags-sidebar-view {
+  height: 100%;
+  overflow-y: scroll;
+  background-color: var(--primary-bg);
+  border: 1px solid transparent;
+  color: var(--color-text-primary);
+}
+
+.tags-sidebar-view .tag-controls {
+  padding: 10px;
+  border-top: 1px solid var(--tertiary-bg);
+  margin-top: 10px;
+}
+
+.tags-sidebar-view .tag-controls .trash-button {
+  background-color: transparent;
+  border: 0;
+  padding: 2px;
+  transition: 0.1s ease background-color;
+  cursor: pointer;
+  fill: var(--color-text-primary);
+}
+
+.tags-sidebar-view .tag-controls .trash-button:hover {
+  background-color: var(--tertiary-bg);
+}
+
+.tags-sidebar-view .tag-controls .trash-button svg {
+  width: 20px;
+}
+
+.tags-sidebar-view .tag-search-form {
+  width: calc(100% - 10px);
+  margin: 5px;
+}
+
+.tags-sidebar-view .tag-search-form input {
+  width: 100%;
+  padding: 5px;
+  background-color: var(--secondary-bg);
+  color: var(--color-text-primary);
+  border-radius: 3px;
+}
+
+.tags-sidebar-view .tag-button {
+  cursor: pointer;
+}
+
+.tags-sidebar-view .tag-button,
+.tags-sidebar-view .edit-tag-section .tag {
+  display: flex;
+  gap: 10px;
+  /* justify-content: space-between; */
+  align-items: center;
+  padding: 3px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 0;
+  transition: 0.1s ease background-color;
+  width: 100%;
+}
+
+.tags-sidebar-view .tag-button:hover {
+  background-color: var(--tertiary-bg);
+}
+
+.tags-sidebar-view .color-span {
+  min-width: 10px;
+  height: 10px;
+  border-radius: 100px;
+}
+
+.tags-sidebar-view .edit-tag-section {
+  display: flex;
+  flex-direction: column;
+  /* border-top: 1px solid var(--tertiary-bg); */
+  /* padding-top: 10px; */
+}
+
+.tags-sidebar-view .cancel-and-done-btns {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-top: 1px solid var(--tertiary-bg);
+  border-bottom: 1px solid var(--tertiary-bg);
+}
+
+.tags-sidebar-view .edit-tag-section .down-arrow {
+  max-width: 15px;
+  align-self: start;
+  margin-left: 10px;
+  fill: var(--color-text-primary);
+}
+
+.tags-sidebar-view .cancel-and-done-btns button {
+  padding: 2px 5px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  background-color: var(--secondary-bg);
+  color: var(--color-text-primary);
+  border: var(--tertiary-bg) 1px solid;
+  border-radius: 3px;
+  transition: border 0.1s ease;
+}
+
+.tags-sidebar-view .cancel-and-done-btns button:hover {
+  border: var(--color-accent-primary) 1px solid;
+}
+
+.tags-sidebar-view .edit-tag-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid var(--tertiary-bg);
+  margin-bottom: 7px;
+}
+
+.tags-sidebar-view .edit-tag-section form input {
+  border: 1px solid var(--tertiary-bg);
+}
+
+.tags-sidebar-view .edit-tag-section form .tag-color,
+.tags-sidebar-view .edit-tag-section form .tag-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.tags-sidebar-view .edit-tag-section form .tag-color label,
+.tags-sidebar-view .edit-tag-section form .tag-name label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.tags-sidebar-view .edit-tag-section form .inputs {
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+  min-width: 15px;
+  height: 26px;
+  border-radius: 3px;
+  position: relative;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  transition: background-color ease 0.1s;
+}
+
+.tags-sidebar-view .edit-tag-section form .tag-color .inputs > input[type="color"] {
+  position: absolute;
+  /* inset: 0; */
+  z-index: 2;
+  right: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 25px;
+}
+
+.tags-sidebar-view .edit-tag-section form .tag-color .inputs > input[type="text"] {
+  width: calc(100% - 20px);
+}
+
+.tags-sidebar-view .edit-tag-section form input.invalid {
+  border: 1px solid crimson !important;
+  outline-color: crimson;
+}
+
+.tags-sidebar-view .edit-tag-section form .invalid-text {
+  font-size: 0.875rem;
+  color: crimson;
+  /* margin-left: 30px; */
+  /* margin-top: -10px; */
+}
+
+.tags-sidebar-view .edit-tag-section form .tag-color svg {
+  /* min-width: 100%; */
+  width: 20px;
+  height: 100%;
+  z-index: 1;
+}
+
+.tags-sidebar-view .edit-tag-section form .tag-color svg:hover {
+  background-color: var(--tertiary-bg);
+}
+
+.tags-sidebar-view .edit-tag-section p.no-changes {
+  padding: 3px 10px;
+}

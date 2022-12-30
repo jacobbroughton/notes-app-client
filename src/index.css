@@ -48,7 +48,7 @@ body[data-theme="light"] {
   --container-shadow: 0 1px 2px #00000033;
   --primary-bg: #f0f2f6;
   --secondary-bg: #fff;
-  --tertiary-bg: #DADCE0;
+  --tertiary-bg: #dadce0;
   --color-text-primary: #181818;
   --color-text-secondary: #fff;
   --color-accent-secondary: #333;
@@ -64,7 +64,6 @@ body[data-theme="light"] {
   --large-shadow: 0px 0px 20px 2px #1818183c;
   --color-input-placeholder: black;
   --color-sidebar-nav: #333;
-
 }
 
 body {
@@ -98,4 +97,21 @@ main {
   padding-top: 10px;
   min-height: 100%;
   height: 100%;
+}
+
+input,
+textarea {
+  border: 1px solid transparent;
+  outline-color: var(--tertiary-bg);
+  background-color: var(--secondary-bg);
+  padding: 3px ;
+  border-radius: 3px;
+  color: var(--color-text-primary);
+}
+
+input:focus,
+input:focus-visible,
+input:focus-within,
+textarea:focus {
+  border: 1px solid var(--tertiary-bg) !important;
 }

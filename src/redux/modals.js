@@ -4,7 +4,8 @@ const modalsSlice = createSlice({
   name: "modals",
   initialState: {
     unsavedWarningVisible: false,
-    deleteModalVisible: false
+    deleteModalVisible: false,
+    tagsModalVisible: false
   },
   reducers: {
     toggleModal: (state, { payload }) => {

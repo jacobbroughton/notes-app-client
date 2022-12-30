@@ -25,7 +25,7 @@ const PageSearch = () => {
     <div className="page-search">
       <form>
         <input
-          placeholder="Search"
+          placeholder="Search pages"
           value={sidebar.searchValue}
           onChange={handleSearchInputChange}
         />
@@ -100,7 +100,6 @@ const PageSearch = () => {
               </div>
               <div className="matching-body-examples">
                 {startingMatchIndexes.map((match, i) => {
-                  console.log(match);
                   return (
                     <p key={i}>
                       {[...body].map((char, charIndex) => {

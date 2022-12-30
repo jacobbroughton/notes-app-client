@@ -85,7 +85,7 @@
     background-color: transparent;
     border: 1px solid transparent;
     padding: 5px 10px;
-    outline-color: var(--tertiary-bg);
+    /* outline-color: var(--tertiary-bg); */
     background-color: var(--secondary-bg);
     border-radius: 3px;
     height: 100%;
@@ -118,7 +118,7 @@
 .home-view .editor-form textarea:focus-within,
 .home-view .editor-form textarea:focus-visible {
     border: 1px solid var(--tertiary-bg) !important;
-    outline: none;
+    /* outline: none; */
 }
 
 .home-view .heading input.error,
