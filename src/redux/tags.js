@@ -64,9 +64,15 @@ const tagsSlice = createSlice({
           return tag.ID !== payload.id
         }),
       }
+    },
+    addTag: (state, { payload }) => {
+      return {
+        ...state,
+        list: [...state.list, payload]
+      }
     }
   }
 })
 
 export default tagsSlice.reducer
-export const { setTags, selectTag, deselectTag, editTag, deleteTag } = tagsSlice.actions
+export const { setTags, selectTag, deselectTag, editTag, deleteTag, addTag } = tagsSlice.actions

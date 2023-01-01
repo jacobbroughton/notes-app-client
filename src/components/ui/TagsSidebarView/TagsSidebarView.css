@@ -15,18 +15,18 @@
 .tags-sidebar-view .tag-controls .trash-button {
   background-color: transparent;
   border: 0;
-  padding: 2px;
+  /* padding: 4px; */
   transition: 0.1s ease background-color;
   cursor: pointer;
   fill: var(--color-text-primary);
 }
 
-.tags-sidebar-view .tag-controls .trash-button:hover {
+/* .tags-sidebar-view .tag-controls .trash-button:hover {
   background-color: var(--tertiary-bg);
-}
+} */
 
 .tags-sidebar-view .tag-controls .trash-button svg {
-  width: 20px;
+  width: 15px;
 }
 
 .tags-sidebar-view .tag-search-form {
@@ -47,12 +47,12 @@
 }
 
 .tags-sidebar-view .tag-button,
-.tags-sidebar-view .edit-tag-section .tag {
+.tags-sidebar-view  .tag {
   display: flex;
   gap: 10px;
   /* justify-content: space-between; */
   align-items: center;
-  padding: 3px 10px;
+  padding: 5px 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -73,22 +73,20 @@
   border-radius: 100px;
 }
 
-.tags-sidebar-view .edit-tag-section {
+.tags-sidebar-view  {
   display: flex;
   flex-direction: column;
-  /* border-top: 1px solid var(--tertiary-bg); */
-  /* padding-top: 10px; */
 }
 
 .tags-sidebar-view .cancel-and-done-btns {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
+  padding: 5px;
   border-top: 1px solid var(--tertiary-bg);
   border-bottom: 1px solid var(--tertiary-bg);
 }
 
-.tags-sidebar-view .edit-tag-section .down-arrow {
+.tags-sidebar-view  .down-arrow {
   max-width: 15px;
   align-self: start;
   margin-left: 10px;
@@ -103,39 +101,46 @@
   color: var(--color-text-primary);
   border: var(--tertiary-bg) 1px solid;
   border-radius: 3px;
-  transition: border 0.1s ease;
+  transition: border 0.1s ease, color 0.1s ease;
 }
 
-.tags-sidebar-view .cancel-and-done-btns button:hover {
+.tags-sidebar-view .cancel-and-done-btns button:not(:disabled):hover {
   border: var(--color-accent-primary) 1px solid;
 }
 
-.tags-sidebar-view .edit-tag-section form {
+.tags-sidebar-view .cancel-and-done-btns button:disabled {
+  cursor: not-allowed;
+  color: #aaa;
+}
+
+
+.tags-sidebar-view .tag-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px;
+  padding: 5px;
   border-bottom: 1px solid var(--tertiary-bg);
   margin-bottom: 7px;
+  padding-bottom: 10px;
 }
 
-.tags-sidebar-view .edit-tag-section form input {
+.tags-sidebar-view  form input {
   border: 1px solid var(--tertiary-bg);
 }
 
-.tags-sidebar-view .edit-tag-section form .tag-color,
-.tags-sidebar-view .edit-tag-section form .tag-name {
+.tags-sidebar-view  form .tag-color,
+.tags-sidebar-view  form .tag-name {
   display: flex;
   flex-direction: column;
 }
 
-.tags-sidebar-view .edit-tag-section form .tag-color label,
-.tags-sidebar-view .edit-tag-section form .tag-name label {
+.tags-sidebar-view  form .tag-color label,
+.tags-sidebar-view  form .tag-name label {
   font-size: 0.875rem;
   font-weight: 500;
 }
 
-.tags-sidebar-view .edit-tag-section form .inputs {
+.tags-sidebar-view  form .inputs {
   background-color: transparent;
   padding: 0;
   border: 0;
@@ -152,7 +157,7 @@
   transition: background-color ease 0.1s;
 }
 
-.tags-sidebar-view .edit-tag-section form .tag-color .inputs > input[type="color"] {
+.tags-sidebar-view  form .tag-color .inputs > input[type="color"] {
   position: absolute;
   /* inset: 0; */
   z-index: 2;
@@ -162,33 +167,66 @@
   width: 25px;
 }
 
-.tags-sidebar-view .edit-tag-section form .tag-color .inputs > input[type="text"] {
+.tags-sidebar-view  form .tag-color .inputs > input[type="text"] {
   width: calc(100% - 20px);
 }
 
-.tags-sidebar-view .edit-tag-section form input.invalid {
+.tags-sidebar-view  form input.invalid {
   border: 1px solid crimson !important;
   outline-color: crimson;
 }
 
-.tags-sidebar-view .edit-tag-section form .invalid-text {
+.tags-sidebar-view  form .invalid-text {
   font-size: 0.875rem;
   color: crimson;
   /* margin-left: 30px; */
   /* margin-top: -10px; */
 }
 
-.tags-sidebar-view .edit-tag-section form .tag-color svg {
+.tags-sidebar-view  form .tag-color svg {
   /* min-width: 100%; */
   width: 20px;
   height: 100%;
   z-index: 1;
 }
 
-.tags-sidebar-view .edit-tag-section form .tag-color svg:hover {
+.tags-sidebar-view  form .tag-color svg:hover {
   background-color: var(--tertiary-bg);
 }
 
-.tags-sidebar-view .edit-tag-section p.no-changes {
+.tags-sidebar-view  p.no-changes {
   padding: 3px 10px;
+}
+
+.tags-sidebar-view .tag-controls .are-you-sure-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+}
+
+.tags-sidebar-view .tag-controls .are-you-sure-container button {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 0;
+  padding: 0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tags-sidebar-view .tag-controls .are-you-sure-container button:hover {
+  text-decoration: underline;
+}
+
+.tags-sidebar-view .tag-controls .are-you-sure-container button.confirm {
+  color: green;
+}
+
+.tags-sidebar-view .tag-controls .are-you-sure-container button.cancel {
+  color: crimson;
+}
+
+.tags-sidebar-view .new-tag-header {
+  font-weight: 600;
+  text-decoration: underline;
 }

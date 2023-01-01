@@ -2,27 +2,20 @@ import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setFolders,
-  setExpandedStatus,
   collapseFolders,
   expandFolders,
-  selectFolder,
   deselectFolder,
-  renameFolder,
   setStagedFolderToDelete,
 } from "../../../redux/folders";
+import { setPages, setStagedPageToDelete } from "../../../redux/pages";
 import {
-  setPages,
-  selectPage,
-  setPageStagedForSwitch,
-  updateParentFolderId,
-  setStagedPageToDelete,
-  renamePage,
-} from "../../../redux/pages";
-import { setSidebarWidth, setSidebarView } from "../../../redux/sidebar";
+  setSidebarWidth,
+  setSidebarView,
+  setNewTagFormToggled,
+} from "../../../redux/sidebar";
 import { formatFolders, formatPages } from "../../../utils/formatData";
 import { toggleModal } from "../../../redux/modals";
 import { setTheme } from "../../../redux/theme";
-
 import ContextMenu from "../ContextMenu/ContextMenu";
 import UserMenu from "../UserMenu/UserMenu";
 import FoldersList from "../FoldersList/FoldersList";
@@ -34,7 +27,6 @@ import PageIcon from "../Icons/PageIcon";
 import Draggable from "react-draggable";
 import "./Sidebar.css";
 import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
-import tags from "../../../redux/tags";
 
 function Sidebar() {
   const sidebarRef = useRef(null);
@@ -42,8 +34,6 @@ function Sidebar() {
   const contextMenuRef = useRef(null);
   const draggableRef = useRef(null);
   const renameInputRef = useRef(null);
-  const userMenuRef = useRef(null);
-  // const [combinedFoldersAndPages, setCombinedFoldersAndPages] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [newPageName, setNewPageName] = useState("");
   const [dragToggled, setDragToggled] = useState(false);
@@ -310,21 +300,25 @@ function Sidebar() {
       symbol: "< >",
       title: "Expand folders",
       disabled: dragToggled,
-      visible: sidebar.view.name === 'Notes' &&  combined.filter((item) => !item.IS_PAGE).length !== 0,
+      visible:
+        sidebar.view.name === "Notes" &&
+        combined.filter((item) => !item.IS_PAGE).length !== 0,
       onClick: () => dispatch(expandFolders()),
     },
     {
       symbol: "> <",
       title: "Collapse folders",
       disabled: dragToggled,
-      visible: sidebar.view.name === 'Notes' && combined.filter((item) => !item.IS_PAGE).length !== 0,
+      visible:
+        sidebar.view.name === "Notes" &&
+        combined.filter((item) => !item.IS_PAGE).length !== 0,
       onClick: () => dispatch(collapseFolders()),
     },
     {
       symbol: "++",
       title: "Create a new page",
       disabled: "",
-      visible: sidebar.view.name === 'Notes',
+      visible: sidebar.view.name === "Notes",
       className: "new-page-button",
       onClick: () => {
         let referenceId = 0;
@@ -354,7 +348,7 @@ function Sidebar() {
       symbol: "+",
       title: "Create a new folder",
       disabled: "",
-      visible: sidebar.view.name === 'Notes',
+      visible: sidebar.view.name === "Notes",
       className: "new-folder-button",
       onClick: () => {
         let referenceId = 0;
@@ -386,9 +380,9 @@ function Sidebar() {
       symbol: "+",
       title: "Create a new tag",
       disabled: dragToggled,
-      visible: sidebar.view.name === 'Tags',
-      onClick: () => null,
-    }
+      visible: sidebar.view.name === "Tags",
+      onClick: () => dispatch(setNewTagFormToggled(!sidebar.newTagFormToggled)),
+    },
   ];
 
   return (
@@ -427,46 +421,48 @@ function Sidebar() {
         <div className="current-view">
           <p>{sidebar.view.name}</p>
         </div>
-        {(sidebar.view.name === "Notes" || sidebar.view.name === "Tags") && tags.selected === null && (
-          <div className="header">
-            <div className="sidebar-header-buttons">
-              {sidebarHeaderButtons.map((button, i) => {
-                if (button.visible) {
-                  return (
-                    <button
-                      className={button.className}
-                      disabled={button.disabled}
-                      onClick={button.onClick}
-                      title={button.title}
-                      key={i}
-                    >
-                      {button.symbol}
-                    </button>
-                  );
-                }
-              })}
+        {(sidebar.view.name === "Notes" || sidebar.view.name === "Tags") &&
+          tags.selected === null &&
+          !sidebar.newTagFormToggled && (
+            <div className="header">
+              <div className="sidebar-header-buttons">
+                {sidebarHeaderButtons.map((button, i) => {
+                  if (button.visible) {
+                    return (
+                      <button
+                        className={button.className}
+                        disabled={button.disabled}
+                        onClick={button.onClick}
+                        title={button.title}
+                        key={i}
+                      >
+                        {button.symbol}
+                      </button>
+                    );
+                  }
+                })}
+              </div>
+              {inputPosition.referenceId === 0 && inputPosition.toggled && (
+                <form
+                  className="new-folder-form"
+                  onSubmit={
+                    inputPosition.forFolder ? handleNewFolderSubmit : handleNewPageSubmit
+                  }
+                >
+                  <input
+                    ref={inputPositionRef}
+                    spellCheck="false"
+                    onChange={(e) => {
+                      inputPosition.forFolder
+                        ? setNewFolderName(e.target.value)
+                        : setNewPageName(e.target.value);
+                    }}
+                    value={inputPosition.forFolder ? newFolderName : newPageName}
+                  />
+                </form>
+              )}
             </div>
-            {inputPosition.referenceId === 0 && inputPosition.toggled && (
-              <form
-                className="new-folder-form"
-                onSubmit={
-                  inputPosition.forFolder ? handleNewFolderSubmit : handleNewPageSubmit
-                }
-              >
-                <input
-                  ref={inputPositionRef}
-                  spellCheck="false"
-                  onChange={(e) => {
-                    inputPosition.forFolder
-                      ? setNewFolderName(e.target.value)
-                      : setNewPageName(e.target.value);
-                  }}
-                  value={inputPosition.forFolder ? newFolderName : newPageName}
-                />
-              </form>
-            )}
-          </div>
-        )}
+          )}
         {sidebar.view.name === "Notes" && (
           <>
             <FoldersList

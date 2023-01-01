@@ -9,6 +9,7 @@ type SidebarState = {
   viewOptions: object[];
   searchValue: string;
   shiftClickItems: object;
+  newTagFormToggled: boolean
 };
 
 const viewOptionsForState = [
@@ -32,6 +33,7 @@ const initialState: SidebarState = {
   viewOptions: viewOptionsForState,
   searchValue: "",
   shiftClickItems: { start: null, end: null, list: [] },
+  newTagFormToggled: false
 };
 
 const sidebarSlice = createSlice({
@@ -89,9 +91,15 @@ const sidebarSlice = createSlice({
         },
       };
     },
+    setNewTagFormToggled: (state, { payload }) => {
+      return {
+        ...state,
+        newTagFormToggled: payload
+      }
+    }
   },
 });
 
-export const { setSidebarWidth, setSidebarView, setSearchValue, setShiftClickItems } =
+export const { setSidebarWidth, setSidebarView, setSearchValue, setShiftClickItems, setNewTagFormToggled } =
   sidebarSlice.actions;
 export default sidebarSlice.reducer;
