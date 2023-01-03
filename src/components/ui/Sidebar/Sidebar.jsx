@@ -540,7 +540,7 @@ function Sidebar() {
             onClick: handleRename,
           },
           {
-            text: "Add Tag",
+            text: "Add Tags",
             icon: "#",
             active:
               sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,

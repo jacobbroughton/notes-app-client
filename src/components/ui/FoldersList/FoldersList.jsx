@@ -43,6 +43,7 @@ const FoldersList = ({
   const pages = useSelector((state) => state.pages);
   const sidebar = useSelector((state) => state.sidebar);
   const combined = useSelector((state) => state.combined);
+  const tags = useSelector((state) => state.tags);
 
   const [grabbedItem, setGrabbedItem] = useState(null);
   const [draggedOverItem, setDraggedOverItem] = useState({
@@ -375,9 +376,6 @@ const FoldersList = ({
               >
                 <div className="name-and-caret">
                   <div className="caret-container">
-                    {/* {!hasChildren && <>&nbsp;</>} */}
-                    {/* {!item.EXPANDED_STATUS && !item.IS_PAGE && <RightCaret />}{" "} */}
-                    {/* {item.EXPANDED_STATUS && !item.IS_PAGE && <DownCaret />} */}
                     {!item.IS_PAGE && (
                       <Caret direction={item.EXPANDED_STATUS ? "down" : "right"} />
                     )}
@@ -399,6 +397,18 @@ const FoldersList = ({
                     <p>{item.NAME}</p>
                   )}
                 </div>
+                {item.TAGS && tags.list && (
+                  <div className="tags">
+                    {item.TAGS.map((tagId) => {
+                      const tag = tags.list?.find((tag) => tag.ID === tagId);
+                      return (
+                        <span style={{ backgroundColor: tag.COLOR }} title={`Color: ${tag.COLOR}`}>
+                          &nbsp;
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
               {inputPosition.referenceId === item.ID && inputPosition.toggled && (
                 <form

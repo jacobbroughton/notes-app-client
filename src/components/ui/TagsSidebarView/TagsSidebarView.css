@@ -67,6 +67,13 @@
   background-color: var(--tertiary-bg);
 }
 
+.tags-sidebar-view .tag-button p {
+    width: 100%;
+    overflow: auto;
+    text-overflow: ellipsis;
+    text-align: start;
+}
+
 .tags-sidebar-view .color-span {
   min-width: 10px;
   height: 10px;

@@ -94,3 +94,10 @@
   height: 10px;
   border-radius: 100px;
 }
+
+.tags-modal .tag-button p {
+  text-align: start;
+  width: 100%;
+  overflow: auto;
+  text-overflow: ellipsis;
+}

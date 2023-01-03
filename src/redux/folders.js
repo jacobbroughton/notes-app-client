@@ -13,7 +13,16 @@ const foldersSlice = createSlice({
   name: "folders",
   initialState,
   reducers: {
-    setFolders: (state, { payload: folders }) => {
+    setFolders: (state, { payload }) => {
+
+      const folders = payload.map(folder => {
+        return {
+          ...folder,
+          IS_PAGE: false,
+          ...(typeof folder.TAGS === "string" && { TAGS: folder.TAGS?.split(',').map(tag => parseInt(tag)) })
+        }
+      })
+
       return {
         ...state,
         list: folders,

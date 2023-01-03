@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTag, deselectTag, editTag, selectTag, addTag } from "../../../redux/tags";
-import ContextMenu from "../ContextMenu/ContextMenu";
 import ColorIcon from "../Icons/ColorIcon";
 import TrashIcon from "../Icons/TrashIcon";
 import DownArrow from "../Icons/DownArrow";
@@ -13,12 +12,11 @@ const TagsSidebarView = () => {
   const sidebar = useSelector((state) => state.sidebar);
   const dispatch = useDispatch();
   const [tagSearchValue, setTagSearchValue] = useState("");
-  const [newTagColor, setNewTagColor] = useState("black");
+  const [newTagColor, setNewTagColor] = useState('teal');
   const [newTagName, setNewTagName] = useState("");
   const [updatedTagColor, setUpdatedTagColor] = useState(tags.selected?.COLOR || "");
   const [updatedTagName, setUpdatedTagName] = useState(tags.selected?.NAME || "");
   const [deleteWarningToggled, setDeleteWarningToggled] = useState(false);
-  // const [newTagFormToggled, setNewTagFormToggled] = useState(false)
 
   function handleTagClick(e, tag) {
     dispatch(selectTag(tag));
@@ -93,15 +91,13 @@ const TagsSidebarView = () => {
       });
       const data = await response.json();
 
-      console.log(data)
-      
-      const justCreatedTag = data.justCreatedTag
+      const justCreatedTag = data.justCreatedTag;
 
       dispatch(addTag(justCreatedTag));
       dispatch(deselectTag());
-      setNewTagColor("black")
-      setNewTagName("")
-      dispatch(setNewTagFormToggled(false))
+      setNewTagColor("black");
+      setNewTagName("");
+      dispatch(setNewTagFormToggled(false));
     } catch (err) {
       console.log(err);
     }
@@ -126,6 +122,7 @@ const TagsSidebarView = () => {
 
       dispatch(deleteTag(payload));
       dispatch(deselectTag());
+      setDeleteWarningToggled(false);
     } catch (err) {
       console.log(err);
     }
@@ -151,7 +148,11 @@ const TagsSidebarView = () => {
                   className={`tag-button ${tag.SELECTED ? "selected" : ""}`}
                   key={i}
                 >
-                  <span className="color-span" style={{ backgroundColor: tag.COLOR }}>
+                  <span
+                    className="color-span"
+                    style={{ backgroundColor: tag.COLOR }}
+                    title={`Color: ${tag.COLOR}`}
+                  >
                     &nbsp;
                   </span>
                   <p>{tag.NAME}</p>
@@ -163,14 +164,16 @@ const TagsSidebarView = () => {
       {sidebar.newTagFormToggled && (
         <div className="tag-form-container">
           <div className="cancel-and-done-btns">
-            <button onClick={() => dispatch(setNewTagFormToggled(false))}>Cancel</button>
             <button
-              onClick={(e) =>
-                handleNewTag(e, newTagName, newTagColor)
-              }
-              disabled={
-                !isValidTagName(newTagName, false) || !isValidColor(newTagColor)
-              }
+              onClick={() => {
+                dispatch(setNewTagFormToggled(false));
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={(e) => handleNewTag(e, newTagName, newTagColor)}
+              disabled={!isValidTagName(newTagName, false) || !isValidColor(newTagColor)}
             >
               Done
             </button>
@@ -215,7 +218,15 @@ const TagsSidebarView = () => {
       {tags.selected && (
         <div className="tag-form-container">
           <div className="cancel-and-done-btns">
-            <button onClick={() => dispatch(deselectTag())}>Cancel</button>
+            <button
+              onClick={() => {
+                setDeleteWarningToggled(false);
+                dispatch(setNewTagFormToggled(false));
+                dispatch(deselectTag());
+              }}
+            >
+              Cancel
+            </button>
             <button
               onClick={(e) =>
                 handleTagEdit(e, updatedTagName, updatedTagColor, tags.selected.ID)
@@ -267,7 +278,11 @@ const TagsSidebarView = () => {
             </div>
           </form>
           <div className="tag">
-            <span className="color-span" style={{ backgroundColor: tags.selected.COLOR }}>
+            <span
+              className="color-span"
+              style={{ backgroundColor: tags.selected.COLOR }}
+              title={`Color: ${tags.selected.COLOR}`}
+            >
               &nbsp;
             </span>
             <p>{tags.selected.NAME}</p>

@@ -16,7 +16,7 @@ const TagsModal = () => {
   const dispatch = useDispatch();
 
   const [tagSearchValue, setTagSearchValue] = useState("");
-  const [tagColor, setTagColor] = useState("green");
+  const [tagColor, setTagColor] = useState("teal");
 
   const selectedItem = pages.selected || folders.selected;
 
@@ -53,7 +53,8 @@ const TagsModal = () => {
         }),
       });
       const data = await response.json();
-      console.log(data);
+      console.log(data)
+      setTagSearchValue("")
     } catch (err) {
       console.log(err);
     }
@@ -77,7 +78,7 @@ const TagsModal = () => {
           <input
             value={tagSearchValue}
             onChange={(e) => setTagSearchValue(e.target.value)}
-            placeholder="Type to search or add a category"
+            placeholder="Type to search or add a tag"
           />
           <button className="custom-color-button">
             <ColorIcon fill={tagColor} />
@@ -86,7 +87,7 @@ const TagsModal = () => {
         </form>
         {tagSearchValue && !tags.list.find((tag) => tag.NAME === tagSearchValue) && (
           <button className="tag-button" nClick={handleTagClick}>
-            <span className="color-span" style={{ backgroundColor: "blue" }}>
+            <span className="color-span" style={{ backgroundColor: tagColor }}>
               &nbsp;
             </span>
             {tagSearchValue}
@@ -105,7 +106,7 @@ const TagsModal = () => {
               <span className="color-span" style={{ backgroundColor: tag.COLOR }}>
                 &nbsp;
               </span>{" "}
-              {tag.NAME}
+              <p>{tag.NAME}</p>
             </button>
           ))}
       </div>

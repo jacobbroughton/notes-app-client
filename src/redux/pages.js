@@ -11,7 +11,6 @@ const pagesSlice = createSlice({
   },
   reducers: {
     setPages: (state, { payload }) => {
-      // let folders = [...payload.folders]
       let pages = [...payload];
 
       return {
@@ -20,6 +19,7 @@ const pagesSlice = createSlice({
           return {
             ...page,
             IS_MODIFIED: false,
+            ...(typeof page.TAGS === "string" && { TAGS: page.TAGS?.split(',').map(tag => parseInt(tag)) })
           };
         }),
       };
