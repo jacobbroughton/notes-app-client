@@ -44,6 +44,7 @@ function Sidebar() {
     },
     toggled: false,
   });
+  
   const [inputPosition, setInputPosition] = useState({
     referenceId: null,
     toggled: false,
@@ -86,6 +87,7 @@ function Sidebar() {
           toggled: false,
           forFolder: false,
         });
+        setNewFolderName("");
         resetContextMenu();
         getData(false);
       })
@@ -114,6 +116,7 @@ function Sidebar() {
           toggled: false,
           forFolder: false,
         });
+        setNewPageName("");
         resetContextMenu();
         getData(false);
       })
@@ -246,14 +249,13 @@ function Sidebar() {
   }
 
   useEffect(() => {
-    console.log(inputPosition);
     if (inputPositionRef.current && inputPosition.toggled)
       inputPositionRef?.current.focus();
   }, [inputPosition.toggled]);
 
   useEffect(() => {
     dispatch(setPages(formatPages(pages?.list, folders?.list)));
-  }, [folders]);
+  }, [folders.list]);
 
   useEffect(() => {
     getData(true);
@@ -453,9 +455,11 @@ function Sidebar() {
                     ref={inputPositionRef}
                     spellCheck="false"
                     onChange={(e) => {
-                      inputPosition.forFolder
-                        ? setNewFolderName(e.target.value)
-                        : setNewPageName(e.target.value);
+                      if (inputPosition.forFolder) {
+                        setNewFolderName(e.target.value);
+                      } else {
+                        setNewPageName(e.target.value);
+                      }
                     }}
                     value={inputPosition.forFolder ? newFolderName : newPageName}
                   />
@@ -468,8 +472,6 @@ function Sidebar() {
             <FoldersList
               inputPosition={inputPosition}
               setInputPosition={setInputPosition}
-              // combinedFoldersAndPages={combinedFoldersAndPages}
-              // setCombinedFoldersAndPages={setCombinedFoldersAndPages}
               dragToggled={dragToggled}
               setRenameInputToggled={setRenameInputToggled}
               renameInputToggled={renameInputToggled}

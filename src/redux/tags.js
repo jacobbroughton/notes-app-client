@@ -4,7 +4,10 @@ const tagsSlice = createSlice({
   name: 'tags',
   initialState: {
     list: [],
-    selected: null
+    selected: null,
+    colorOptions: {
+      default: []
+    }
   },
   reducers: {
     setTags: (state, { payload }) => {
@@ -70,9 +73,18 @@ const tagsSlice = createSlice({
         ...state,
         list: [...state.list, payload]
       }
+    },
+    setColorOptions: (state, {payload}) => {
+      return {
+        ...state,
+        colorOptions: {
+          default: payload.defaultOptions,
+          userCreated: payload.userCreatedOptions
+        }
+      }
     }
   }
 })
 
 export default tagsSlice.reducer
-export const { setTags, selectTag, deselectTag, editTag, deleteTag, addTag } = tagsSlice.actions
+export const { setTags, selectTag, deselectTag, editTag, deleteTag, addTag, setColorOptions } = tagsSlice.actions

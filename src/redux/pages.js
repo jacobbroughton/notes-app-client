@@ -11,18 +11,33 @@ const pagesSlice = createSlice({
   },
   reducers: {
     setPages: (state, { payload }) => {
-      let pages = [...payload];
+      // let pages = [...payload];
+
+      const pages = payload.map(page => {
+        return {
+          ...page,
+          IS_PAGE: true,
+          SELECTED: page.SELECTED,
+          TAGS: typeof page.TAGS === 'string' ? page.TAGS.split(',').map(tag => parseInt(tag)) : page.TAGS
+        }
+      })
 
       return {
         ...state,
-        list: pages.map((page) => {
-          return {
-            ...page,
-            IS_MODIFIED: false,
-            ...(typeof page.TAGS === "string" && { TAGS: page.TAGS?.split(',').map(tag => parseInt(tag)) })
-          };
-        }),
+        list: pages,
+        selected: state.list.find(page => page.SELECTED)
       };
+
+      // return {
+      //   ...state,
+      //   list: pages.map((page) => {
+      //     return {
+      //       ...page,
+      //       IS_MODIFIED: false,
+      //       TAGS: page.TAGS ? page.TAGS.split(',').map(tag => parseInt(tag)) : []
+      //     };
+      //   }),
+      // };
 
       // return {
       //   ...state,
@@ -66,7 +81,7 @@ const pagesSlice = createSlice({
             ...page,
             ...((payload === null || page.PAGE_ID !== payload?.PAGE_ID) &&
               page.SELECTED && { SELECTED: false }),
-            ...(page.PAGE_ID === payload?.PAGE_ID && { SELECTED: true }),
+            ...(page.PAGE_ID === selectedPage?.PAGE_ID && { SELECTED: true }),
           };
         }),
         selected: selectedPage,
@@ -175,6 +190,32 @@ const pagesSlice = createSlice({
         })
       };
     },
+    addTagToPage: (state, { payload }) => {
+      const { item, tag } = payload
+      return {
+        ...state,
+        list: state.list.map(page => {
+          return {
+            ...page,
+            ...(page.PAGE_ID === item.PAGE_ID && !page.TAGS.includes(tag.ID) && {
+              TAGS: [...page.TAGS, tag.ID]
+            }),
+            ...(page.PAGE_ID === item.PAGE_ID && page.TAGS.includes(tag.ID) && {
+              TAGS: page.TAGS.filter(innerTag => innerTag !== tag.ID)
+            })
+          }
+        }),
+        selected: {
+          ...state.selected,
+          ...(!state.selected.TAGS.includes(tag.ID) && {
+            TAGS: [...state.selected.TAGS, tag.ID]
+          }),
+          ...(state.selected.TAGS.includes(tag.ID) && {
+            TAGS: state.selected.TAGS.filter(innerTag => innerTag !== tag.ID)
+          })
+        }
+      }
+    }
   },
 });
 
@@ -188,5 +229,6 @@ export const {
   setPageStagedForSwitch,
   updateParentFolderId,
   setStagedPageToDelete,
-  renamePage
+  renamePage,
+  addTagToPage
 } = pagesSlice.actions;

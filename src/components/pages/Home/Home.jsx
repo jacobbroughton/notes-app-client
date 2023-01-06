@@ -12,7 +12,7 @@ import PageIcon from "../../ui/Icons/PageIcon";
 import { DeleteModal } from "../../ui/DeleteModal/DeleteModal";
 import "./Home.css";
 import TagsModal from "../../ui/TagsModal/TagsModal";
-import { setTags } from "../../../redux/tags";
+import { setTags, setColorOptions } from "../../../redux/tags";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -47,23 +47,6 @@ const Home = () => {
     if (!data.user) navigate("/login");
   }
 
-  // async function testProtectedRoute() {
-  //   const result = await fetch("http://localhost:3001/protected-route", {
-  //       credentials: 'include'
-
-  //   });
-  //   const data = await result.json();
-  //   console.log(data);
-  // }
-
-  // async function testAdminRoute() {
-  //   const result = await fetch("http://localhost:3001/admin-route", {
-  //       credentials: 'include'
-  //   });
-  //   const data = await result.json();
-  //   console.log(data);
-  // }
-
   async function getData() {
     try {
       let foldersResponse = await fetch("http://localhost:3001/folders", {
@@ -96,6 +79,24 @@ const Home = () => {
       });
       let tagsData = await tagsResponse.json();
       dispatch(setTags(tagsData.tags));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function getColorOptions() {
+    try {
+      let colorOptionsResponse = await fetch("http://localhost:3001/tags/color-options", {
+        method: "GET",
+        credentials: "include",
+      });
+      let colorOptionsData = await colorOptionsResponse.json();
+      dispatch(
+        setColorOptions({
+          defaultOptions: colorOptionsData.defaultOptions,
+          userCreatedOptions: colorOptionsData.userCreatedOptions,
+        })
+      );
     } catch (err) {
       console.log(err);
     }
@@ -239,6 +240,7 @@ const Home = () => {
   useEffect(() => {
     testApi();
     getTags();
+    getColorOptions();
   }, []);
 
   useEffect(() => {

@@ -48,11 +48,6 @@ export const formatFolders = (updatedFolders, existingFolders, existingPages) =>
       EXPANDED_STATUS,
       VISIBLE,
       SELECTED: folder.SELECTED ? folder.SELECTED : false
-      // :
-      //   folder.EFF_STATUS &&
-      //   (!isInitial && newFolder?.ID === folder.ID && (folder.PARENT_FOLDER_ID === null ? true : parentOfNewFolder?.EXPANDED_STATUS))
-      //   || existingFolderThatMatches?.VISIBLE
-      //   || !folder.PARENT_FOLDER_ID,
     };
   });
 };

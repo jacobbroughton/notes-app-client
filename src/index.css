@@ -115,3 +115,7 @@ input:focus-within,
 textarea:focus {
   border: 1px solid var(--tertiary-bg) !important;
 }
+
+.ignore-overflow {
+  position: fixed;
+}

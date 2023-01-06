@@ -197,9 +197,6 @@
   z-index: 1;
 }
 
-.tags-sidebar-view  form .tag-color svg:hover {
-  background-color: var(--tertiary-bg);
-}
 
 .tags-sidebar-view  p.no-changes {
   padding: 3px 10px;

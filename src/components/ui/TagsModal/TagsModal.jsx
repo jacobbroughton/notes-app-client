@@ -3,6 +3,8 @@ import { useRef } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleModal } from "../../../redux/modals";
+import { addTagToPage } from "../../../redux/pages";
+import { addTagToFolder } from "../../../redux/folders";
 import Overlay from "../Overlay/Overlay";
 import ColorIcon from "../Icons/ColorIcon";
 import "./TagsModal.css";
@@ -19,6 +21,7 @@ const TagsModal = () => {
   const [tagColor, setTagColor] = useState("teal");
 
   const selectedItem = pages.selected || folders.selected;
+  // const selectedItem = pages.list.find(page => page.SELECTED) || folders.list.find(page => page.SELECTED)
 
   useEffect(() => {
     function handler(e) {
@@ -49,12 +52,11 @@ const TagsModal = () => {
           color: tagColor,
           isForItem: true, // TODO - Change this once i can add tags without being on a page/folder
           item: selectedItem,
-
         }),
       });
       const data = await response.json();
-      console.log(data)
-      setTagSearchValue("")
+      console.log(data);
+      setTagSearchValue("");
     } catch (err) {
       console.log(err);
     }
@@ -64,8 +66,31 @@ const TagsModal = () => {
     setTagColor(e.target.value);
   }
 
-  async function handleTagClick(e, tag) {
-    console.log(tag);
+  async function handleTagClick(e, item, tag) {
+    try {
+      const response = await fetch("http://localhost:3001/tags/tag-item", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          tag,
+          item,
+        }),
+      });
+      const data = await response.json();
+
+      console.log(data);
+
+      if (item.IS_PAGE) {
+        dispatch(addTagToPage({ item, tag }));
+      } else {
+        dispatch(addTagToFolder({ item, tag }));
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   return (
@@ -86,20 +111,21 @@ const TagsModal = () => {
           </button>
         </form>
         {tagSearchValue && !tags.list.find((tag) => tag.NAME === tagSearchValue) && (
-          <button className="tag-button" nClick={handleTagClick}>
+          <button className="tag-button" onClick={(e) => console.log("new tag input")}>
             <span className="color-span" style={{ backgroundColor: tagColor }}>
               &nbsp;
             </span>
             {tagSearchValue}
           </button>
         )}
-        {tags
-          .list
-          ?.filter((tag) => tag.NAME.includes(tagSearchValue))
+        {/* {tags.list
+          .filter((tag) => selectedItem.TAGS.includes(tag.ID))
           .map((tag, index) => (
             <button
-              className="tag-button"
-              onClick={(e) => handleTagClick(e, tag, selectedItem)}
+              className={`tag-button ${
+                selectedItem?.TAGS.includes(tag.ID) ? "added" : ""
+              }`}
+              onClick={(e) => handleTagClick(e, selectedItem, tag)}
               key={index}
             >
               {" "}
@@ -107,8 +133,30 @@ const TagsModal = () => {
                 &nbsp;
               </span>{" "}
               <p>{tag.NAME}</p>
-            </button>
-          ))}
+            </button> */}
+        
+        {tags.list
+          ?.filter(
+            (tag) =>
+              tag.NAME.includes(tagSearchValue) 
+          )
+          .map((tag, index) => {
+            return (
+              <button
+                className={`tag-button ${
+                  selectedItem?.TAGS.includes(tag.ID) ? "added" : ""
+                }`}
+                onClick={(e) => handleTagClick(e, selectedItem, tag)}
+                key={index}
+              >
+                {" "}
+                <span className="color-span" style={{ backgroundColor: tag.COLOR }}>
+                  &nbsp;
+                </span>{" "}
+                <p>{tag.NAME}</p>
+              </button>
+            );
+          })}
       </div>
       <Overlay />
     </>

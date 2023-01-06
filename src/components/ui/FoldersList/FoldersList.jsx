@@ -10,10 +10,7 @@ import {
   renamePage,
 } from "../../../redux/pages";
 
-import RightCaret from "../Icons/RightCaret";
 import PageIcon from "../Icons/PageIcon";
-
-// import DownCaret from "../Icons/DownCaret";
 import Caret from "../Icons/Caret";
 import "./FoldersList.css";
 import { setCombined } from "../../../redux/combined";
@@ -241,6 +238,7 @@ const FoldersList = ({
     if (!dragToggled || inputPosition.referenceId !== itemFromList.ID)
       className += " hoverable";
 
+
     if (
       itemFromList.SELECTED ||
       (sidebar.shiftClickItems.start !== null &&
@@ -295,18 +293,25 @@ const FoldersList = ({
       indexAfterAddingPages += pagesInFolder.length + 1;
     });
 
+
     pagesAndFolders.push(...pagesInRoot);
 
     pagesAndFolders = pagesAndFolders.map((item, i) => {
       return {
         ...item,
-        ORDER: i,
+        ORDER: i
       };
     });
-
-    // setCombinedFoldersAndPages(combined);
     dispatch(setCombined(pagesAndFolders));
   }, [folders.list, pages.list]);
+
+  // useEffect(() => {
+  //   console.log("Folders")
+  // }, [folders.list])
+
+  // useEffect(() => {
+  //   console.log("Pages")
+  // }, [pages.list])
 
   return (
     <div className={`folders-list ${inputPosition.referenceId === 0 ? "selected" : ""}`}>
@@ -399,10 +404,13 @@ const FoldersList = ({
                 </div>
                 {item.TAGS && tags.list && (
                   <div className="tags">
-                    {item.TAGS.map((tagId) => {
+                    {item.TAGS.map((tagId, index) => {
                       const tag = tags.list?.find((tag) => tag.ID === tagId);
+                      if (!tag) return <span style={{ backgroundColor: 'yellow' }} key={index} title={tagId}>
+                      &nbsp;
+                    </span>
                       return (
-                        <span style={{ backgroundColor: tag.COLOR }} title={`Color: ${tag.COLOR}`}>
+                        <span style={{ backgroundColor: tag.COLOR }} key={index} title={`Color: ${tag.COLOR}`}>
                           &nbsp;
                         </span>
                       );

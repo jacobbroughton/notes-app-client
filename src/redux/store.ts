@@ -7,8 +7,7 @@ import modalsReducer from "./modals";
 import themeReducer from "./theme";
 import combinedReducer from "./combined";
 import tagsReducer from "./tags";
-import { saveState } from "../utils/localStorage.js";
-import { batchedSubscribe } from "redux-batched-subscribe";
+import colorPickerMenuReducer from "./colorPickerMenu";
 
 const store = configureStore({
   reducer: {
@@ -19,6 +18,7 @@ const store = configureStore({
     combined: combinedReducer,
     sidebar: sidebarReducer,
     modals: modalsReducer,
+    colorPickerMenu: colorPickerMenuReducer,
     theme: themeReducer,
   },
 //   enhancers: [batchedSubscribe(() => saveState("light", "themeState"))],

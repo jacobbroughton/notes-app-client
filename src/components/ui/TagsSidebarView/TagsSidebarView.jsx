@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTag, deselectTag, editTag, selectTag, addTag } from "../../../redux/tags";
 import ColorIcon from "../Icons/ColorIcon";
@@ -6,13 +6,16 @@ import TrashIcon from "../Icons/TrashIcon";
 import DownArrow from "../Icons/DownArrow";
 import "./TagsSidebarView.css";
 import { setNewTagFormToggled } from "../../../redux/sidebar";
+import ColorPicker from "../ColorPicker/ColorPicker"
 
 const TagsSidebarView = () => {
   const tags = useSelector((state) => state.tags);
   const sidebar = useSelector((state) => state.sidebar);
+  const colorPickerMenu = useSelector((state) => state.colorPickerMenu);
+  const colorPickerMenuRef = useRef(null);
   const dispatch = useDispatch();
   const [tagSearchValue, setTagSearchValue] = useState("");
-  const [newTagColor, setNewTagColor] = useState('teal');
+  const [newTagColor, setNewTagColor] = useState("teal");
   const [newTagName, setNewTagName] = useState("");
   const [updatedTagColor, setUpdatedTagColor] = useState(tags.selected?.COLOR || "");
   const [updatedTagName, setUpdatedTagName] = useState(tags.selected?.NAME || "");
@@ -260,17 +263,13 @@ const TagsSidebarView = () => {
                   value={updatedTagColor}
                   className={isValidColor(updatedTagColor) ? "" : "invalid"}
                 />
-                <input
+                {/* <input
                   type="color"
                   onChange={handleUpdatedColorChange}
                   value={updatedTagColor}
                   onClick={(e) => e.stopPropagation()}
-                />
-                <ColorIcon
-                  fill={
-                    isValidColor(updatedTagColor) ? updatedTagColor : tags.selected.COLOR
-                  }
-                />
+                /> */}
+                <ColorPicker/>
               </div>
               {!isValidColor(updatedTagColor) && (
                 <p className="invalid-text">Invalid color</p>

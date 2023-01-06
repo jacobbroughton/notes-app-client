@@ -19,7 +19,7 @@ const foldersSlice = createSlice({
         return {
           ...folder,
           IS_PAGE: false,
-          ...(typeof folder.TAGS === "string" && { TAGS: folder.TAGS?.split(',').map(tag => parseInt(tag)) })
+          TAGS: folder.TAGS ? folder.TAGS.split(',').map(tag => parseInt(tag)) : []
         }
       })
 
@@ -160,6 +160,34 @@ const foldersSlice = createSlice({
         }),
       };
     },
+    addTagToFolder: (state, { payload }) => {
+      const { item, tag } = payload
+
+      return {
+        ...state,
+        list: state.list.map(folder => {
+
+          return {
+            ...folder,
+            ...(folder.ID === item.ID && !folder.TAGS.includes(tag.ID) && {
+              TAGS: [...folder.TAGS, tag.ID]
+            }),
+            ...(folder.ID === item.ID && folder.TAGS.includes(tag.ID) && {
+              TAGS: folder.TAGS.filter(innerTag => innerTag !== tag.ID)
+            })
+          }
+        }),
+        selected: {
+          ...state.selected,
+          ...(!state.selected.TAGS.includes(tag.ID) && {
+            TAGS: [...state.selected.TAGS, tag.ID]
+          }),
+          ...(state.selected.TAGS.includes(tag.ID) && {
+            TAGS: state.selected.TAGS.filter(innerTag => innerTag !== tag.ID)
+          })
+        }
+      }
+    }
   },
 });
 
@@ -173,5 +201,6 @@ export const {
   setFolderEffStatus,
   setStagedFolderToDelete,
   renameFolder,
+  addTagToFolder
 } = foldersSlice.actions;
 export default foldersSlice.reducer;
