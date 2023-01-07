@@ -46,11 +46,9 @@
   cursor: pointer;
 }
 
-.tags-sidebar-view .tag-button,
-.tags-sidebar-view  .tag {
+.tags-sidebar-view .tag-button {
   display: flex;
   gap: 10px;
-  /* justify-content: space-between; */
   align-items: center;
   padding: 5px 10px;
   overflow: hidden;
@@ -80,6 +78,7 @@
   border-radius: 100px;
 }
 
+
 .tags-sidebar-view  {
   display: flex;
   flex-direction: column;
@@ -98,6 +97,7 @@
   align-self: start;
   margin-left: 10px;
   fill: var(--color-text-primary);
+  margin-bottom: -3px
 }
 
 .tags-sidebar-view .cancel-and-done-btns button {
@@ -199,7 +199,7 @@
 
 
 .tags-sidebar-view  p.no-changes {
-  padding: 3px 10px;
+  padding: 5px 10px;
 }
 
 .tags-sidebar-view .tag-controls .are-you-sure-container {

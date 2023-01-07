@@ -5,6 +5,16 @@
   height: 20px;
 }
 
+.color-picker-parent .ignore-overflow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.color-picker-parent .ignore-overflow p.color-text {
+  font-size: 0.875rem;
+}
+
 button.color-picker-toggle {
   background-color: transparent;
   border: 0;
@@ -27,27 +37,39 @@ button.color-picker-toggle:hover {
   max-width: 250px;
   width: auto;
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 25px;
+  top: 80%;
   padding: 10px;
   background-color: var(--secondary-bg);
   border: 1px solid var(--tertiary-bg);
-}
-
-.color-picker-parent .color-options-container {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+.color-picker-parent .color-options-container,
+.color-picker-parent .custom-color-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   font-size: 0.875rem;
 }
 
 .color-picker-parent .color-options-container .buttons {
-  display: flex;
-  /* justify-content: space-between; */
+  /* display: flex;
   gap: 5px;
+  flex-wrap: wrap; */
+  display: grid;
+  grid-template-columns: repeat(8, 15px);
+  grid-gap: 5px;
 }
 
-.color-picker-parent .color-options-container button {
+.color-picker-parent .color-button,
+.color-picker-parent .color-option-new,
+.color-picker-parent .confirm-btn,
+.color-picker-parent .cancel-btn {
   border: 0;
+  min-width: 15px;
   width: 15px;
   height: 15px;
   border-radius: 3px;
@@ -56,6 +78,65 @@ button.color-picker-toggle:hover {
   transition: box-shadow 0.1s ease;
 }
 
+.color-picker-parent .color-option-new {
+  background: linear-gradient(
+    135deg,
+    hsl(0, 100%, 43%) 0%,
+    hsl(36, 100%, 43%) 10%,
+    hsl(64, 74%, 43%) 20%,
+    hsl(118, 68%, 43%) 30%,
+    hsl(179, 68%, 43%) 40%,
+    hsl(188, 76%, 43%) 50%,
+    hsl(212, 86%, 43%) 60%,
+    hsl(260, 89%, 43%) 70%,
+    hsl(284, 94%, 43%) 80%,
+    hsl(308, 97%, 43%) 90%,
+    hsl(0, 100%, 43%) 100%
+  );
+  color: white;
+  text-shadow: 2px 2px 1px black;
+  padding: 0;
+  /* font-size: 1.1rem; */
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .color-picker-parent .color-options-container button:hover {
   box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.color-picker-parent .custom-color-button-container .custom-color-options {
+  position: relative;
+  display: flex;
+  gap: 5px;
+}
+
+.color-picker-parent .custom-color-button-container .custom-color-options .spacer {
+  width: 2px;
+  background-color: var(--color-text-primary);
+  height: 15px;
+}
+
+.color-picker-parent .custom-color-button-container .custom-color-options input[type="color"] {
+  position: absolute;
+  /* inset: 0; */
+  z-index: 2;
+  right: left;
+  opacity: 0;
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+}
+
+.color-picker-parent .custom-color-button-container button {
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.color-picker-parent .custom-color-button-container button:hover {
+  box-shadow: none;
 }

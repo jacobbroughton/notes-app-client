@@ -6,7 +6,8 @@ const tagsSlice = createSlice({
     list: [],
     selected: null,
     colorOptions: {
-      default: []
+      default: [],
+      userCreated: []
     }
   },
   reducers: {
@@ -74,7 +75,7 @@ const tagsSlice = createSlice({
         list: [...state.list, payload]
       }
     },
-    setColorOptions: (state, {payload}) => {
+    setColorOptions: (state, { payload }) => {
       return {
         ...state,
         colorOptions: {
@@ -82,9 +83,19 @@ const tagsSlice = createSlice({
           userCreated: payload.userCreatedOptions
         }
       }
+    },
+    addCustomColorOption: (state, { payload }) => {
+      if (!payload) return state
+      return {
+        ...state,
+        colorOptions: {
+          ...state.colorOptions,
+          userCreated: [...state.colorOptions.userCreated, payload]
+        }
+      }
     }
   }
 })
 
 export default tagsSlice.reducer
-export const { setTags, selectTag, deselectTag, editTag, deleteTag, addTag, setColorOptions } = tagsSlice.actions
+export const { setTags, selectTag, deselectTag, editTag, deleteTag, addTag, setColorOptions, addCustomColorOption } = tagsSlice.actions

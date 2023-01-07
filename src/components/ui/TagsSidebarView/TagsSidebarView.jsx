@@ -6,7 +6,8 @@ import TrashIcon from "../Icons/TrashIcon";
 import DownArrow from "../Icons/DownArrow";
 import "./TagsSidebarView.css";
 import { setNewTagFormToggled } from "../../../redux/sidebar";
-import ColorPicker from "../ColorPicker/ColorPicker"
+import ColorPicker from "../ColorPicker/ColorPicker";
+import Tag from "../Tag/Tag";
 
 const TagsSidebarView = () => {
   const tags = useSelector((state) => state.tags);
@@ -15,7 +16,7 @@ const TagsSidebarView = () => {
   const colorPickerMenuRef = useRef(null);
   const dispatch = useDispatch();
   const [tagSearchValue, setTagSearchValue] = useState("");
-  const [newTagColor, setNewTagColor] = useState("teal");
+  const [newTagColor, setNewTagColor] = useState("#008080");
   const [newTagName, setNewTagName] = useState("");
   const [updatedTagColor, setUpdatedTagColor] = useState(tags.selected?.COLOR || "");
   const [updatedTagName, setUpdatedTagName] = useState(tags.selected?.NAME || "");
@@ -27,12 +28,12 @@ const TagsSidebarView = () => {
     setUpdatedTagColor(tag.COLOR);
   }
 
-  function handleUpdatedColorChange(e) {
-    setUpdatedTagColor(e.target.value);
+  function handleUpdatedColorChange(colorCode) {
+    setUpdatedTagColor(colorCode);
   }
 
-  function handleNewColorChange(e) {
-    setNewTagColor(e.target.value);
+  function handleNewColorChange(colorCode) {
+    setNewTagColor(colorCode);
   }
 
   function handleSubmit(e) {
@@ -98,7 +99,7 @@ const TagsSidebarView = () => {
 
       dispatch(addTag(justCreatedTag));
       dispatch(deselectTag());
-      setNewTagColor("black");
+      setNewTagColor("#008080");
       setNewTagName("");
       dispatch(setNewTagFormToggled(false));
     } catch (err) {
@@ -197,25 +198,18 @@ const TagsSidebarView = () => {
             <div className="tag-color">
               <label>Tag Color</label>
               <div className="inputs">
-                <input
-                  type="text"
-                  onChange={handleNewColorChange}
-                  value={newTagColor}
-                  className={isValidColor(newTagColor) ? "" : "invalid"}
+                <ColorPicker
+                  onColorSelect={handleNewColorChange}
+                  selectedColor={newTagColor}
                 />
-                <input
-                  type="color"
-                  onChange={handleNewColorChange}
-                  value={newTagColor}
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <ColorIcon fill={isValidColor(newTagColor) ? newTagColor : "black"} />
               </div>
               {!isValidColor(newTagColor) && (
                 <p className="invalid-text">Invalid color</p>
               )}
             </div>
           </form>
+          <Tag name={newTagName ? newTagName : '-'} color={newTagColor} />
+
         </div>
       )}
       {tags.selected && (
@@ -257,57 +251,33 @@ const TagsSidebarView = () => {
             <div className="tag-color">
               <label>Tag Color</label>
               <div className="inputs">
-                <input
-                  type="text"
-                  onChange={handleUpdatedColorChange}
-                  value={updatedTagColor}
-                  className={isValidColor(updatedTagColor) ? "" : "invalid"}
+                <ColorPicker
+                  onColorSelect={handleUpdatedColorChange}
+                  selectedColor={updatedTagColor}
                 />
-                {/* <input
-                  type="color"
-                  onChange={handleUpdatedColorChange}
-                  value={updatedTagColor}
-                  onClick={(e) => e.stopPropagation()}
-                /> */}
-                <ColorPicker/>
               </div>
               {!isValidColor(updatedTagColor) && (
                 <p className="invalid-text">Invalid color</p>
               )}
             </div>
           </form>
-          <div className="tag">
-            <span
-              className="color-span"
-              style={{ backgroundColor: tags.selected.COLOR }}
-              title={`Color: ${tags.selected.COLOR}`}
-            >
-              &nbsp;
-            </span>
-            <p>{tags.selected.NAME}</p>
-          </div>
+          <Tag name={tags.selected.NAME} color={tags.selected.COLOR} />
 
           <DownArrow />
           {updatedTagName !== tags.selected.NAME ||
           updatedTagColor !== tags.selected.COLOR ? (
-            <div className="tag">
-              <span
-                className="color-span"
-                style={{
-                  backgroundColor: isValidColor(updatedTagColor)
-                    ? updatedTagColor
-                    : tags.selected.COLOR,
-                }}
-              >
-                &nbsp;
-              </span>
-              <p>{updatedTagName ? updatedTagName : "-"}</p>
-            </div>
+            <Tag
+              name={updatedTagName ? updatedTagName : "-"}
+              color={
+                isValidColor(updatedTagColor) ? updatedTagColor : tags.selected.COLOR
+              }
+            />
           ) : (
             <p className="no-changes">No changes made yet</p>
           )}
         </div>
       )}
+
       {tags.selected && (
         <div className="tag-controls">
           {!deleteWarningToggled && (

@@ -18,7 +18,7 @@ const TagsModal = () => {
   const dispatch = useDispatch();
 
   const [tagSearchValue, setTagSearchValue] = useState("");
-  const [tagColor, setTagColor] = useState("teal");
+  const [tagColor, setTagColor] = useState("#008080");
 
   const selectedItem = pages.selected || folders.selected;
   // const selectedItem = pages.list.find(page => page.SELECTED) || folders.list.find(page => page.SELECTED)
@@ -93,6 +93,8 @@ const TagsModal = () => {
     }
   }
 
+  if (!selectedItem) return 'No selected item found'
+
   return (
     <>
       <div className="tags-modal" ref={tagsModalRef}>
@@ -144,7 +146,7 @@ const TagsModal = () => {
             return (
               <button
                 className={`tag-button ${
-                  selectedItem?.TAGS.includes(tag.ID) ? "added" : ""
+                  selectedItem?.TAGS?.includes(tag.ID) ? "added" : ""
                 }`}
                 onClick={(e) => handleTagClick(e, selectedItem, tag)}
                 key={index}
