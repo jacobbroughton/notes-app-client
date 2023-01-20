@@ -6,6 +6,11 @@
   color: var(--color-text-primary);
 }
 
+.tags-sidebar-view .no-tags-found {
+  margin-left: 10px;
+  font-size: 0.875rem;
+}
+
 .tags-sidebar-view .tag-controls {
   padding: 10px;
   border-top: 1px solid var(--tertiary-bg);
@@ -76,6 +81,7 @@
   min-width: 10px;
   height: 10px;
   border-radius: 100px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -139,6 +145,7 @@
 .tags-sidebar-view  form .tag-name {
   display: flex;
   flex-direction: column;
+  gap: 3px;
 }
 
 .tags-sidebar-view  form .tag-color label,
@@ -189,14 +196,6 @@
   /* margin-left: 30px; */
   /* margin-top: -10px; */
 }
-
-.tags-sidebar-view  form .tag-color svg {
-  /* min-width: 100%; */
-  width: 20px;
-  height: 100%;
-  z-index: 1;
-}
-
 
 .tags-sidebar-view  p.no-changes {
   padding: 5px 10px;

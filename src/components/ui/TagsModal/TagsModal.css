@@ -85,6 +85,8 @@
 
 .tags-modal .tag-button.added {
   border: 1px solid var(--color-accent-primary);
+  font-weight: 600;
+  color: var(--color-accent-primary)
 }
 
 .tags-modal .tag-button:hover {

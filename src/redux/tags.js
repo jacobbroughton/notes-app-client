@@ -54,7 +54,8 @@ const tagsSlice = createSlice({
           return {
             ...tag,
             ...(tag.ID === payload.id && {
-              COLOR: payload.color,
+              COLOR_CODE: payload.color.COLOR_CODE,
+              COLOR_ID: payload.color.ID,
               NAME: payload.name
             })
           }

@@ -1,0 +1,10 @@
+.open-page-navigation {
+  display: flex;
+  height: 100%;
+  max-height: 35px;
+  overflow-x: auto;
+  background-color: var(--color-sidebar-nav);
+  width: 100%;
+  width: calc(100% + 30px);
+  margin-left: -15px;
+}

@@ -19,3 +19,8 @@
   height: 10px;
   border-radius: 100px;
 }
+
+.tag p {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

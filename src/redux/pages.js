@@ -6,19 +6,17 @@ const pagesSlice = createSlice({
     list: [],
     selected: null,
     active: null,
-    staged: null,
+    stagedToSwitch: null,
     stagedToDelete: null
   },
   reducers: {
     setPages: (state, { payload }) => {
-      // let pages = [...payload];
 
       const pages = payload.map(page => {
         return {
           ...page,
           IS_PAGE: true,
           SELECTED: page.SELECTED,
-          TAGS: typeof page.TAGS === 'string' ? page.TAGS.split(',').map(tag => parseInt(tag)) : page.TAGS
         }
       })
 
@@ -27,33 +25,6 @@ const pagesSlice = createSlice({
         list: pages,
         selected: state.list.find(page => page.SELECTED)
       };
-
-      // return {
-      //   ...state,
-      //   list: pages.map((page) => {
-      //     return {
-      //       ...page,
-      //       IS_MODIFIED: false,
-      //       TAGS: page.TAGS ? page.TAGS.split(',').map(tag => parseInt(tag)) : []
-      //     };
-      //   }),
-      // };
-
-      // return {
-      //   ...state,
-      //   list: pages.map(page => {
-      //     let pageFolder = folders.find(folder => folder.ID === page.FOLDER_ID)
-
-      //     console.log(pageFolder)
-
-      //     return {
-      //       ...page,
-      //       IS_PAGE: true,
-      //       TIER: pageFolder ? pageFolder.TIER + 1 : 1,
-      //       VISIBLE: pageFolder ? pageFolder.EXPANDED_STATUS : true
-      //     }
-      //   })
-      // }
     },
     setPageEffStatus: (state, { payload: pageId }) => {
       return {
@@ -82,11 +53,25 @@ const pagesSlice = createSlice({
             ...((payload === null || page.PAGE_ID !== payload?.PAGE_ID) &&
               page.SELECTED && { SELECTED: false }),
             ...(page.PAGE_ID === selectedPage?.PAGE_ID && { SELECTED: true }),
+            ...(page.PAGE_ID === selectedPage?.PAGE_ID ? { ACTIVE: true, OPEN: true } : { ACTIVE: false }),
           };
         }),
         selected: selectedPage,
         active: selectedPage || state.active,
       };
+    },
+    deselectPage: (state, { payload }) => {
+      return {
+        ...state,
+        list: state.list.map(page => {
+          return {
+            ...page,
+            ...(page.PAGE_ID === payload.PAGE_ID && { ACTIVE: false, SELECTED: false })
+          }
+        }),
+        selected: null,
+        active: null
+      }
     },
     updatePage: (state, { payload }) => {
       if (!payload) return state
@@ -118,7 +103,7 @@ const pagesSlice = createSlice({
     setPageStagedForSwitch: (state, { payload }) => {
       return {
         ...state,
-        staged: payload,
+        stagedToSwitch: payload,
       };
     },
     updateParentFolderId: (state, { payload }) => {
@@ -151,12 +136,6 @@ const pagesSlice = createSlice({
             VISIBLE = droppedOntoItem.EXPANDED_STATUS;
           }
 
-          console.log(droppedOntoItem)
-
-          if (droppedOntoItem === 'root') {
-            console.log(droppedOntoItem)
-          }
-
           return {
             ...page,
             ...(page.PAGE_ID === affectedPage.PAGE_ID && {
@@ -168,7 +147,7 @@ const pagesSlice = createSlice({
         }),
         selected: state.selected,
         active: state.active,
-        staged: state.staged,
+        stagedToSwitch: state.stagedToSwitch,
       };
     },
     setStagedPageToDelete: (state, { payload }) => {
@@ -192,28 +171,95 @@ const pagesSlice = createSlice({
     },
     addTagToPage: (state, { payload }) => {
       const { item, tag } = payload
+
+      let updatedTags = [...item.TAGS, tag.ID]
+      updatedTags.sort((a, b) => a > b ? 1 : -1)
+
       return {
         ...state,
         list: state.list.map(page => {
           return {
             ...page,
             ...(page.PAGE_ID === item.PAGE_ID && !page.TAGS.includes(tag.ID) && {
-              TAGS: [...page.TAGS, tag.ID]
+              // TAGS: [...page.TAGS, tag.ID],
+              TAGS: updatedTags
             }),
-            ...(page.PAGE_ID === item.PAGE_ID && page.TAGS.includes(tag.ID) && {
-              TAGS: page.TAGS.filter(innerTag => innerTag !== tag.ID)
+          }
+        }),
+        ...(state.selected && {
+          selected: {
+            ...state.selected,
+            ...(!state.selected.TAGS.includes(tag.ID) && {
+              // TAGS: [...state.selected.TAGS, tag.ID]
+              TAGS: updatedTags
+            }),
+          }
+        }),
+        ...(state.selected && {
+          active: {
+            ...state.selected,
+            ...(!state.selected.TAGS.includes(tag.ID) && {
+              // TAGS: [...state.selected.TAGS, tag.ID]
+              TAGS: updatedTags
+            }),
+          }
+        })
+      }
+    },
+    removeTagFromPage: (state, { payload }) => {
+      const { item, tag } = payload
+
+      const removeTag = (page, tag) => page.TAGS.filter(innerTag => innerTag !== tag.ID)
+
+
+      return {
+        ...state,
+        list: state.list.map(page => {
+          return {
+            ...page,
+            ...(page.PAGE_ID === item.PAGE_ID && {
+              TAGS: removeTag(page, tag)
             })
           }
         }),
-        selected: {
-          ...state.selected,
-          ...(!state.selected.TAGS.includes(tag.ID) && {
-            TAGS: [...state.selected.TAGS, tag.ID]
-          }),
-          ...(state.selected.TAGS.includes(tag.ID) && {
-            TAGS: state.selected.TAGS.filter(innerTag => innerTag !== tag.ID)
-          })
+        ...(state.active && {
+          active: {
+            ...state.active,
+            ...(state.active.PAGE_ID === item.PAGE_ID && {
+              TAGS: removeTag(state.active, tag)
+            })
+          }
+        }),
+        ...(state.selected && {
+          selected: {
+            ...state.selected,
+            ...(state.selected.PAGE_ID === item.PAGE_ID && {
+              TAGS: removeTag(state.selected, tag)
+            })
+          }
+        })
+      }
+    },
+    setPageClosed: (state, { payload }) => {
+      const updatedPages = state.list.map(page => {
+        return {
+          ...page,
+          ...(page.PAGE_ID === payload.PAGE_ID && { OPEN: false, SELECTED: false })
         }
+      })
+
+      const openPages = updatedPages.filter(page => page.OPEN === true)
+
+      return {
+        ...state,
+        list: updatedPages.map(page => {
+          return {
+            ...page,
+            ...(page.PAGE_ID === openPages[0]?.PAGE_ID && { SELECTED: true, ACTIVE: true })
+          }
+        }),
+        active: openPages[0],
+        selected: openPages[0]
       }
     }
   },
@@ -224,11 +270,14 @@ export const {
   setPages,
   setPageEffStatus,
   selectPage,
+  deselectPage,
   updatePage,
   setPageModified,
   setPageStagedForSwitch,
   updateParentFolderId,
   setStagedPageToDelete,
   renamePage,
-  addTagToPage
+  addTagToPage,
+  removeTagFromPage,
+  setPageClosed
 } = pagesSlice.actions;

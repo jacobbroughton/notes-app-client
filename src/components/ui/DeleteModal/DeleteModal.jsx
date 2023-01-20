@@ -6,6 +6,7 @@ import Overlay from "../Overlay/Overlay";
 import "./DeleteModal.css";
 import PageIcon from "../Icons/PageIcon";
 import { setShiftClickItems } from "../../../redux/sidebar";
+import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 
 export function DeleteModal() {
   const dispatch = useDispatch();
@@ -19,8 +20,6 @@ export function DeleteModal() {
     itemToDelete = pages.stagedToDelete;
   } else if (folders.stagedToDelete) {
     itemToDelete = folders.stagedToDelete;
-  } else if (sidebar.shiftClickItems.list) {
-    console.log(sidebar.shiftClickItems.list);
   }
 
   async function deleteFolder(folderId) {
@@ -35,27 +34,29 @@ export function DeleteModal() {
           folderId,
         }),
       });
+
+      if (response.status !== 200) throwResponseStatusError(response, "POST");
+
       let data = await response.json();
 
-      console.log(data);
+      if (!data) throw "There was a problem parsing folders/delete response";
 
       data.deletedFolders.forEach((folderId) => {
-        console.log("Deleting folder - ", folderId);
         dispatch(setFolderEffStatus(folderId));
         pages.list.forEach((page) => {
           if (page.FOLDER_ID === folderId) dispatch(setPageEffStatus(page.PAGE_ID));
         });
       });
       dispatch(toggleModal("deleteModal"));
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async function deletePage(pageId) {
     try {
       let response = await fetch("http://localhost:3001/pages/delete", {
-        method: "post",
+        method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
         },
@@ -67,8 +68,8 @@ export function DeleteModal() {
       let data = await response.json();
       dispatch(setPageEffStatus(pageId));
       dispatch(toggleModal("deleteModal"));
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -78,46 +79,45 @@ export function DeleteModal() {
       const selectionIncludesPages = items.filter((item) => item.IS_PAGE).length !== 0;
 
       if (selectionIncludesFolders) {
-        let deleteFoldersResponse = await fetch(
-          "http://localhost:3001/folders/delete-multiple",
-          {
-            method: "post",
-            headers: {
-              "content-type": "application/json;charset=UTF-8",
-            },
-            credentials: "include",
-            body: JSON.stringify({ folders: items.filter((item) => !item.IS_PAGE) }),
-          }
-        );
-        let deleteFoldersData = await deleteFoldersResponse.json();
+        let response = await fetch("http://localhost:3001/folders/delete-multiple", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json;charset=UTF-8",
+          },
+          credentials: "include",
+          body: JSON.stringify({ folders: items.filter((item) => !item.IS_PAGE) }),
+        });
+
+        if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+        let deleteFoldersData = await response.json();
         for (let i = 0; i < deleteFoldersData.deletedFolderIds.length; i++) {
           dispatch(setFolderEffStatus(deleteFoldersData.deletedFolderIds[i]));
         }
       }
 
       if (selectionIncludesPages) {
-        let deletePagesResponse = await fetch(
-          "http://localhost:3001/pages/delete-multiple",
-          {
-            method: "post",
-            headers: {
-              "content-type": "application/json;charset=UTF-8",
-            },
-            credentials: "include",
-            body: JSON.stringify({ pages: items.filter((item) => item.IS_PAGE) }),
-          }
-        );
+        let response = await fetch("http://localhost:3001/pages/delete-multiple", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json;charset=UTF-8",
+          },
+          credentials: "include",
+          body: JSON.stringify({ pages: items.filter((item) => item.IS_PAGE) }),
+        });
 
-        let deletePagesData = await deletePagesResponse.json();
+        if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+        let deletePagesData = await response.json();
 
         for (let i = 0; i < deletePagesData.deletedPageIds.length; i++) {
           dispatch(setPageEffStatus(deletePagesData.deletedPageIds[i]));
         }
       }
-      dispatch(setShiftClickItems({ start: null, end: null, list: [] }))
+      dispatch(setShiftClickItems({ start: null, end: null, list: [] }));
       dispatch(toggleModal("deleteModal"));
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 

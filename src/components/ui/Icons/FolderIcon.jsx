@@ -1,7 +1,9 @@
 const FolderIcon = () => {
   return (
-    <svg viewBox="0 0 1024 896" aria-labelledby="dksi-ant-folder-title" id="si-ant-folder"><title id="dksi-ant-folder-title">icon folder</title><path d="M405 64q5 0 11 5t7 10l19 77v1q5 23 26 39 20 17 45 17h437q10 0 10 11v597q0 5-3 8t-6 3H73q-9 0-9-11V75q0-11 9-11h332zm0-64H73Q43 0 21.5 22T0 75v746q0 31 21.5 53T73 896h878q30 0 51.5-22t21.5-53V224q0-31-21.5-53T951 149H514q-3 0-6-2.5t-4-4.5l-18-77q-7-28-30-46.5T405 0z"/></svg>
-  )
-}
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <path d="M447.1 96h-172.1L226.7 50.75C214.7 38.74 198.5 32 181.5 32H63.1c-35.35 0-64 28.66-64 64v320c0 35.34 28.65 64 64 64h384c35.35 0 64-28.66 64-64V160C511.1 124.7 483.3 96 447.1 96zM463.1 416c0 8.824-7.178 16-16 16h-384c-8.822 0-16-7.176-16-16V96c0-8.824 7.178-16 16-16h117.5c4.273 0 8.293 1.664 11.31 4.688L255.1 144h192c8.822 0 16 7.176 16 16V416z" />
+    </svg>
+  );
+};
 
-export default FolderIcon
+export default FolderIcon;

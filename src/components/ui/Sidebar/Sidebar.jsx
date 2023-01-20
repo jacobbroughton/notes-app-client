@@ -27,6 +27,7 @@ import PageIcon from "../Icons/PageIcon";
 import Draggable from "react-draggable";
 import "./Sidebar.css";
 import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
+import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 
 function Sidebar() {
   const sidebarRef = useRef(null);
@@ -44,7 +45,7 @@ function Sidebar() {
     },
     toggled: false,
   });
-  
+
   const [inputPosition, setInputPosition] = useState({
     referenceId: null,
     toggled: false,
@@ -66,61 +67,75 @@ function Sidebar() {
     dispatch(setSidebarWidth(data.x));
   }
 
-  function handleNewFolderSubmit(e) {
+  async function handleNewFolderSubmit(e) {
     e.preventDefault();
-    fetch("http://localhost:3001/folders/new", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json;charset=UTF-8",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        parentFolderId:
-          inputPosition.referenceId === 0 ? null : inputPosition.referenceId,
-        newFolderName,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setInputPosition({
-          referenceId: null,
-          toggled: false,
-          forFolder: false,
-        });
-        setNewFolderName("");
-        resetContextMenu();
-        getData(false);
-      })
-      .catch((err) => console.log(err));
+    try {
+      const response = await fetch("http://localhost:3001/folders/new", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          parentFolderId:
+            inputPosition.referenceId === 0 ? null : inputPosition.referenceId,
+          newFolderName,
+        }),
+      });
+
+      if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+      const data = await response.json();
+
+      if (!data) throw 'There was an issue parsing /tags/new response'
+
+      setInputPosition({
+        referenceId: null,
+        toggled: false,
+        forFolder: false,
+      });
+      setNewFolderName("");
+      resetContextMenu();
+      getData(false);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  function handleNewPageSubmit(e) {
+  async function handleNewPageSubmit(e) {
     e.preventDefault();
 
-    fetch("http://localhost:3001/pages/new", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json;charset=UTF-8",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        parentFolderId:
-          inputPosition.referenceId === 0 ? null : inputPosition.referenceId,
-        newPageName,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setInputPosition({
-          referenceId: null,
-          toggled: false,
-          forFolder: false,
-        });
-        setNewPageName("");
-        resetContextMenu();
-        getData(false);
-      })
-      .catch((err) => console.log(err));
+    try {
+      const response = await fetch("http://localhost:3001/pages/new", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          parentFolderId:
+            inputPosition.referenceId === 0 ? null : inputPosition.referenceId,
+          newPageName,
+        }),
+      });
+
+      if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+      const data = await response.json();
+
+      if (!data) throw "There was an issue parsing /pages/new response";
+
+      setInputPosition({
+        referenceId: null,
+        toggled: false,
+        forFolder: false,
+      });
+      setNewPageName("");
+      resetContextMenu();
+      getData(false);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function handleDeleteSingle(e, item) {
@@ -176,18 +191,17 @@ function Sidebar() {
     resetContextMenu();
 
     dispatch(toggleModal("tagsModal"));
-    console.log("tag", item);
   }
 
-  function handleNewPage(e, item) {
+  function handleNewPage() {
     resetContextMenu();
 
     let referenceId = 0;
 
     if (folders.selected) {
       referenceId = folders.selected.ID;
-    } else if (pages.selected && pages.selected.FOLDER_ID) {
-      referenceId = pages.selected.FOLDER_ID;
+    } else if (pages.active && pages.active.FOLDER_ID) {
+      referenceId = pages.active.FOLDER_ID;
     }
 
     setInputPosition({
@@ -197,17 +211,15 @@ function Sidebar() {
     });
   }
 
-  function handleNewFolder(e, item) {
-    const selectedFolder = folders.list.find((folder) => folder.SELECTED);
-
+  function handleNewFolder() {
     resetContextMenu();
 
     let referenceId = 0;
 
     if (folders.selected) {
       referenceId = folders.selected.ID;
-    } else if (pages.selected && pages.selected.FOLDER_ID) {
-      referenceId = pages.selected.FOLDER_ID;
+    } else if (pages.active && pages.active.FOLDER_ID) {
+      referenceId = pages.active.FOLDER_ID;
     }
 
     setInputPosition({
@@ -219,23 +231,38 @@ function Sidebar() {
   }
 
   async function getData() {
-    let foldersResponse = await fetch("http://localhost:3001/folders", {
-      method: "GET",
-      credentials: "include",
-    });
-    let pagesResponse = await fetch("http://localhost:3001/pages", {
-      method: "GET",
-      credentials: "include",
-    });
+    try {
+      let foldersResponse = await fetch("http://localhost:3001/folders", {
+        method: "GET",
+        credentials: "include",
+      });
 
-    let foldersData = await foldersResponse.json();
-    let pagesData = await pagesResponse.json();
+      if (foldersResponse.status !== 200)
+        throwResponseStatusError(foldersResponse, "GET");
 
-    let formattedFolders = formatFolders(foldersData.folders, folders.list, pages.list);
-    let formattedPages = formatPages(pagesData.pages, formattedFolders);
+      let pagesResponse = await fetch("http://localhost:3001/pages", {
+        method: "GET",
+        credentials: "include",
+      });
 
-    dispatch(setFolders(formattedFolders));
-    dispatch(setPages(formattedPages));
+      if (pagesResponse.status !== 200) throwResponseStatusError(pagesResponse, "GET");
+
+      let foldersData = await foldersResponse.json();
+
+      if (!foldersData) throw "There was an issue parsing /folders response";
+
+      let pagesData = await pagesResponse.json();
+
+      if (!pagesData) throw "There was an issue parsing /pages response";
+
+      let formattedFolders = formatFolders(foldersData.folders, folders.list, pages.list);
+      let formattedPages = formatPages(pagesData.pages, formattedFolders);
+
+      dispatch(setFolders(formattedFolders));
+      dispatch(setPages(formattedPages));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function resetContextMenu() {
@@ -317,7 +344,7 @@ function Sidebar() {
       onClick: () => dispatch(collapseFolders()),
     },
     {
-      symbol: "++",
+      symbol: "+P",
       title: "Create a new page",
       disabled: "",
       visible: sidebar.view.name === "Notes",
@@ -334,8 +361,8 @@ function Sidebar() {
         } else {
           if (folders.selected) {
             referenceId = folders.selected.ID;
-          } else if (pages.selected && pages.selected.FOLDER_ID) {
-            referenceId = pages.selected.FOLDER_ID;
+          } else if (pages.active && pages.active.FOLDER_ID) {
+            referenceId = pages.active.FOLDER_ID;
           }
 
           setInputPosition({
@@ -347,7 +374,7 @@ function Sidebar() {
       },
     },
     {
-      symbol: "+",
+      symbol: "+F",
       title: "Create a new folder",
       disabled: "",
       visible: sidebar.view.name === "Notes",
@@ -364,8 +391,8 @@ function Sidebar() {
         } else {
           if (folders.selected) {
             referenceId = folders.selected.ID;
-          } else if (pages.selected && pages.selected.FOLDER_ID) {
-            referenceId = pages.selected.FOLDER_ID;
+          } else if (pages.active && pages.active.FOLDER_ID) {
+            referenceId = pages.active.FOLDER_ID;
           }
 
           setInputPosition({
@@ -399,6 +426,7 @@ function Sidebar() {
             onClick={() => dispatch(setSidebarView(viewOption))}
             className={viewOption.id === sidebar.view.id ? "current" : ""}
             key={index}
+            title={viewOption.name}
           >
             {viewOption.id === 1 && <PageIcon />}
             {viewOption.id === 2 && <SearchIcon />}
@@ -408,12 +436,14 @@ function Sidebar() {
         <button
           className="theme-button"
           onClick={() => dispatch(setTheme(theme === "dark" ? "light" : "dark"))}
+          title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
         >
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
         <button
           className="user-button"
           onClick={() => setUserMenuToggled(!userMenuToggled)}
+          title="User options"
         >
           <UserIcon />
         </button>
@@ -511,7 +541,7 @@ function Sidebar() {
         ></div>
       </Draggable>
       <ContextMenu
-        item={pages.selected || folders.selected}
+        item={pages.active || folders.selected}
         toggled={contextMenu.toggled}
         positionX={contextMenu.position.x}
         positionY={contextMenu.position.y}

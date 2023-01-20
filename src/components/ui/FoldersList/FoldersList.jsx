@@ -48,52 +48,60 @@ const FoldersList = ({
     PAGE_ID: null,
   });
 
-  function handleRenameSubmit(e, item) {
+  async function handleRenameSubmit(e, item) {
     e.preventDefault();
-    if (item.IS_PAGE) {
-      const pageInfo = {
-        newName: e.target.newName.value,
-        pageId: item.PAGE_ID,
-      };
+    try {
+      if (item.IS_PAGE) {
+        const pageInfo = {
+          newName: e.target.newName.value,
+          pageId: item.PAGE_ID,
+        };
 
-      fetch("http://localhost:3001/pages/rename", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify(pageInfo),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          dispatch(renamePage(pageInfo));
-          renameInputRef.current.blur();
-          setRenameInputToggled(false);
-        })
-        .catch((err) => console.log(err));
-    } else {
-      const folderInfo = {
-        newName: e.target.newName.value,
-        folderId: item.ID,
-      };
+        const response = await fetch("http://localhost:3001/pages/rename", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json;charset=UTF-8",
+          },
+          body: JSON.stringify(pageInfo),
+        });
 
-      fetch("http://localhost:3001/folders/rename", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify(folderInfo),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          dispatch(renameFolder(folderInfo));
-          renameInputRef.current.blur();
-          setRenameInputToggled(false);
-        })
-        .catch((err) => console.log(err));
+        if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+        const data = await response.json();
+
+        if (!data) throw "There was an issue parsing /pages/rename response";
+
+        dispatch(renamePage(pageInfo));
+        renameInputRef.current.blur();
+        setRenameInputToggled(false);
+      } else {
+        const folderInfo = {
+          newName: e.target.newName.value,
+          folderId: item.ID,
+        };
+
+        const response = await fetch("http://localhost:3001/folders/rename", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json;charset=UTF-8",
+          },
+          body: JSON.stringify(folderInfo),
+        });
+
+        if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+        const data = await response.json();
+
+        if (!data) throw "There was an issue parsing /tags/new response";
+
+        dispatch(renameFolder(folderInfo));
+        renameInputRef.current.blur();
+        setRenameInputToggled(false);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -122,7 +130,7 @@ const FoldersList = ({
 
   function handlePageClick(page) {
     if (pages.active?.IS_MODIFIED) {
-      if (!pages.staged) dispatch(setPageStagedForSwitch(page));
+      if (!pages.stagedToSwitch) dispatch(setPageStagedForSwitch(page));
       dispatch(toggleModal("unsavedWarning"));
       return;
     }
@@ -177,42 +185,52 @@ const FoldersList = ({
     setGrabbedItem(pickedUpItem);
   }
 
-  function handleDrop(e, grabbedItem, droppedOntoItem) {
-    if (droppedOntoItem === "root") {
-      droppedOntoItem = {
+  async function handleDrop(e, grabbedItem, droppedOntoItem) {
+    try {
+      if (droppedOntoItem === "root") {
+        droppedOntoItem = {
+          ID: null,
+          TIER: 0,
+          EXPANDED_STATUS: true,
+        };
+      }
+
+      if (grabbedItem.IS_PAGE) {
+        dispatch(
+          updateParentFolderId({
+            folders: folders.list,
+            affectedPage: grabbedItem,
+            droppedOntoItem,
+          })
+        );
+
+        const response = await fetch("http://localhost:3001/pages/updateParentFolder", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json;charset=UTF-8",
+          },
+          body: JSON.stringify({
+            affectedPage: grabbedItem,
+            droppedOntoItem,
+          }),
+        });
+
+        if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+        const data = await response.json();
+
+        if (!data) throw "There was an issue parsing /pages/updateParentFolder response";
+      }
+
+      setGrabbedItem(null);
+      setDraggedOverItem({
         ID: null,
-        TIER: 0,
-        EXPANDED_STATUS: true,
-      };
-    }
-
-    if (grabbedItem.IS_PAGE) {
-      dispatch(
-        updateParentFolderId({
-          folders: folders.list,
-          affectedPage: grabbedItem,
-          droppedOntoItem,
-        })
-      );
-
-      fetch("http://localhost:3001/pages/updateParentFolder", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify({
-          affectedPage: grabbedItem,
-          droppedOntoItem,
-        }),
+        PAGE_ID: null,
       });
+    } catch (error) {
+      console.log(error);
     }
-
-    setGrabbedItem(null);
-    setDraggedOverItem({
-      ID: null,
-      PAGE_ID: null,
-    });
   }
 
   function handleDragEnter(e, hoveredOverItem) {
@@ -237,7 +255,6 @@ const FoldersList = ({
 
     if (!dragToggled || inputPosition.referenceId !== itemFromList.ID)
       className += " hoverable";
-
 
     if (
       itemFromList.SELECTED ||
@@ -293,25 +310,16 @@ const FoldersList = ({
       indexAfterAddingPages += pagesInFolder.length + 1;
     });
 
-
     pagesAndFolders.push(...pagesInRoot);
 
     pagesAndFolders = pagesAndFolders.map((item, i) => {
       return {
         ...item,
-        ORDER: i
+        ORDER: i,
       };
     });
     dispatch(setCombined(pagesAndFolders));
   }, [folders.list, pages.list]);
-
-  // useEffect(() => {
-  //   console.log("Folders")
-  // }, [folders.list])
-
-  // useEffect(() => {
-  //   console.log("Pages")
-  // }, [pages.list])
 
   return (
     <div className={`folders-list ${inputPosition.referenceId === 0 ? "selected" : ""}`}>
@@ -332,6 +340,7 @@ const FoldersList = ({
           return (
             <div
               draggable={item.IS_PAGE}
+              title={`${item.IS_PAGE ? "Page: " : "Folder: "} ${item.NAME}`}
               onDragStart={(e) => handleDragStart(e, item)}
               onDragEnter={(e) => handleDragEnter(e, item)}
               onDrop={(e) => handleDrop(e, grabbedItem, item)}
@@ -399,18 +408,20 @@ const FoldersList = ({
                       />
                     </form>
                   ) : (
-                    <p>{item.NAME}</p>
+                    <p>{item.PAGE_ID || item.ID} {item.NAME}</p>
                   )}
                 </div>
                 {item.TAGS && tags.list && (
                   <div className="tags">
                     {item.TAGS.map((tagId, index) => {
                       const tag = tags.list?.find((tag) => tag.ID === tagId);
-                      if (!tag) return <span style={{ backgroundColor: 'yellow' }} key={index} title={tagId}>
-                      &nbsp;
-                    </span>
                       return (
-                        <span style={{ backgroundColor: tag.COLOR }} key={index} title={`Color: ${tag.COLOR}`}>
+                        <span
+                          className="tag-color"
+                          style={{ backgroundColor: tag.COLOR_CODE }}
+                          key={index}
+                          title={tag.NAME}
+                        >
                           &nbsp;
                         </span>
                       );

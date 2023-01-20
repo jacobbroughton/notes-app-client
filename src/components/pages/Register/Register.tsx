@@ -1,6 +1,8 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import Input from "../../ui/Input/Input";
+import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+
 import "./Register.css";
 
 const Login = () => {
@@ -13,7 +15,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const result = await fetch("http://localhost:3001/register", {
+      const response = await fetch("http://localhost:3001/register", {
         method: "post",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -24,21 +26,22 @@ const Login = () => {
           password,
         }),
       });
-      const data = await result.json();
 
-      if (data) {
-        console.log(data)
-        // setSearchParams({ redirectedFrom: 'register', message: 'Your account has been created, please log in', isError: 'false' })
-        navigate({
-          pathname: '/login',
-          search: `?redirectedFrom=register&message=Account '${username}' has been created&status=success`
-        });
-      }
-    } catch (err) {
-      console.log(err);
+      if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+      const result = await response.json();
+
+      if (!result) throw "There was a problem registering user";
+
+      navigate({
+        pathname: "/login",
+        search: `?redirectedFrom=register&message=Account '${username}' has been created&status=success`,
+      });
+    } catch (error) {
+      console.log(error);
     }
   }
-  
+
   return (
     <div className="register-view">
       <h1>Register</h1>
@@ -67,8 +70,9 @@ const Login = () => {
         />
         <button type="submit">Submit</button>
       </form>
-      <p>Already have an account? <Link to='/login'>Sign in</Link></p>
-          
+      <p>
+        Already have an account? <Link to="/login">Sign in</Link>
+      </p>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import "./Navbar.css";
 import { FormEvent } from "react";
+import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 
 const Navbar = () => {
   const navDropdownRef = useRef(null);
@@ -14,7 +15,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
   const [navDropdownToggled, setNavDropdownToggled] = useState(false);
-
 
   useEffect(() => {
     function handler(e) {
@@ -37,14 +37,23 @@ const Navbar = () => {
   async function handleLogout(e: FormEvent) {
     e.preventDefault();
 
-    const result = await fetch("http://localhost:3001/logout", {
-      credentials: "include",
-    });
-    const data = await result.json();
+    try {
+      const response = await fetch("http://localhost:3001/logout", {
+        credentials: "include",
+      });
 
-    dispatch(setUser(null));
-    setNavDropdownToggled(false);
-    navigate("/login");
+      if (response.status !== 200) throwResponseStatusError(response, "GET");
+
+      const data = await response.json();
+
+      if (!data) throw "There was a problem parsing logout response";
+
+      dispatch(setUser(null));
+      setNavDropdownToggled(false);
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -61,7 +70,9 @@ const Navbar = () => {
                 }}
                 className="nav-dropdown-toggle"
               >
-                <img src={`https://avatars.dicebear.com/api/initials/${user.USERNAME}.svg?backgroundColor=%23646cff`}/>
+                <img
+                  src={`https://avatars.dicebear.com/api/initials/${user.USERNAME}.svg?backgroundColor=%23646cff`}
+                />
                 {user.USERNAME[0].toUpperCase() +
                   user.USERNAME.slice(1, user.USERNAME.length)}{" "}
                 <DownCaret direction={navDropdownToggled ? "up" : "down"} />

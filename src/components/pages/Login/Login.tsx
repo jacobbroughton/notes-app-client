@@ -3,6 +3,7 @@ import { setUser } from "../../../redux/user";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Input from "../../ui/Input/Input";
+import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import "./Login.css";
 
 const Login = () => {
@@ -18,35 +19,39 @@ const Login = () => {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    const result = await fetch("http://localhost:3001/login", {
-      method: "post",
-      headers: {
-        "content-type": "application/json;charset=UTF-8",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
-    const data = await result.json();
-    if (data.user) {
-      if (loginError) setLoginError("")
+    try {
+      const response = await fetch("http://localhost:3001/login", {
+        method: "post",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+      const data = await response.json();
+      
+      if (!data) throw 'There was a problem parsing login response'
+
+      if (!data.user) {
+        setLoginError(data.message);
+        setTimeout(() => {
+          setLoginError("");
+        }, 5000);
+      }
+
+      if (loginError) setLoginError("");
       dispatch(setUser(data.user));
       navigate("/");
-    } else {
-      setLoginError(data.message);
-      setTimeout(() => {
-        setLoginError("")
-      }, 5000)
+    } catch (error) {
+      console.log(error);
     }
   }
-
-  useEffect(() => {
-    console.log(searchParams.get("redirectedFrom"));
-    console.log(searchParams.get("message"));
-    console.log(searchParams.get("isError"));
-  }, [searchParams]);
 
   return (
     <div className="login-view">
@@ -55,7 +60,7 @@ const Login = () => {
           <p>{searchParams.get("message")}</p>
         </div>
       )}
-      {loginError && <div className='login-error'>{loginError}</div>}
+      {loginError && <div className="login-error">{loginError}</div>}
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <input
@@ -80,7 +85,9 @@ const Login = () => {
         />
         <button type="submit">Submit</button>
       </form>
-      <p>New here? <Link to='/register'>Create an account</Link></p>
+      <p>
+        New here? <Link to="/register">Create an account</Link>
+      </p>
     </div>
   );
 };

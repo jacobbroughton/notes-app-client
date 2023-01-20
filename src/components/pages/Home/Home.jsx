@@ -2,7 +2,13 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../../redux/user";
-import { updatePage, setPageModified, selectPage, setPages } from "../../../redux/pages";
+import {
+  updatePage,
+  setPageModified,
+  selectPage,
+  setPages,
+  setPageStagedForSwitch,
+} from "../../../redux/pages";
 import { selectFolder, setFolders } from "../../../redux/folders";
 import { toggleModal } from "../../../redux/modals";
 import { getElapsedTime } from "../../../utils/getElapsedTime";
@@ -13,6 +19,8 @@ import { DeleteModal } from "../../ui/DeleteModal/DeleteModal";
 import "./Home.css";
 import TagsModal from "../../ui/TagsModal/TagsModal";
 import { setTags, setColorOptions } from "../../../redux/tags";
+import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
+import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,10 +44,10 @@ const Home = () => {
   }
 
   async function testApi() {
-    const result = await fetch("http://localhost:3001", {
+    const response = await fetch("http://localhost:3001", {
       credentials: "include",
     });
-    const data = await result.json();
+    const data = await response.json();
     if (data.user && !user) {
       dispatch(setUser(data.user));
       setLoading(false);
@@ -53,10 +61,16 @@ const Home = () => {
         method: "GET",
         credentials: "include",
       });
+
+      if (foldersResponse.status !== 200)
+        throwResponseStatusError(foldersResponse, "GET");
+
       let pagesResponse = await fetch("http://localhost:3001/pages", {
         method: "GET",
         credentials: "include",
       });
+
+      if (pagesResponse.status !== 200) throwResponseStatusError(pagesResponse, "GET");
 
       let foldersData = await foldersResponse.json();
       let pagesData = await pagesResponse.json();
@@ -66,116 +80,134 @@ const Home = () => {
 
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async function getTags() {
     try {
-      let tagsResponse = await fetch("http://localhost:3001/tags", {
+      let response = await fetch("http://localhost:3001/tags", {
         method: "GET",
         credentials: "include",
       });
-      let tagsData = await tagsResponse.json();
+
+      if (response.status !== 200) throwResponseStatusError(response, "GET");
+
+      let tagsData = await response.json();
       dispatch(setTags(tagsData.tags));
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async function getColorOptions() {
     try {
-      let colorOptionsResponse = await fetch("http://localhost:3001/tags/color-options", {
+      let response = await fetch("http://localhost:3001/tags/color-options", {
         method: "GET",
         credentials: "include",
       });
-      let colorOptionsData = await colorOptionsResponse.json();
+
+      if (response.status !== 200) throwResponseStatusError(response, "GET");
+
+      let colorOptionsData = await response.json();
       dispatch(
         setColorOptions({
           defaultOptions: colorOptionsData.defaultOptions,
           userCreatedOptions: colorOptionsData.userCreatedOptions,
         })
       );
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    console.log({ title, body });
-
-    if (!title) {
-      bodyFieldRef.current?.blur();
-      titleFieldRef.current?.focus();
-      clearTimeout(noTitleWarningTimeout);
-      setNoTitleWarningToggled(true);
-      return;
-    }
-
-    fetch("http://localhost:3001/pages/edit", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "content-type": "application/json;charset=UTF-8",
-      },
-      body: JSON.stringify({
-        pageId: pages.active?.PAGE_ID,
-        title,
-        body,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        clearTimeout(noTitleWarningTimeout);
-        setNoTitleWarningToggled(false);
-        dispatch(updatePage(data.modifiedPage));
-        dispatch(setPageModified(false));
-        if (modals.unsavedWarningVisible) {
-          dispatch(selectPage(pages.staged));
-          dispatch(selectFolder(null));
-          dispatch(toggleModal("unsavedWarning"));
-        }
-      })
-      .catch((err) => console.log(err));
-  }
-
-  function handleNewPageSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    if (!title) {
-      bodyFieldRef.current?.blur();
-      titleFieldRef.current?.focus();
-      clearTimeout(noTitleWarningTimeout);
-      setNoTitleWarningToggled(true);
-      return;
-    }
-
-    console.log(body === null);
-
-    fetch("http://localhost:3001/pages/new", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "content-type": "application/json;charset=UTF-8",
-      },
-      body: JSON.stringify({
-        parentFolderId: null,
-        newPageName: title,
-        newPageBody: body || "",
-      }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
+    try {
+      if (!title) {
+        bodyFieldRef.current?.blur();
+        titleFieldRef.current?.focus();
         clearTimeout(noTitleWarningTimeout);
-        setNoTitleWarningToggled(false);
-        getData();
-        setTitle("");
-        setBody("");
-      })
-      .catch((err) => console.log(err));
+        setNoTitleWarningToggled(true);
+        return;
+      }
+
+      const response = await fetch("http://localhost:3001/pages/edit", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          pageId: pages.active?.PAGE_ID,
+          title,
+          body,
+        }),
+      });
+
+      if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+      const data = await response.json();
+
+      clearTimeout(noTitleWarningTimeout);
+      setNoTitleWarningToggled(false);
+      dispatch(updatePage(data.modifiedPage));
+      dispatch(setPageModified(false));
+
+      if (modals.unsavedWarningVisible) {
+        dispatch(selectPage(pages.stagedToSwitch));
+        dispatch(setPageStagedForSwitch(null));
+        dispatch(selectFolder(null));
+        dispatch(toggleModal("unsavedWarning"));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
+
+  async function handleNewPageSubmit(e) {
+    e.preventDefault();
+
+    try {
+      if (!title) {
+        bodyFieldRef.current?.blur();
+        titleFieldRef.current?.focus();
+        clearTimeout(noTitleWarningTimeout);
+        setNoTitleWarningToggled(true);
+        return;
+      }
+
+      const response = await fetch("http://localhost:3001/pages/new", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify({
+          parentFolderId: null,
+          newPageName: title,
+          newPageBody: body || "",
+        }),
+      });
+      
+      if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+      const result = await response.json();
+
+      if (!result) throw "There was an error adding the page";
+
+      clearTimeout(noTitleWarningTimeout);
+      setNoTitleWarningToggled(false);
+      getData();
+      setTitle("");
+      setBody("");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   function handleKeyDown(e) {
     if (document.activeElement === bodyFieldRef.current) {
       if (e.keyCode === 9) {
@@ -309,7 +341,12 @@ const Home = () => {
               <button onClick={handleSubmit} className="save-btn">
                 Save Changes
               </button>
-              <button onClick={() => dispatch(toggleModal("unsavedWarning"))}>
+              <button
+                onClick={() => {
+                  dispatch(setPageStagedForSwitch(null));
+                  dispatch(toggleModal("unsavedWarning"));
+                }}
+              >
                 Cancel
               </button>
             </div>
@@ -318,6 +355,7 @@ const Home = () => {
       )}
       {modals.deleteModalVisible && <DeleteModal />}
       {modals.tagsModalVisible && <TagsModal />}
+      <OpenPageNavigation />
       {!pages.active && (
         <form className="editor-form" onSubmit={handleNewPageSubmit}>
           <div className="heading">
@@ -358,20 +396,6 @@ const Home = () => {
       )}
       {pages.active && (
         <form className="editor-form" onSubmit={handleSubmit}>
-          {determinePath(pages.active).length !== 0 && (
-            <div className="page-path">
-              {determinePath(pages.active).map((folder, i) => (
-                <div className="folder-name-and-divider" key={i}>
-                  <p>{folder.NAME}</p>
-                  <span className="path-divider">&nbsp;&gt;&nbsp;</span>
-                </div>
-              ))}
-              <div className="current-page">
-                <PageIcon />
-                <p>{pages.active.NAME}</p>
-              </div>
-            </div>
-          )}
           <div className="heading">
             {noTitleWarningToggled && (
               <div className="no-title-warning">
@@ -405,6 +429,20 @@ const Home = () => {
             data-gramm_editor="false"
             data-enable-grammarly="false"
           />
+          {determinePath(pages.active).length !== 0 && (
+            <div className="page-path">
+              {determinePath(pages.active).map((folder, i) => (
+                <div className="folder-name-and-divider" key={i}>
+                  <p>{folder.NAME}</p>
+                  <span className="path-divider">&nbsp;&gt;&nbsp;</span>
+                </div>
+              ))}
+              <div className="current-page">
+                <PageIcon />
+                <p>{pages.active.NAME}</p>
+              </div>
+            </div>
+          )}
         </form>
       )}
       {/* <div>Excel-like page selector here</div> */}

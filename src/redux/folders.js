@@ -16,17 +16,21 @@ const foldersSlice = createSlice({
     setFolders: (state, { payload }) => {
 
       const folders = payload.map(folder => {
+        const TAGS = folder.TAGS ? folder.TAGS.split(',').map(tag => parseInt(tag)) : []
+
+        TAGS.sort((a, b) => a > b ? 1 : -1)
+
         return {
           ...folder,
           IS_PAGE: false,
-          TAGS: folder.TAGS ? folder.TAGS.split(',').map(tag => parseInt(tag)) : []
+          TAGS
         }
       })
 
       return {
         ...state,
         list: folders,
-        selected: folders.find(folder => folder.SELECTED)
+        selected: folders.find(folder => folder.SELECTED) || null
       };
     },
     setExpandedStatus: (state, { payload }) => {
@@ -163,31 +167,98 @@ const foldersSlice = createSlice({
     addTagToFolder: (state, { payload }) => {
       const { item, tag } = payload
 
+      let childFolderIds = []
+
+      function getChildren(folderIdToCheck) {
+
+        childFolderIds.push(folderIdToCheck)
+
+        const children = current(state).list.filter(folder => folder.PARENT_FOLDER_ID === folderIdToCheck).map(folder => folder.ID)
+
+        if (children.length === 0) return
+
+        children.forEach(folderId => getChildren(folderId))
+      }
+
+      getChildren(item.ID)
+
+      let selectedFolderTags = [...state.selected.TAGS]
+
+      if (state.selected.ID === item.ID && !state.selected.TAGS.includes(tag.ID)) {
+        selectedFolderTags = [...selectedFolderTags, tag.ID]
+        selectedFolderTags.sort((a, b) => a > b ? 1 : -1)
+      }
+
       return {
         ...state,
         list: state.list.map(folder => {
 
+          const isSameFolder = folder.ID === item.ID
+
+          let TAGS = [...folder.TAGS, tag.ID]
+          TAGS.sort((a, b) => a > b ? 1 : -1)
+
+
           return {
             ...folder,
-            ...(folder.ID === item.ID && !folder.TAGS.includes(tag.ID) && {
-              TAGS: [...folder.TAGS, tag.ID]
+            ...((isSameFolder || childFolderIds.includes(folder.ID)) && !folder.TAGS.includes(tag.ID) && {
+              TAGS
             }),
-            ...(folder.ID === item.ID && folder.TAGS.includes(tag.ID) && {
-              TAGS: folder.TAGS.filter(innerTag => innerTag !== tag.ID)
-            })
           }
         }),
         selected: {
           ...state.selected,
-          ...(!state.selected.TAGS.includes(tag.ID) && {
-            TAGS: [...state.selected.TAGS, tag.ID]
-          }),
-          ...(state.selected.TAGS.includes(tag.ID) && {
-            TAGS: state.selected.TAGS.filter(innerTag => innerTag !== tag.ID)
+          TAGS: selectedFolderTags
+        }
+      }
+    },
+    removeTagFromFolder: (state, { payload }) => {
+      const { item, tag } = payload
+
+      const removeTag = (folder, tagId) => folder.TAGS.filter(innerTag => innerTag !== tagId)
+
+      let childFolderIds = []
+
+      function getChildren(folderIdToCheck) {
+
+        childFolderIds.push(folderIdToCheck)
+
+        const children = current(state).list.filter(folder => folder.PARENT_FOLDER_ID === folderIdToCheck).map(folder => folder.ID)
+
+        if (children.length === 0) return
+
+        children.forEach(folderId => getChildren(folderId))
+      }
+
+      getChildren(item.ID)
+
+      return {
+        ...state,
+        list: state.list.map(folder => {
+          return {
+            ...folder,
+            ...(folder.ID === item.ID && {
+              TAGS: removeTag(folder, tag.ID)
+            }),
+            ...(childFolderIds.includes(folder.ID) && {
+              TAGS: removeTag(folder, tag.ID)
+            })
+          }
+        }),
+        active: {
+          ...state.active,
+          ...(state.active?.ID === item.ID && {
+            TAGS: removeTag(state.active, tag.ID)
+          })
+        },
+        selected: {
+          ...state.selected,
+          ...(state.selected?.ID === item.ID && {
+            TAGS: removeTag(state.selected, tag.ID)
           })
         }
       }
-    }
+    },
   },
 });
 
@@ -201,6 +272,7 @@ export const {
   setFolderEffStatus,
   setStagedFolderToDelete,
   renameFolder,
-  addTagToFolder
+  addTagToFolder,
+  removeTagFromFolder
 } = foldersSlice.actions;
 export default foldersSlice.reducer;
