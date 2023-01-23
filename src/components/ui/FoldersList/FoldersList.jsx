@@ -129,11 +129,11 @@ const FoldersList = ({
   }
 
   function handlePageClick(page) {
-    if (pages.active?.IS_MODIFIED) {
-      if (!pages.stagedToSwitch) dispatch(setPageStagedForSwitch(page));
-      dispatch(toggleModal("unsavedWarning"));
-      return;
-    }
+    // if (pages.active?.IS_MODIFIED) {
+    //   if (!pages.stagedToSwitch) dispatch(setPageStagedForSwitch(page));
+    //   dispatch(toggleModal("unsavedWarning"));
+    //   return;
+    // }
     dispatch(selectPage(page));
     dispatch(selectFolder(null));
     setInputPosition({
@@ -253,8 +253,9 @@ const FoldersList = ({
   function determineFolderContainerClass(itemFromList) {
     let className = "folder-container";
 
-    if (!dragToggled || inputPosition.referenceId !== itemFromList.ID)
+    if (!dragToggled || inputPosition.referenceId !== itemFromList.ID) {
       className += " hoverable";
+    }
 
     if (
       itemFromList.SELECTED ||
@@ -282,6 +283,30 @@ const FoldersList = ({
     }
 
     return className;
+  }
+
+  function handleItemClick(e, item) {
+    if (e.shiftKey) {
+      if (sidebar.shiftClickItems.start !== null) {
+        dispatch(
+          setShiftClickItems({
+            ...sidebar.shiftClickItems,
+            end: item.ORDER,
+            list: combined,
+          })
+        );
+      }
+    } else {
+      dispatch(
+        setShiftClickItems({
+          start: item.ORDER,
+          end: null,
+          list: combined,
+        })
+      );
+      if (!item.IS_PAGE) handleFolderClick(item, true);
+      if (item.IS_PAGE) handlePageClick(item);
+    }
   }
 
   useEffect(() => {
@@ -318,6 +343,7 @@ const FoldersList = ({
         ORDER: i,
       };
     });
+    
     dispatch(setCombined(pagesAndFolders));
   }, [folders.list, pages.list]);
 
@@ -353,29 +379,7 @@ const FoldersList = ({
               }}
               key={index}
               onContextMenu={(e) => handleOnContextMenu(e, item)}
-              onClick={(e) => {
-                if (e.shiftKey) {
-                  if (sidebar.shiftClickItems.start !== null) {
-                    dispatch(
-                      setShiftClickItems({
-                        ...sidebar.shiftClickItems,
-                        end: item.ORDER,
-                        list: combined,
-                      })
-                    );
-                  }
-                } else {
-                  dispatch(
-                    setShiftClickItems({
-                      start: item.ORDER,
-                      end: null,
-                      list: combined,
-                    })
-                  );
-                  if (!item.IS_PAGE) handleFolderClick(item, true);
-                  if (item.IS_PAGE) handlePageClick(item);
-                }
-              }}
+              onClick={(e) => handleItemClick(e, item)}
             >
               <div className="tier-blocks">
                 {[...Array(item.TIER)].map((tierNum, index) => (
@@ -408,7 +412,9 @@ const FoldersList = ({
                       />
                     </form>
                   ) : (
-                    <p>{item.PAGE_ID || item.ID} {item.NAME}</p>
+                    <p>
+                      {item.PAGE_ID || item.ID} {item.NAME}
+                    </p>
                   )}
                 </div>
                 {item.TAGS && tags.list && (

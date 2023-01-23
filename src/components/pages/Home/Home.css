@@ -132,6 +132,7 @@
 
 .home-view .heading .no-title-warning {
     background: var(--secondary-bg);
+    color: var(--color-text-primary);
     border: crimson 1px solid;
     border-radius: 3px;
     position: absolute;

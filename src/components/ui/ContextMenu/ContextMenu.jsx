@@ -23,7 +23,7 @@ const ContextMenu = forwardRef(
 
           return (
             <button onClick={handleClick} key={index} className='context-menu-button'>
-              <span>{button.text}</span> <span>{button.icon}</span>
+              <span>{button.text}</span> <span className='icon'>{button.icon}</span>
             </button>
           );
         })}

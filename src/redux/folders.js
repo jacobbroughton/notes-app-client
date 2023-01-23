@@ -23,7 +23,7 @@ const foldersSlice = createSlice({
         return {
           ...folder,
           IS_PAGE: false,
-          TAGS
+          TAGS,
         }
       })
 

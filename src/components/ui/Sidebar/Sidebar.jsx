@@ -87,7 +87,7 @@ function Sidebar() {
 
       const data = await response.json();
 
-      if (!data) throw 'There was an issue parsing /tags/new response'
+      if (!data) throw "There was an issue parsing /tags/new response";
 
       setInputPosition({
         referenceId: null,
@@ -256,7 +256,7 @@ function Sidebar() {
       if (!pagesData) throw "There was an issue parsing /pages response";
 
       let formattedFolders = formatFolders(foldersData.folders, folders.list, pages.list);
-      let formattedPages = formatPages(pagesData.pages, formattedFolders);
+      let formattedPages = formatPages(pagesData.pages, formattedFolders, pages.list);
 
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
@@ -281,7 +281,8 @@ function Sidebar() {
   }, [inputPosition.toggled]);
 
   useEffect(() => {
-    dispatch(setPages(formatPages(pages?.list, folders?.list)));
+    console.log(pages?.list);
+    dispatch(setPages(formatPages(pages?.list, folders?.list, pages.list)));
   }, [folders.list]);
 
   useEffect(() => {
@@ -544,7 +545,7 @@ function Sidebar() {
         item={pages.active || folders.selected}
         toggled={contextMenu.toggled}
         positionX={contextMenu.position.x}
-        positionY={contextMenu.position.y}
+        positionY={contextMenu.position.y - 15}
         ref={contextMenuRef}
         buttons={[
           {
@@ -566,7 +567,7 @@ function Sidebar() {
           },
           {
             text: "Rename",
-            icon: "",
+            icon: "abc",
             active:
               sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,
             onClick: handleRename,

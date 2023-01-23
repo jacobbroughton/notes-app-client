@@ -1,20 +1,17 @@
-import { useSelector, useDispatch } from "react-redux";
-import XIcon from "../Icons/XIcon";
-import "./OpenPageNavigation.css";
-import { selectPage, setPageClosed } from "../../../redux/pages";
+import { useSelector } from "react-redux";
 import OpenPageButton from "../OpenPageButton/OpenPageButton";
+import "./OpenPageNavigation.css";
 
 const OpenPageNavigation = () => {
   const pages = useSelector((state) => state.pages);
-  const dispatch = useDispatch();
 
-  const openOrActivePages = pages.list.filter((page) => page.OPEN);
+  const openPages = pages.list.filter((page) => page.OPEN);
 
   return (
     <div className="open-page-navigation">
-      {openOrActivePages.length === 0 && <OpenPageButton page={null} />}
-      {openOrActivePages.map((page, key) => (
-        <OpenPageButton page={page} key={key}/>
+      {openPages.length === 0 && <OpenPageButton page={null} />}
+      {openPages.map((page, key) => (
+        <OpenPageButton page={page} key={key} />
       ))}
     </div>
   );

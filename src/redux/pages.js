@@ -7,16 +7,27 @@ const pagesSlice = createSlice({
     selected: null,
     active: null,
     stagedToSwitch: null,
-    stagedToDelete: null
+    stagedToDelete: null,
+    untitledPage: {
+      TITLE: '',
+      BODY: ''
+    }
   },
   reducers: {
     setPages: (state, { payload }) => {
 
       const pages = payload.map(page => {
+
+        const existingPage = state.list.find(innerPage => innerPage.PAGE_ID === page.PAGE_ID)
+
         return {
           ...page,
           IS_PAGE: true,
           SELECTED: page.SELECTED,
+          DRAFT_TITLE: existingPage?.DRAFT_TITLE || page.TITLE,
+          DRAFT_BODY: existingPage?.DRAFT_BODY || page.BODY,
+          OPEN: page.OPEN || false,
+          ACTIVE: page.ACTIVE || false
         }
       })
 
@@ -27,12 +38,13 @@ const pagesSlice = createSlice({
       };
     },
     setPageEffStatus: (state, { payload: pageId }) => {
+
       return {
         ...state,
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === pageId && { EFF_STATUS: 0, SELECTED: false }),
+            ...(page.PAGE_ID === pageId && { EFF_STATUS: 0, SELECTED: false, OPEN: false }),
           };
         }),
         selected: null,
@@ -92,6 +104,9 @@ const pagesSlice = createSlice({
       };
     },
     setPageModified: (state, { payload }) => {
+
+
+
       return {
         ...state,
         active: {
@@ -261,7 +276,68 @@ const pagesSlice = createSlice({
         active: openPages[0],
         selected: openPages[0]
       }
-    }
+    },
+    setPageDraftTitle: (state, { payload }) => {
+
+      const { page: affectedPage, draftTitle } = payload
+
+      return {
+        ...state,
+        list: state.list.map(page => {
+          return {
+            ...page,
+            ...(page.PAGE_ID === affectedPage.PAGE_ID && { DRAFT_TITLE: draftTitle }),
+          }
+        }),
+        active: {
+          ...state.active,
+          DRAFT_TITLE: draftTitle
+        }
+      }
+    },
+    setPageDraftBody: (state, { payload }) => {
+
+      const { page: affectedPage, draftBody } = payload
+
+      return {
+        ...state,
+        list: state.list.map(page => {
+          return {
+            ...page,
+            ...(page.PAGE_ID === affectedPage.PAGE_ID && { DRAFT_BODY: draftBody }),
+
+          }
+        }),
+        active: {
+          ...state.active,
+          DRAFT_BODY: draftBody
+        }
+      }
+    },
+    setUntitledPageBody: (state, { payload }) => {
+      return {
+        ...state,
+        untitledPage: {
+          ...state.untitledPage,
+          BODY: payload
+        }
+      }
+    },
+    setUntitledPageTitle: (state, { payload }) => {
+      return {
+        ...state,
+        untitledPage: {
+          ...state.untitledPage,
+          TITLE: payload
+        }
+      }
+    },
+    // setUnsavedPageTitle: (state, {payload}) => {
+    //   return {
+    //     ...state,
+
+    //   }
+    // }
   },
 });
 
@@ -279,5 +355,9 @@ export const {
   renamePage,
   addTagToPage,
   removeTagFromPage,
-  setPageClosed
+  setPageClosed,
+  setPageDraftTitle,
+  setPageDraftBody,
+  setUntitledPageBody,
+  setUntitledPageTitle
 } = pagesSlice.actions;

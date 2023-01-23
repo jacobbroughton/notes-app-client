@@ -3,11 +3,7 @@
  * @param {array} existingFolders Folders from state,
  * @param {array} existingPages Pages from state,
  */
-export const formatFolders = (updatedFolders, existingFolders, existingPages) => {
-
-  if (!updatedFolders) updatedFolders = []
-  if (!existingFolders) existingFolders = []
-  if (!existingPages) existingPages = []
+export const formatFolders = (updatedFolders = [], existingFolders = []) => {
 
   return updatedFolders?.map((folder) => {
     let existingFolderThatMatches = existingFolders?.find(
@@ -52,9 +48,7 @@ export const formatFolders = (updatedFolders, existingFolders, existingPages) =>
   });
 };
 
-export const formatPages = (pages, formattedFolders) => {
-  if (!pages) pages = []
-  if (!formattedFolders) formattedFolders = []
+export const formatPages = (pages = [], formattedFolders = [], existingPages = []) => {
 
   return pages?.map((page) => {
     let pageFolder = formattedFolders.find((folder) => folder.ID === page.FOLDER_ID);
@@ -69,12 +63,19 @@ export const formatPages = (pages, formattedFolders) => {
 
     if (page.FOLDER_ID === null) VISIBLE = true
 
+    const existingPage = existingPages.find(existingPage => existingPage.PAGE_ID === page.PAGE_ID)
+
+    console.log(existingPage)
+
     return {
       ...page,
       IS_PAGE: true,
       TIER: pageFolder ? pageFolder.TIER + 1 : 1,
       VISIBLE,
-      SELECTED: page.SELECTED ? page.SELECTED : false
+      SELECTED: page.SELECTED ? page.SELECTED : false,
+      DRAFT_TITLE: existingPage?.DRAFT_TITLE !== page.TITLE ? page.DRAFT_TITLE : page.TITLE,
+      DRAFT_BODY: existingPage?.DRAFT_BODY !== page.BODY ? page.DRAFT_BODY : page.BODY,
+      OPEN: existingPage?.OPEN ? true : false
     };
   });
 };

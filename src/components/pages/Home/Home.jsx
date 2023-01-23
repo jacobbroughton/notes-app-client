@@ -8,6 +8,10 @@ import {
   selectPage,
   setPages,
   setPageStagedForSwitch,
+  setPageDraftBody,
+  setPageDraftTitle,
+  setUntitledPageBody,
+  setUntitledPageTitle,
 } from "../../../redux/pages";
 import { selectFolder, setFolders } from "../../../redux/folders";
 import { toggleModal } from "../../../redux/modals";
@@ -40,7 +44,11 @@ const Home = () => {
   let pageModified = false;
 
   if (pages.active) {
-    if (pages.active.BODY !== body || title !== pages.active?.TITLE) pageModified = true;
+    if (
+      pages.active.BODY !== pages.active.DRAFT_BODY ||
+      pages.active?.TITLE !== pages.active.DRAFT_TITLE
+    )
+      pageModified = true;
   }
 
   async function testApi() {
@@ -55,25 +63,39 @@ const Home = () => {
     if (!data.user) navigate("/login");
   }
 
+  async function getFolders() {
+    return await fetch("http://localhost:3001/folders", {
+      method: "GET",
+      credentials: "include",
+    });
+  }
+
+  async function getPages() {
+    return await fetch("http://localhost:3001/pages", {
+      method: "GET",
+      credentials: "include",
+    });
+  }
+
   async function getData() {
     try {
-      let foldersResponse = await fetch("http://localhost:3001/folders", {
-        method: "GET",
-        credentials: "include",
-      });
+      // const [foldersResponse, pagesResponse] = Promise.allSettled([
+      //   getFolders(),
+      //   getPages(),
+      // ]);
+
+      const foldersResponse = await getFolders();
+      const pagesResponse = await getPages();
 
       if (foldersResponse.status !== 200)
         throwResponseStatusError(foldersResponse, "GET");
 
-      let pagesResponse = await fetch("http://localhost:3001/pages", {
-        method: "GET",
-        credentials: "include",
-      });
-
       if (pagesResponse.status !== 200) throwResponseStatusError(pagesResponse, "GET");
 
-      let foldersData = await foldersResponse.json();
-      let pagesData = await pagesResponse.json();
+      const foldersData = await foldersResponse.json();
+      const pagesData = await pagesResponse.json();
+
+      // const [foldersData, pagesData] = Promise.allSettled([foldersResponse.json(), pagesResponse.json()]);
 
       let formattedFolders = formatFolders(foldersData.folders, folders.list, pages.list);
       let formattedPages = formatPages(pagesData.pages, formattedFolders);
@@ -126,7 +148,8 @@ const Home = () => {
     e.preventDefault();
 
     try {
-      if (!title) {
+      console.log(pages.active.DRAFT_TITLE);
+      if (!pages.active.DRAFT_TITLE) {
         bodyFieldRef.current?.blur();
         titleFieldRef.current?.focus();
         clearTimeout(noTitleWarningTimeout);
@@ -142,8 +165,8 @@ const Home = () => {
         },
         body: JSON.stringify({
           pageId: pages.active?.PAGE_ID,
-          title,
-          body,
+          title: pages.active.DRAFT_TITLE,
+          body: pages.active.DRAFT_BODY,
         }),
       });
 
@@ -169,9 +192,9 @@ const Home = () => {
 
   async function handleNewPageSubmit(e) {
     e.preventDefault();
-
     try {
-      if (!title) {
+      console.log(pages);
+      if (!pages.untitledPage.TITLE) {
         bodyFieldRef.current?.blur();
         titleFieldRef.current?.focus();
         clearTimeout(noTitleWarningTimeout);
@@ -187,11 +210,11 @@ const Home = () => {
         },
         body: JSON.stringify({
           parentFolderId: null,
-          newPageName: title,
-          newPageBody: body || "",
+          newPageName: pages.untitledPage.TITLE.trim(),
+          newPageBody: pages.untitledPage.BODY.trim() || "",
         }),
       });
-      
+
       if (response.status !== 200) throwResponseStatusError(response, "POST");
 
       const result = await response.json();
@@ -201,8 +224,12 @@ const Home = () => {
       clearTimeout(noTitleWarningTimeout);
       setNoTitleWarningToggled(false);
       getData();
-      setTitle("");
-      setBody("");
+      // setTitle("");
+      // setBody("");
+      // dispatch(setPageDraftTitle(""));
+      // dispatch(setPageDraftBody(""));
+      dispatch(setUntitledPageTitle(""));
+      dispatch(setUntitledPageBody(""));
     } catch (error) {
       console.log(error);
     }
@@ -216,7 +243,8 @@ const Home = () => {
           body.slice(0, e.selectionStart) +
           " " +
           body.slice(e.selectionStart, body.length - 1);
-        setBody(newBody);
+        // setBody(newBody);
+        dispatch(setPageDraftBody(newBody));
       }
     }
     if (
@@ -230,15 +258,25 @@ const Home = () => {
     }
   }
 
-  function handleBodyChange(e) {
+  function handleBodyChange(e, isForUnsaved) {
     e.preventDefault();
-    setBody(e.target.value);
+    // setBody(e.target.value);
+    if (isForUnsaved) {
+      dispatch(setUntitledPageBody(e.target.value));
+    } else {
+      dispatch(setPageDraftBody({ page: pages.active, draftBody: e.target.value }));
+    }
   }
 
-  function handleTitleChange(e) {
+  function handleTitleChange(e, isForUnsaved) {
     e.preventDefault();
 
-    setTitle(e.target.value);
+    // setTitle(e.target.value);
+    if (isForUnsaved) {
+      dispatch(setUntitledPageTitle(e.target.value));
+    } else {
+      dispatch(setPageDraftTitle({ page: pages.active, draftTitle: e.target.value }));
+    }
   }
 
   function determineSavedStatus() {
@@ -292,11 +330,13 @@ const Home = () => {
     } else if (pages.active?.NAME) {
       newTitle = pages.active?.NAME;
     }
-    setTitle(newTitle);
 
-    const newBody = pages.active?.BODY || "";
-
-    setBody(newBody);
+    // if (pages.active) {
+    //   dispatch(setPageDraftTitle({ page: pages.active, draftTitle: newTitle }));
+    //   dispatch(
+    //     setPageDraftBody({ page: pages.active, draftBody: pages.active?.BODY || "" })
+    //   );
+    // }
 
     return () => {
       if (pages.active?.IS_MODIFIED) dispatch(toggleModal("unsavedWarning"));
@@ -305,22 +345,28 @@ const Home = () => {
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
-    if (title && noTitleWarningToggled) {
-      clearTimeout(noTitleWarningTimeout);
-      setNoTitleWarningToggled(false);
-    }
     if (pages.active) {
-      dispatch(
-        setPageModified(body !== pages.active?.BODY || title !== pages.active?.TITLE)
-      );
+      if (title && noTitleWarningToggled) {
+        clearTimeout(noTitleWarningTimeout);
+        setNoTitleWarningToggled(false);
+      }
+
+      const isModified =
+        pages.active.DRAFT_BODY !== pages.active?.BODY ||
+        pages.active.DRAFT_TITLE !== pages.active?.TITLE;
+
+      dispatch(setPageModified(isModified));
     }
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [body, title]);
-
-  // useEffect(() => {});
+  }, [
+    pages.active?.DRAFT_TITLE,
+    pages.active?.DRAFT_BODY,
+    pages.untitledPage.BODY,
+    pages.untitledPage.TITLE,
+  ]);
 
   if (loading && !user) {
     return <p>Loading...</p>;
@@ -365,16 +411,20 @@ const Home = () => {
               </div>
             )}
             <div
-              className={`status-indicator ${pageModified ? "unsaved" : "saved"}`}
+              className={`status-indicator ${
+                pages.untitledPage.TITLE !== "" || pages.untitledPage.BODY !== ""
+                  ? "unsaved"
+                  : "saved"
+              }`}
               title={determineSavedStatus()}
             ></div>
             <input
               type="text"
               placeholder="Title / Topic"
-              value={title}
+              value={pages.untitledPage.TITLE}
               spellCheck="false"
               required
-              onChange={handleTitleChange}
+              onChange={(e) => handleTitleChange(e, true)}
               ref={titleFieldRef}
               className={noTitleWarningToggled ? "error" : ""}
               // tabIndex="0"
@@ -384,9 +434,9 @@ const Home = () => {
           <textarea
             type="text"
             placeholder="Body"
-            value={body}
+            value={pages.untitledPage.BODY}
             spellCheck="false"
-            onChange={handleBodyChange}
+            onChange={(e) => handleBodyChange(e, true)}
             ref={bodyFieldRef}
             data-gramm="false"
             data-gramm_editor="false"
@@ -409,10 +459,10 @@ const Home = () => {
             <input
               type="text"
               placeholder="Title / Topic"
-              value={title}
+              value={pages.active.DRAFT_TITLE}
               spellCheck="false"
               required
-              onChange={handleTitleChange}
+              onChange={(e) => handleTitleChange(e, false)}
               ref={titleFieldRef}
               className={noTitleWarningToggled ? "error" : ""}
             />
@@ -421,9 +471,9 @@ const Home = () => {
           <textarea
             type="text"
             placeholder="Body"
-            value={body}
+            value={pages.active.DRAFT_BODY}
             spellCheck="false"
-            onChange={handleBodyChange}
+            onChange={(e) => handleBodyChange(e, false)}
             ref={bodyFieldRef}
             data-gramm="false"
             data-gramm_editor="false"

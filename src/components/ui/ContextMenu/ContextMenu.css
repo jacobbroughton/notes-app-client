@@ -43,3 +43,7 @@
   background-color: transparent;
   margin: 5px 0;
 }
+
+.context-menu .icon {
+  opacity: 0.75;
+}
