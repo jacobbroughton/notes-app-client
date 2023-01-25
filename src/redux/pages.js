@@ -27,7 +27,8 @@ const pagesSlice = createSlice({
           DRAFT_TITLE: existingPage?.DRAFT_TITLE || page.TITLE,
           DRAFT_BODY: existingPage?.DRAFT_BODY || page.BODY,
           OPEN: page.OPEN || false,
-          ACTIVE: page.ACTIVE || false
+          ACTIVE: page.ACTIVE || false,
+          IS_FAVORITE: page.IS_FAVORITE || false
         }
       })
 
@@ -332,6 +333,20 @@ const pagesSlice = createSlice({
         }
       }
     },
+    setFavoriteStatus: (state, { payload }) => {
+
+      const { favoriteStatus, page } = payload
+
+      return {
+        ...state,
+        list: state.list.map(innerPage => {
+          return {
+            ...innerPage,
+            ...(innerPage.PAGE_ID === page.PAGE_ID && { IS_FAVORITE: favoriteStatus })
+          }
+        })
+      }
+    }
     // setUnsavedPageTitle: (state, {payload}) => {
     //   return {
     //     ...state,
@@ -359,5 +374,6 @@ export const {
   setPageDraftTitle,
   setPageDraftBody,
   setUntitledPageBody,
-  setUntitledPageTitle
+  setUntitledPageTitle,
+  setFavoriteStatus
 } = pagesSlice.actions;

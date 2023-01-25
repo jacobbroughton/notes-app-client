@@ -32,9 +32,26 @@
     min-height: 26px;
     height: 26px;
     /* background: var(--tertiary-bg); */
-    border-left: var(--border);
+    /* border-left: var(--border); */
     overflow-x: auto;
+    overflow-y: hidden;
+    color: var(--color-text-primary);
 }
+
+.home-view .page-path::-webkit-scrollbar {
+    height: 3px;
+  }
+  
+  .home-view .page-path::-webkit-scrollbar-track {
+    background-color: var(--secondary-bg);
+    scrollbar-width: 10px;
+  }
+  
+  .home-view .page-path::-webkit-scrollbar-thumb {
+    background-color: var(--tertiary-bg);
+    border-radius: 25px;
+    width: 3px;
+  }
 
 .home-view .page-path .folder-name-and-divider {
     display: flex;

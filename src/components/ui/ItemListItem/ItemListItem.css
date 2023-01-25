@@ -1,17 +1,4 @@
-
-.folders-list  {
-  height: 100%;
-  padding-bottom: 40px;
-  overflow-y: scroll;
-  background-color: var(--primary-bg);
-  border: 1px solid transparent;
-}
-
-.folders-list.selected {
-  border: 1px solid var(--tertiary-bg);
-}
-
-.folders-list .folder-container {
+.items-list .folder-container {
   display: flex;
   position: relative;
   overflow: hidden;
@@ -19,11 +6,11 @@
   user-select: none;
 }
 
-.folders-list .folder-container.under-drag {
+.items-list .folder-container.under-drag {
   background-color: var(--tertiary-bg);
 }
 
-.folders-list .rename-input {
+.items-list .rename-input {
   padding: 1px 3px;
   color: var(--color-text-primary);
   background-color: var(--secondary-bg);
@@ -31,8 +18,8 @@
   border-radius: 3px;
 }
 
-.folders-list .new-folder-form input,
-.folders-list .new-page-form input {
+.items-list .new-folder-form input,
+.items-list .new-page-form input {
   background: var(--secondary-bg);
   color: var(--color-text-primary);
   border: 1px solid var(--color-accent-primary);
@@ -40,23 +27,21 @@
   width: 100%;
 }
 
-
-.folders-list .folder-container .tier-blocks {
+.items-list .folder-container .tier-blocks {
   display: flex;
   /* gap: 5px; */
 }
 
-.folders-list .folder-container .tier-blocks .tier-block {
+.items-list .folder-container .tier-blocks .tier-block {
   transition: border-color 0.05s ease, background-color 0.05s ease;
 }
 
-.folders-list .folder-container .tier-blocks .tier-block:not(:first-child) {
+.items-list .folder-container .tier-blocks .tier-block:not(:first-child) {
   width: 10px;
   border-right: 1px solid var(--color-tier-block-border);
-  /* border-right: 1px solid var(--color-accent-primary); */
 }
 
-.folders-list .name-and-buttons {
+.items-list .name-and-buttons {
   height: 100%;
   display: flex;
   gap: 30px;
@@ -64,31 +49,27 @@
   align-items: center;
   width: 100%;
   padding: 1px 5px;
-  /* position: relative; */
   overflow: hidden;
-  /* width: calc(100% - 23px); */
-  width: calc(100% - 10px)
+  width: calc(100% - 10px);
 }
 
-.folders-list .folder-container.hoverable:hover {
+.items-list .folder-container.hoverable:hover {
   background-color: var(--tertiary-bg);
 }
 
-.folders-list .folder-container.selected {
+.items-list .folder-container.selected {
   background-color: var(--tertiary-bg);
-  /* border: 1px solid var(--tertiary-bg); */
 }
 
-.folders-list .folder-container.selected .tier-block:first-child {
+.items-list .folder-container.selected .tier-block:first-child {
   background-color: var(--color-accent-primary);
 }
 
-.folders-list .folder-container.selected .tier-block:not(:first-child) {
+.items-list .folder-container.selected .tier-block:not(:first-child) {
   border-color: var(--color-accent-primary);
 }
 
-.folders-list .folder-container .name-and-buttons .folder-buttons,
-.folders-list .header .folders-list-header-buttons {
+.items-list .folder-container .name-and-buttons .folder-buttons {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -98,13 +79,14 @@
   padding: 0px 3px;
 }
 
-.folders-list .folder-container:not(.selected):not(:hover) .name-and-buttons .folder-buttons {
+.items-list
+  .folder-container:not(.selected):not(:hover)
+  .name-and-buttons
+  .folder-buttons {
   background-color: var(--primary-bg);
 }
 
-.folders-list .name-and-buttons button,
-.folders-list .header .folders-list-header-buttons button {
-  /* width: 17px; */
+.items-list .name-and-buttons button {
   min-width: 17px;
   padding: 0px 3px;
   height: 17px;
@@ -119,50 +101,47 @@
   border-radius: 3px;
 }
 
-.folders-list .name-and-buttons button:disabled,
-.folders-list .name-and-buttons button:not(:disabled):hover,
-.folders-list .header .folders-list-header-buttons button:not(:disabled):hover {
+.items-list .name-and-buttons button:disabled,
+.items-list .name-and-buttons button:not(:disabled):hover {
   border: 1px solid var(--color-accent-primary);
   color: var(--color-text-primary);
 }
 
-.folders-list .name-and-buttons button:not(:disabled):active,
-.folders-list .header .folders-list-header-buttons button:not(:disabled):active {
+.items-list .name-and-buttons button:not(:disabled):active {
   background-color: var(--color-accent-primary);
 }
 
-.folders-list .name-and-buttons svg {
+.items-list .name-and-buttons svg {
   width: 8px;
   height: 8px;
   fill: var(--color-text-primary);
   margin-right: 5px;
 }
 
-.folders-list .name-and-caret {
+.items-list .name-and-caret {
   display: flex;
   align-items: center;
   overflow: hidden;
 }
 
-.folders-list .tags {
+.items-list .tags {
   position: absolute;
   right: 10px;
   display: flex;
-  /* gap: 3px; */
 }
 
-.folders-list .tags span {
+.items-list .tags span {
   width: 10px;
   height: 10px;
   border-radius: 99px;
   filter: drop-shadow(-1px 1px 1px rgb(0 0 0 / 15%));
 }
 
-.folders-list .tags span:not(:last-child) {
+.items-list .tags span:not(:last-child) {
   margin-right: -3px;
 }
 
-.folders-list .caret-container {
+.items-list .caret-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -170,13 +149,13 @@
   width: 20px;
 }
 
-.folders-list .caret-container .page-icon {
+.items-list .caret-container .page-icon {
   width: 10px;
   height: 10px;
   fill: var(--color-accent-secondary);
 }
 
-.folders-list .name-and-buttons p {
+.items-list .name-and-buttons p {
   white-space: nowrap;
   font-size: 0.875rem;
   font-weight: 500;

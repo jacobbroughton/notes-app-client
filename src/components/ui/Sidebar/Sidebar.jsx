@@ -7,18 +7,23 @@ import {
   deselectFolder,
   setStagedFolderToDelete,
 } from "../../../redux/folders";
-import { setPages, setStagedPageToDelete } from "../../../redux/pages";
+import { setFavoriteStatus, setPages, setStagedPageToDelete } from "../../../redux/pages";
 import {
   setSidebarWidth,
   setSidebarView,
   setNewTagFormToggled,
+  setDragToggled,
+  setRenameInputToggled,
+  setNewNameForRename,
+  setNewPageName,
+  setNewFolderName,
 } from "../../../redux/sidebar";
 import { formatFolders, formatPages } from "../../../utils/formatData";
 import { toggleModal } from "../../../redux/modals";
 import { setTheme } from "../../../redux/theme";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import UserMenu from "../UserMenu/UserMenu";
-import FoldersList from "../FoldersList/FoldersList";
+import ItemList from "../ItemList/ItemList";
 import PageSearch from "../PageSearch/PageSearch";
 import SearchIcon from "../Icons/SearchIcon";
 import TagIcon from "../Icons/TagIcon";
@@ -28,6 +33,7 @@ import Draggable from "react-draggable";
 import "./Sidebar.css";
 import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+import { setInputPosition } from "../../../redux/sidebar";
 
 function Sidebar() {
   const sidebarRef = useRef(null);
@@ -35,9 +41,9 @@ function Sidebar() {
   const contextMenuRef = useRef(null);
   const draggableRef = useRef(null);
   const renameInputRef = useRef(null);
-  const [newFolderName, setNewFolderName] = useState("");
-  const [newPageName, setNewPageName] = useState("");
-  const [dragToggled, setDragToggled] = useState(false);
+  // const [newFolderName, setNewFolderName] = useState("");
+  // const [newPageName, setNewPageName] = useState("");
+  // const [dragToggled, setDragToggled] = useState(false);
   const [contextMenu, setContextMenu] = useState({
     position: {
       x: 0,
@@ -46,14 +52,13 @@ function Sidebar() {
     toggled: false,
   });
 
-  const [inputPosition, setInputPosition] = useState({
-    referenceId: null,
-    toggled: false,
-    forFolder: false,
-  });
-  const [renameInputToggled, setRenameInputToggled] = useState(false);
+  // const [sidebar.inputPosition, dispatch(setInputPosition] = useState({
+  //   referenceId: null,
+  //   toggled: false,
+  //   forFolder: false,
+  // }));
   const [userMenuToggled, setUserMenuToggled] = useState(false);
-  const [newName, setNewName] = useState("");
+  // const [newName, dispatch(setNewNameForRename)] = useState("");
 
   const folders = useSelector((state) => state.folders);
   const pages = useSelector((state) => state.pages);
@@ -78,8 +83,10 @@ function Sidebar() {
         credentials: "include",
         body: JSON.stringify({
           parentFolderId:
-            inputPosition.referenceId === 0 ? null : inputPosition.referenceId,
-          newFolderName,
+            sidebar.inputPosition.referenceId === 0
+              ? null
+              : sidebar.inputPosition.referenceId,
+          newFolderName: sidebar.newFolderName,
         }),
       });
 
@@ -89,12 +96,14 @@ function Sidebar() {
 
       if (!data) throw "There was an issue parsing /tags/new response";
 
-      setInputPosition({
-        referenceId: null,
-        toggled: false,
-        forFolder: false,
-      });
-      setNewFolderName("");
+      dispatch(
+        setInputPosition({
+          referenceId: null,
+          toggled: false,
+          forFolder: false,
+        })
+      );
+      dispatch(setNewFolderName(""));
       resetContextMenu();
       getData(false);
     } catch (error) {
@@ -114,8 +123,10 @@ function Sidebar() {
         credentials: "include",
         body: JSON.stringify({
           parentFolderId:
-            inputPosition.referenceId === 0 ? null : inputPosition.referenceId,
-          newPageName,
+            sidebar.inputPosition.referenceId === 0
+              ? null
+              : sidebar.inputPosition.referenceId,
+          newPageName: sidebar.newPageName,
         }),
       });
 
@@ -125,11 +136,13 @@ function Sidebar() {
 
       if (!data) throw "There was an issue parsing /pages/new response";
 
-      setInputPosition({
-        referenceId: null,
-        toggled: false,
-        forFolder: false,
-      });
+      dispatch(
+        setInputPosition({
+          referenceId: null,
+          toggled: false,
+          forFolder: false,
+        })
+      );
       setNewPageName("");
       resetContextMenu();
       getData(false);
@@ -147,11 +160,13 @@ function Sidebar() {
     } else {
       dispatch(setStagedFolderToDelete(item));
     }
-    setInputPosition({
-      referenceId: null,
-      toggled: false,
-      forFolder: false,
-    });
+    dispatch(
+      setInputPosition({
+        referenceId: null,
+        toggled: false,
+        forFolder: false,
+      })
+    );
     resetContextMenu();
   }
 
@@ -159,11 +174,13 @@ function Sidebar() {
     e.stopPropagation();
 
     dispatch(toggleModal("deleteModal"));
-    setInputPosition({
-      referenceId: null,
-      toggled: false,
-      forFolder: false,
-    });
+    dispatch(
+      setInputPosition({
+        referenceId: null,
+        toggled: false,
+        forFolder: false,
+      })
+    );
     resetContextMenu();
   }
 
@@ -173,8 +190,8 @@ function Sidebar() {
     resetContextMenu();
 
     new Promise((resolve) => {
-      setRenameInputToggled(true);
-      setNewName(item.NAME);
+      dispatch(setRenameInputToggled(true));
+      dispatch(setNewNameForRename(item.NAME));
       resetContextMenu();
       resolve();
     }).then(() => {
@@ -204,11 +221,13 @@ function Sidebar() {
       referenceId = pages.active.FOLDER_ID;
     }
 
-    setInputPosition({
-      referenceId,
-      toggled: true,
-      forFolder: false,
-    });
+    dispatch(
+      setInputPosition({
+        referenceId,
+        toggled: true,
+        forFolder: false,
+      })
+    );
   }
 
   function handleNewFolder() {
@@ -222,12 +241,14 @@ function Sidebar() {
       referenceId = pages.active.FOLDER_ID;
     }
 
-    setInputPosition({
-      referenceId,
-      toggled: true,
-      forFolder: true,
-    });
-    if (inputPosition.referenceId === null) dispatch(deselectFolder());
+    dispatch(
+      setInputPosition({
+        referenceId,
+        toggled: true,
+        forFolder: true,
+      })
+    );
+    if (sidebar.inputPosition.referenceId === null) dispatch(deselectFolder());
   }
 
   async function getData() {
@@ -275,13 +296,38 @@ function Sidebar() {
     });
   }
 
-  useEffect(() => {
-    if (inputPositionRef.current && inputPosition.toggled)
-      inputPositionRef?.current.focus();
-  }, [inputPosition.toggled]);
+  async function handleAddToFavorites(e, item) {
+    try {
+      const response = await fetch("http://localhost:3001/pages/favorite", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          favoriteStatus: 1,
+          pageId: item.PAGE_ID,
+        }),
+      });
+
+      if (response.status !== 200) throwResponseStatusError(response, "POST");
+
+      const data = await response.json();
+
+      if (!data) throw "There was an issue parsing /pages/new response";
+
+      if (item.IS_PAGE) dispatch(setFavoriteStatus({ favoriteStatus: 1, page: item }));
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    console.log(pages?.list);
+    if (inputPositionRef.current && sidebar.inputPosition.toggled)
+      inputPositionRef?.current.focus();
+  }, [sidebar.inputPosition.toggled]);
+
+  useEffect(() => {
     dispatch(setPages(formatPages(pages?.list, folders?.list, pages.list)));
   }, [folders.list]);
 
@@ -297,24 +343,29 @@ function Sidebar() {
         !event.target.classList.contains("new-folder-button") &&
         !event.target.classList.contains("new-page-button")
       ) {
-        setNewFolderName("");
+        dispatch(setNewFolderName(""));
         setNewPageName("");
         resetContextMenu();
-        setInputPosition({
-          referenceId: null,
-          toggled: false,
-          forFolder: false,
-        });
+        dispatch(
+          setInputPosition({
+            referenceId: null,
+            toggled: false,
+            forFolder: false,
+          })
+        );
       }
 
       if (!contextMenuRef.current?.contains(event.target)) {
-        setNewFolderName("");
+        dispatch(setNewFolderName(""));
         setNewPageName("");
         resetContextMenu();
       }
 
-      if (renameInputToggled && !event.target.classList.contains("rename-input")) {
-        setRenameInputToggled(false);
+      if (
+        sidebar.renameInputToggled &&
+        !event.target.classList.contains("rename-input")
+      ) {
+        dispatch(setRenameInputToggled(false));
       }
     };
 
@@ -329,7 +380,7 @@ function Sidebar() {
     {
       symbol: "< >",
       title: "Expand folders",
-      disabled: dragToggled,
+      disabled: sidebar.dragToggled,
       visible:
         sidebar.view.name === "Notes" &&
         combined.filter((item) => !item.IS_PAGE).length !== 0,
@@ -338,7 +389,7 @@ function Sidebar() {
     {
       symbol: "> <",
       title: "Collapse folders",
-      disabled: dragToggled,
+      disabled: sidebar.dragToggled,
       visible:
         sidebar.view.name === "Notes" &&
         combined.filter((item) => !item.IS_PAGE).length !== 0,
@@ -353,12 +404,14 @@ function Sidebar() {
       onClick: () => {
         let referenceId = 0;
 
-        if (inputPosition.toggled) {
-          setInputPosition({
-            ...inputPosition,
-            referenceId: null,
-            toggled: false,
-          });
+        if (sidebar.inputPosition.toggled) {
+          dispatch(
+            setInputPosition({
+              ...sidebar.inputPosition,
+              referenceId: null,
+              toggled: false,
+            })
+          );
         } else {
           if (folders.selected) {
             referenceId = folders.selected.ID;
@@ -366,11 +419,13 @@ function Sidebar() {
             referenceId = pages.active.FOLDER_ID;
           }
 
-          setInputPosition({
-            referenceId,
-            toggled: true,
-            forFolder: false,
-          });
+          dispatch(
+            setInputPosition({
+              referenceId,
+              toggled: true,
+              forFolder: false,
+            })
+          );
         }
       },
     },
@@ -383,12 +438,14 @@ function Sidebar() {
       onClick: () => {
         let referenceId = 0;
 
-        if (inputPosition.toggled) {
-          setInputPosition({
-            ...inputPosition,
-            referenceId: null,
-            toggled: false,
-          });
+        if (sidebar.inputPosition.toggled) {
+          dispatch(
+            setInputPosition({
+              ...sidebar.inputPosition,
+              referenceId: null,
+              toggled: false,
+            })
+          );
         } else {
           if (folders.selected) {
             referenceId = folders.selected.ID;
@@ -396,20 +453,22 @@ function Sidebar() {
             referenceId = pages.active.FOLDER_ID;
           }
 
-          setInputPosition({
-            referenceId,
-            toggled: true,
-            forFolder: true,
-          });
+          dispatch(
+            setInputPosition({
+              referenceId,
+              toggled: true,
+              forFolder: true,
+            })
+          );
         }
 
-        if (inputPosition.referenceId === null) dispatch(deselectFolder());
+        if (sidebar.inputPosition.referenceId === null) dispatch(deselectFolder());
       },
     },
     {
       symbol: "+",
       title: "Create a new tag",
-      disabled: dragToggled,
+      disabled: sidebar.dragToggled,
       visible: sidebar.view.name === "Tags",
       onClick: () => dispatch(setNewTagFormToggled(!sidebar.newTagFormToggled)),
     },
@@ -475,49 +534,47 @@ function Sidebar() {
                   }
                 })}
               </div>
-              {inputPosition.referenceId === 0 && inputPosition.toggled && (
-                <form
-                  className="new-folder-form"
-                  onSubmit={
-                    inputPosition.forFolder ? handleNewFolderSubmit : handleNewPageSubmit
-                  }
-                >
-                  <input
-                    ref={inputPositionRef}
-                    spellCheck="false"
-                    onChange={(e) => {
-                      if (inputPosition.forFolder) {
-                        setNewFolderName(e.target.value);
-                      } else {
-                        setNewPageName(e.target.value);
+              {sidebar.inputPosition.referenceId === 0 &&
+                sidebar.inputPosition.toggled && (
+                  <form
+                    className="new-folder-form"
+                    onSubmit={
+                      sidebar.inputPosition.forFolder
+                        ? handleNewFolderSubmit
+                        : handleNewPageSubmit
+                    }
+                  >
+                    <input
+                      ref={inputPositionRef}
+                      spellCheck="false"
+                      onChange={(e) => {
+                        if (sidebar.inputPosition.forFolder) {
+                          dispatch(setNewFolderName(e.target.value));
+                        } else {
+                          dispatch(setNewPageName(e.target.value));
+                        }
+                      }}
+                      value={
+                        sidebar.inputPosition.forFolder ? sidebar.newFolderName : sidebar.newPageName
                       }
-                    }}
-                    value={inputPosition.forFolder ? newFolderName : newPageName}
-                  />
-                </form>
-              )}
+                    />
+                  </form>
+                )}
             </div>
           )}
         {sidebar.view.name === "Notes" && (
           <>
-            <FoldersList
-              inputPosition={inputPosition}
-              setInputPosition={setInputPosition}
-              dragToggled={dragToggled}
-              setRenameInputToggled={setRenameInputToggled}
-              renameInputToggled={renameInputToggled}
+            <ItemList
               setContextMenu={setContextMenu}
               handleNewFolderSubmit={handleNewFolderSubmit}
               handleNewPageSubmit={handleNewPageSubmit}
-              newFolderName={newFolderName}
+              // newFolderName={newFolderName}
               inputPositionRef={inputPositionRef}
-              newPageName={newPageName}
-              setNewPageName={setNewPageName}
-              setNewFolderName={setNewFolderName}
+              // newPageName={newPageName}
+              // setNewPageName={setNewPageName}
+              // setNewFolderName={setNewFolderName}
               resetContextMenu={resetContextMenu}
               handleRename={handleRename}
-              setNewName={setNewName}
-              newName={newName}
               renameInputRef={renameInputRef}
             />
           </>
@@ -533,12 +590,12 @@ function Sidebar() {
           x: sidebar.width ? sidebar.width : sidebarRef?.current?.offsetWidth,
         }}
         onDrag={onDragSidebar}
-        onStart={() => setDragToggled(true)}
-        onStop={() => setDragToggled(false)}
+        onStart={() => dispatch(setDragToggled(true))}
+        onStop={() => dispatch(setDragToggled(false))}
       >
         <div
           ref={draggableRef}
-          className={`drag-sidebar-button ${dragToggled ? "active" : ""}`}
+          className={`drag-sidebar-button ${sidebar.dragToggled ? "active" : ""}`}
         ></div>
       </Draggable>
       <ContextMenu
@@ -549,45 +606,57 @@ function Sidebar() {
         ref={contextMenuRef}
         buttons={[
           {
-            text: "New page",
-            icon: "++",
+            text: "New Page",
+            icon: "📄",
             active: sidebar.shiftClickItems.end === null,
             onClick: handleNewPage,
           },
           {
-            text: "New folder",
-            icon: "+",
+            text: "New Folder",
+            icon: "📁",
             active: sidebar.shiftClickItems.end === null,
             onClick: handleNewFolder,
           },
           {
             active:
-              sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,
+              sidebar.shiftClickItems.end === null &&
+              sidebar.inputPosition.referenceId !== 0,
+            isSpacer: true,
+          },
+          {
+            text: "Add Tags",
+            icon: "#️⃣",
+            active:
+              sidebar.shiftClickItems.end === null &&
+              sidebar.inputPosition.referenceId !== 0,
+            onClick: handleTag,
+          },
+          {
+            text: "Add To Favorites",
+            icon: "⭐️",
+            active:
+              sidebar.shiftClickItems.end === null &&
+              sidebar.inputPosition.referenceId !== 0,
+            onClick: handleAddToFavorites,
+          },
+          {
+            active:
+              sidebar.shiftClickItems.end === null &&
+              sidebar.inputPosition.referenceId !== 0,
             isSpacer: true,
           },
           {
             text: "Rename",
-            icon: "abc",
+            icon: "ABC",
             active:
-              sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,
+              sidebar.shiftClickItems.end === null &&
+              sidebar.inputPosition.referenceId !== 0,
             onClick: handleRename,
           },
           {
-            text: "Add Tags",
-            icon: "#",
-            active:
-              sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,
-            onClick: handleTag,
-          },
-          {
-            active:
-              sidebar.shiftClickItems.end === null && inputPosition.referenceId !== 0,
-            isSpacer: true,
-          },
-          {
             text: "Delete",
-            icon: "-",
-            active: inputPosition.referenceId !== 0,
+            icon: "🗑️",
+            active: sidebar.inputPosition.referenceId !== 0,
             onClick: sidebar.shiftClickItems.end
               ? handleDeleteMultiple
               : handleDeleteSingle,

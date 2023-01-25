@@ -479,20 +479,26 @@ const Home = () => {
             data-gramm_editor="false"
             data-enable-grammarly="false"
           />
-          {determinePath(pages.active).length !== 0 && (
-            <div className="page-path">
-              {determinePath(pages.active).map((folder, i) => (
-                <div className="folder-name-and-divider" key={i}>
-                  <p>{folder.NAME}</p>
-                  <span className="path-divider">&nbsp;&gt;&nbsp;</span>
-                </div>
-              ))}
-              <div className="current-page">
-                <PageIcon />
-                <p>{pages.active.NAME}</p>
+          {/* {determinePath(pages.active).length !== 0 && ( */}
+          <div className="page-path">
+            /&nbsp;
+            {determinePath(pages.active).map((folder, i) => (
+              <div className="folder-name-and-divider" key={i}>
+                <p>{folder.NAME}</p>
+                <span className="path-divider">&nbsp;/&nbsp;</span>
               </div>
+            ))}
+            {determinePath(pages.active) === 0 && (
+              <div className="folder-name-and-divider">
+                <span className="path-divider">&nbsp;/&nbsp;</span>
+              </div>
+            )}
+            <div className="current-page">
+              <PageIcon />
+              <p>{pages.active.NAME}</p>
             </div>
-          )}
+          </div>
+          {/* )} */}
         </form>
       )}
       {/* <div>Excel-like page selector here</div> */}

@@ -65,8 +65,6 @@ export const formatPages = (pages = [], formattedFolders = [], existingPages = [
 
     const existingPage = existingPages.find(existingPage => existingPage.PAGE_ID === page.PAGE_ID)
 
-    console.log(existingPage)
-
     return {
       ...page,
       IS_PAGE: true,

@@ -9,7 +9,15 @@ type SidebarState = {
   viewOptions: object[];
   searchValue: string;
   shiftClickItems: object;
-  newTagFormToggled: boolean
+  newTagFormToggled: boolean;
+  dragToggled: boolean;
+  draggedOverItem: object;
+  grabbedItem: object,
+  inputPosition: object,
+  renameInputToggled: boolean,
+  newNameForRename: string,
+  newPageName: string,
+  newFolderName: string
 };
 
 const viewOptionsForState = [
@@ -33,7 +41,22 @@ const initialState: SidebarState = {
   viewOptions: viewOptionsForState,
   searchValue: "",
   shiftClickItems: { start: null, end: null, list: [] },
-  newTagFormToggled: false
+  newTagFormToggled: false,
+  dragToggled: false,
+  draggedOverItem: {
+    ID: null,
+    PAGE_ID: null,
+  },
+  grabbedItem: null,
+  inputPosition: {
+    referenceId: null,
+    toggled: false,
+    forFolder: false,
+  },
+  renameInputToggled: false,
+  newNameForRename: '',
+  newPageName: '',
+  newFolderName: ''
 };
 
 const sidebarSlice = createSlice({
@@ -94,12 +117,80 @@ const sidebarSlice = createSlice({
     setNewTagFormToggled: (state, { payload }) => {
       return {
         ...state,
-        newTagFormToggled: payload
+        newTagFormToggled: payload,
+      };
+    },
+    setDragToggled: (state, { payload }) => {
+      return {
+        ...state,
+        dragToggled: payload,
+      };
+    },
+    setDraggedOverItem: (state, { payload }) => {
+      return {
+        ...state,
+        draggedOverItem: {
+          ID: payload.ID,
+          PAGE_ID: payload.PAGE_ID,
+        },
+      };
+    },
+    setGrabbedItem: (state, { payload }) => {
+      return {
+        ...state,
+        grabbedItem: payload,
+      };
+    },
+    setInputPosition: (state,{payload}) => {
+      return {
+        ...state,
+        inputPosition: {
+          referenceId: payload.referenceId,
+          toggled: payload.toggled,
+          forFolder: payload.forFolder,
+        }
+      }
+    },
+    setRenameInputToggled: (state, {payload}) => {
+      return {
+        ...state,
+        renameInputToggled: payload
+      }
+    },
+    setNewNameForRename: (state, {payload}) => {
+      return {
+        ...state,
+        newNameForRename: payload
+      }
+    },
+    setNewPageName: (state, {payload}) => {
+      return {
+        ...state,
+        newPageName: payload
+      }
+    },
+    setNewFolderName: (state, {payload}) => {
+      return {
+        ...state,
+        newFolderName: payload
       }
     }
   },
 });
 
-export const { setSidebarWidth, setSidebarView, setSearchValue, setShiftClickItems, setNewTagFormToggled } =
-  sidebarSlice.actions;
+export const {
+  setSidebarWidth,
+  setSidebarView,
+  setSearchValue,
+  setShiftClickItems,
+  setNewTagFormToggled,
+  setDragToggled,
+  setDraggedOverItem,
+  setGrabbedItem,
+  setInputPosition,
+  setRenameInputToggled,
+  setNewNameForRename,
+  setNewPageName,
+  setNewFolderName
+} = sidebarSlice.actions;
 export default sidebarSlice.reducer;

@@ -24,8 +24,8 @@
   border-top: 1px solid var(--color-accent-primary);
 }
 
-.open-page-navigation .page-button:hover {
-  background-color: #444;
+.open-page-navigation .page-button:not(.active):hover {
+  background-color: #3f3f3f;
 }
 
 .open-page-navigation .page-button.untitled {
@@ -62,8 +62,12 @@
   height: 10px;
   border-radius: 100%;
   background-color: #ccc;
-  display: none;
+  user-select: none;
 } 
+
+.open-page-navigation .page-button:not(.untitled) .unsaved-circle {
+  display: none;
+}
 
 .open-page-navigation .page-button.unsaved .x-button {
   opacity: 1;
