@@ -12,11 +12,11 @@
 }
 
 .open-page-navigation .page-button {
-  /* padding: 7px 15px; */
   padding: 7px 5px 7px 12px;
   font-size: 0.875rem;
   white-space: nowrap;
   border-top: 1px solid transparent;
+  user-select: none;
 }
 
 .open-page-navigation .page-button.active {
@@ -30,6 +30,7 @@
 
 .open-page-navigation .page-button.untitled {
   padding-right: 12px;
+  cursor: default;
 }
 
 .open-page-navigation .page-button .x-button {
@@ -39,7 +40,7 @@
   visibility: 0;
 }
 
-.open-page-navigation .page-button:hover .x-button ,
+.open-page-navigation .page-button:hover .x-button,
 .open-page-navigation .page-button.active .x-button {
   opacity: 1;
   visibility: 1;
@@ -63,7 +64,7 @@
   border-radius: 100%;
   background-color: #ccc;
   user-select: none;
-} 
+}
 
 .open-page-navigation .page-button:not(.untitled) .unsaved-circle {
   display: none;

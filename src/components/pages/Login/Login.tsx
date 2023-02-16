@@ -2,7 +2,6 @@ import { FormEvent, ReactEventHandler, useEffect, useState } from "react";
 import { setUser } from "../../../redux/user";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import Input from "../../ui/Input/Input";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import "./Login.css";
 
@@ -35,8 +34,8 @@ const Login = () => {
       if (response.status !== 200) throwResponseStatusError(response, "POST");
 
       const data = await response.json();
-      
-      if (!data) throw 'There was a problem parsing login response'
+
+      if (!data) throw "There was a problem parsing login response";
 
       if (!data.user) {
         setLoginError(data.message);
@@ -72,6 +71,7 @@ const Login = () => {
           }
           pattern="^\S*$"
           required
+          autoComplete="off"
         />
         <input
           type="password"
@@ -82,6 +82,7 @@ const Login = () => {
           }
           pattern="^\S*$"
           required
+          autoComplete="off"
         />
         <button type="submit">Submit</button>
       </form>

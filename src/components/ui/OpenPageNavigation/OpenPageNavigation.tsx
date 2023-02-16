@@ -1,11 +1,13 @@
 import { useSelector } from "react-redux";
 import OpenPageButton from "../OpenPageButton/OpenPageButton";
 import "./OpenPageNavigation.css";
+import { RootState } from "../../../redux/store";
+import { PageState } from "../../../types";
 
 const OpenPageNavigation = () => {
-  const pages = useSelector((state) => state.pages);
+  const pages = useSelector((state: RootState) => state.pages);
 
-  const openPages = pages.list.filter((page) => page.OPEN);
+  const openPages = pages.list.filter((page: PageState) => page.OPEN);
 
   return (
     <div className="open-page-navigation">

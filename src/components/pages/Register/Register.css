@@ -21,12 +21,10 @@
   background-color: var(--secondary-bg);
   border: 1px solid var(--tertiary-bg);
   box-shadow: var(--small-shadow);
-
 }
 
 .register-view button {
   background-color: var(--color-accent-primary);
-  /* align-self: center; */
   padding: 5px 10px;
   border-radius: 3px;
   border: 0;

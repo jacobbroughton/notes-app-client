@@ -11,7 +11,7 @@ const UserMenu = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userMenuRef = useRef(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   async function handleLogout(e: FormEvent) {
     e.preventDefault();
@@ -29,17 +29,17 @@ const UserMenu = ({
     function handler(e: Event) {
       if (
         userMenuRef.current &&
-        !userMenuRef.current.contains(e.target) &&
-        !e.target.classList.contains("user-button") && 
-        !e.target.classList.contains("user-icon")
+        !userMenuRef.current.contains((e.target as HTMLElement)) &&
+        !(e.target as HTMLElement).classList.contains("user-button") && 
+        !(e.target as HTMLElement).classList.contains("user-icon")
       ) {
         setUserMenuToggled(false);
       }
     }
 
-    window.addEventListener("mousedown", handler);
+    window.addEventListener("click", handler);
 
-    return () => window.removeEventListener("mousedown", handler);
+    return () => window.removeEventListener("click", handler);
   });
 
 

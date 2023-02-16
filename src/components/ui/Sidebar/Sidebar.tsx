@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Context, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setFolders,
@@ -29,50 +29,72 @@ import SearchIcon from "../Icons/SearchIcon";
 import TagIcon from "../Icons/TagIcon";
 import UserIcon from "../Icons/UserIcon";
 import PageIcon from "../Icons/PageIcon";
-import Draggable from "react-draggable";
+import Draggable, { DraggableData } from "react-draggable";
 import "./Sidebar.css";
 import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { setInputPosition } from "../../../redux/sidebar";
+import { ItemState } from "../../../types";
+import { RootState } from "../../../redux/store";
 
 function Sidebar() {
-  const sidebarRef = useRef(null);
-  const inputPositionRef = useRef(null);
-  const contextMenuRef = useRef(null);
+  const sidebarRef = useRef<HTMLElement | null>(null);
+  const inputPositionRef = useRef<HTMLInputElement | null>(null);
+  const contextMenuRef = useRef<HTMLMenuElement | null>(null);
   const draggableRef = useRef(null);
-  const renameInputRef = useRef(null);
-  // const [newFolderName, setNewFolderName] = useState("");
-  // const [newPageName, setNewPageName] = useState("");
-  // const [dragToggled, setDragToggled] = useState(false);
-  const [contextMenu, setContextMenu] = useState({
+  const renameInputRef = useRef<HTMLInputElement | null>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    position: {
+      x: number;
+      y: number;
+    };
+    toggled: boolean;
+  }>({
     position: {
       x: 0,
       y: 0,
     },
     toggled: false,
   });
-
-  // const [sidebar.inputPosition, dispatch(setInputPosition] = useState({
-  //   referenceId: null,
-  //   toggled: false,
-  //   forFolder: false,
-  // }));
   const [userMenuToggled, setUserMenuToggled] = useState(false);
-  // const [newName, dispatch(setNewNameForRename)] = useState("");
-
-  const folders = useSelector((state) => state.folders);
-  const pages = useSelector((state) => state.pages);
-  const tags = useSelector((state) => state.tags);
-  const sidebar = useSelector((state) => state.sidebar);
-  const theme = useSelector((state) => state.theme);
-  const combined = useSelector((state) => state.combined);
+  const [isResizingSidebar, setIsResizingSidebar] = useState(false);
+  const folders = useSelector((state: RootState) => state.folders);
+  const pages = useSelector((state: RootState) => state.pages);
+  const tags = useSelector((state: RootState) => state.tags);
+  const sidebar = useSelector((state: RootState) => state.sidebar);
+  const theme = useSelector((state: RootState) => state.theme);
+  const combined = useSelector((state: RootState) => state.combined);
   const dispatch = useDispatch();
 
-  function onDragSidebar(e, data) {
-    dispatch(setSidebarWidth(data.x));
-  }
+  const startResizing = useCallback(() => {
+    setIsResizingSidebar(true);
+  }, []);
 
-  async function handleNewFolderSubmit(e) {
+  const stopResizing = useCallback(() => {
+    setIsResizingSidebar(false);
+  }, []);
+
+  const resizeSidebar = useCallback(
+    (mouseMoveEvent: MouseEvent) => {
+      if (isResizingSidebar && sidebarRef.current) {
+        const newSidebarPositionX =
+          mouseMoveEvent.clientX - sidebarRef.current.getBoundingClientRect().left;
+        if (newSidebarPositionX >= 50) dispatch(setSidebarWidth(newSidebarPositionX));
+      }
+    },
+    [isResizingSidebar]
+  );
+
+  useEffect(() => {
+    window.addEventListener("mousemove", resizeSidebar);
+    window.addEventListener("mouseup", stopResizing);
+    return () => {
+      window.removeEventListener("mousemove", resizeSidebar);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [resizeSidebar, stopResizing]);
+
+  async function handleNewFolderSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
       const response = await fetch("http://localhost:3001/folders/new", {
@@ -105,13 +127,13 @@ function Sidebar() {
       );
       dispatch(setNewFolderName(""));
       resetContextMenu();
-      getData(false);
+      getData();
     } catch (error) {
       console.log(error);
     }
   }
 
-  async function handleNewPageSubmit(e) {
+  async function handleNewPageSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     try {
@@ -145,15 +167,14 @@ function Sidebar() {
       );
       setNewPageName("");
       resetContextMenu();
-      getData(false);
+      getData();
     } catch (error) {
       console.log(error);
     }
   }
 
-  function handleDeleteSingle(e, item) {
+  function handleDeleteSingle(e: MouseEvent, item: any) {
     e.stopPropagation();
-
     dispatch(toggleModal("deleteModal"));
     if (item.IS_PAGE) {
       dispatch(setStagedPageToDelete(item));
@@ -170,9 +191,7 @@ function Sidebar() {
     resetContextMenu();
   }
 
-  function handleDeleteMultiple(e) {
-    e.stopPropagation();
-
+  function handleDeleteMultiple() {
     dispatch(toggleModal("deleteModal"));
     dispatch(
       setInputPosition({
@@ -184,16 +203,17 @@ function Sidebar() {
     resetContextMenu();
   }
 
-  function handleRename(e, item) {
+  function handleRename(e: MouseEvent, item: ItemState) {
     e.stopPropagation();
 
     resetContextMenu();
+    console.log(item);
 
     new Promise((resolve) => {
       dispatch(setRenameInputToggled(true));
       dispatch(setNewNameForRename(item.NAME));
       resetContextMenu();
-      resolve();
+      resolve("success");
     }).then(() => {
       if (renameInputRef.current) {
         renameInputRef?.current.focus();
@@ -202,7 +222,7 @@ function Sidebar() {
     });
   }
 
-  function handleTag(e, item) {
+  function handleTag(e: MouseEvent) {
     e.stopPropagation();
 
     resetContextMenu();
@@ -210,7 +230,8 @@ function Sidebar() {
     dispatch(toggleModal("tagsModal"));
   }
 
-  function handleNewPage() {
+  function handleNewPage(e: MouseEvent, item: ItemState) {
+    e.stopPropagation();
     resetContextMenu();
 
     let referenceId = 0;
@@ -230,7 +251,8 @@ function Sidebar() {
     );
   }
 
-  function handleNewFolder() {
+  function handleNewFolder(e: MouseEvent) {
+    e.stopPropagation();
     resetContextMenu();
 
     let referenceId = 0;
@@ -248,7 +270,7 @@ function Sidebar() {
         forFolder: true,
       })
     );
-    if (sidebar.inputPosition.referenceId === null) dispatch(deselectFolder());
+    if (sidebar.inputPosition.referenceId === null) dispatch(deselectFolder(null));
   }
 
   async function getData() {
@@ -276,7 +298,7 @@ function Sidebar() {
 
       if (!pagesData) throw "There was an issue parsing /pages response";
 
-      let formattedFolders = formatFolders(foldersData.folders, folders.list, pages.list);
+      let formattedFolders = formatFolders(foldersData.folders, folders.list);
       let formattedPages = formatPages(pagesData.pages, formattedFolders, pages.list);
 
       dispatch(setFolders(formattedFolders));
@@ -296,8 +318,10 @@ function Sidebar() {
     });
   }
 
-  async function handleAddToFavorites(e, item) {
+  async function handleAddToFavorites(e: MouseEvent, item: ItemState) {
     try {
+      e.stopPropagation();
+
       const response = await fetch("http://localhost:3001/pages/favorite", {
         method: "POST",
         headers: {
@@ -305,7 +329,7 @@ function Sidebar() {
         },
         credentials: "include",
         body: JSON.stringify({
-          favoriteStatus: 1,
+          favoriteStatus: item.IS_FAVORITE ? 0 : 1,
           pageId: item.PAGE_ID,
         }),
       });
@@ -316,7 +340,11 @@ function Sidebar() {
 
       if (!data) throw "There was an issue parsing /pages/new response";
 
-      if (item.IS_PAGE) dispatch(setFavoriteStatus({ favoriteStatus: 1, page: item }));
+      if (item.IS_PAGE)
+        dispatch(
+          setFavoriteStatus({ favoriteStatus: item.IS_FAVORITE ? 0 : 1, page: item })
+        );
+      resetContextMenu();
     } catch (error) {
       console.log(error);
     }
@@ -332,16 +360,16 @@ function Sidebar() {
   }, [folders.list]);
 
   useEffect(() => {
-    getData(true);
+    getData();
   }, []);
 
   useEffect(() => {
-    const inputPositionHandler = (event) => {
+    const inputPositionHandler = (event: MouseEvent) => {
       if (
         inputPositionRef.current &&
-        !inputPositionRef.current?.contains(event.target) &&
-        !event.target.classList.contains("new-folder-button") &&
-        !event.target.classList.contains("new-page-button")
+        !inputPositionRef.current?.contains(event.target as HTMLElement) &&
+        !(event.target as HTMLElement).classList.contains("new-folder-button") &&
+        !(event.target as HTMLElement).classList.contains("new-page-button")
       ) {
         dispatch(setNewFolderName(""));
         setNewPageName("");
@@ -355,7 +383,7 @@ function Sidebar() {
         );
       }
 
-      if (!contextMenuRef.current?.contains(event.target)) {
+      if (!contextMenuRef.current?.contains(event.target as HTMLElement)) {
         dispatch(setNewFolderName(""));
         setNewPageName("");
         resetContextMenu();
@@ -363,9 +391,10 @@ function Sidebar() {
 
       if (
         sidebar.renameInputToggled &&
-        !event.target.classList.contains("rename-input")
+        !(event.target as HTMLElement).classList.contains("rename-input")
       ) {
         dispatch(setRenameInputToggled(false));
+        dispatch(setNewNameForRename(""));
       }
     };
 
@@ -384,7 +413,7 @@ function Sidebar() {
       visible:
         sidebar.view.name === "Notes" &&
         combined.filter((item) => !item.IS_PAGE).length !== 0,
-      onClick: () => dispatch(expandFolders()),
+      onClick: () => dispatch(expandFolders(null)),
     },
     {
       symbol: "> <",
@@ -393,12 +422,12 @@ function Sidebar() {
       visible:
         sidebar.view.name === "Notes" &&
         combined.filter((item) => !item.IS_PAGE).length !== 0,
-      onClick: () => dispatch(collapseFolders()),
+      onClick: () => dispatch(collapseFolders(null)),
     },
     {
       symbol: "+P",
       title: "Create a new page",
-      disabled: "",
+      disabled: false,
       visible: sidebar.view.name === "Notes",
       className: "new-page-button",
       onClick: () => {
@@ -432,7 +461,7 @@ function Sidebar() {
     {
       symbol: "+F",
       title: "Create a new folder",
-      disabled: "",
+      disabled: false,
       visible: sidebar.view.name === "Notes",
       className: "new-folder-button",
       onClick: () => {
@@ -462,7 +491,7 @@ function Sidebar() {
           );
         }
 
-        if (sidebar.inputPosition.referenceId === null) dispatch(deselectFolder());
+        if (sidebar.inputPosition.referenceId === null) dispatch(deselectFolder(null));
       },
     },
     {
@@ -479,11 +508,15 @@ function Sidebar() {
       ref={sidebarRef}
       className="sidebar"
       style={{ width: `${sidebar.width ? `${sidebar.width}px` : "275px"}` }}
+      onMouseDown={(e) => e.preventDefault()}
     >
       <div className="sidebar-nav">
         {sidebar.viewOptions.map((viewOption, index) => (
           <button
-            onClick={() => dispatch(setSidebarView(viewOption))}
+            onClick={() => {
+              dispatch(setSidebarView(viewOption));
+              if (sidebar.width <= 60) dispatch(setSidebarWidth(275));
+            }}
             className={viewOption.id === sidebar.view.id ? "current" : ""}
             key={index}
             title={viewOption.name}
@@ -555,8 +588,11 @@ function Sidebar() {
                         }
                       }}
                       value={
-                        sidebar.inputPosition.forFolder ? sidebar.newFolderName : sidebar.newPageName
+                        sidebar.inputPosition.forFolder
+                          ? sidebar.newFolderName
+                          : sidebar.newPageName
                       }
+                      autoComplete="off"
                     />
                   </form>
                 )}
@@ -568,11 +604,7 @@ function Sidebar() {
               setContextMenu={setContextMenu}
               handleNewFolderSubmit={handleNewFolderSubmit}
               handleNewPageSubmit={handleNewPageSubmit}
-              // newFolderName={newFolderName}
               inputPositionRef={inputPositionRef}
-              // newPageName={newPageName}
-              // setNewPageName={setNewPageName}
-              // setNewFolderName={setNewFolderName}
               resetContextMenu={resetContextMenu}
               handleRename={handleRename}
               renameInputRef={renameInputRef}
@@ -582,46 +614,39 @@ function Sidebar() {
         {sidebar.view.name === "Search" && <PageSearch />}
         {sidebar.view.name === "Tags" && <TagsSidebarView />}
       </div>
-      <Draggable
-        axis="x"
-        nodeRef={draggableRef}
-        defaultPosition={{ x: sidebarRef?.current?.offsetWidth, y: 0 }}
-        position={{
-          x: sidebar.width ? sidebar.width : sidebarRef?.current?.offsetWidth,
-        }}
-        onDrag={onDragSidebar}
-        onStart={() => dispatch(setDragToggled(true))}
-        onStop={() => dispatch(setDragToggled(false))}
-      >
-        <div
-          ref={draggableRef}
-          className={`drag-sidebar-button ${sidebar.dragToggled ? "active" : ""}`}
-        ></div>
-      </Draggable>
+      <div
+        className={`drag-sidebar-button ${sidebar.dragToggled ? "active" : ""}`}
+        onMouseDown={startResizing}
+      ></div>
       <ContextMenu
-        item={pages.active || folders.selected}
+        item={pages.active || folders.selected} // TODO - figure out how to determine which
         toggled={contextMenu.toggled}
         positionX={contextMenu.position.x}
         positionY={contextMenu.position.y - 15}
-        ref={contextMenuRef}
+        contextMenuRef={contextMenuRef}
         buttons={[
           {
             text: "New Page",
             icon: "📄",
             active: sidebar.shiftClickItems.end === null,
             onClick: handleNewPage,
+            isSpacer: false,
           },
           {
             text: "New Folder",
             icon: "📁",
             active: sidebar.shiftClickItems.end === null,
             onClick: handleNewFolder,
+            isSpacer: false,
           },
           {
+            text: "",
+            icon: "",
+            onClick: () => null,
             active:
               sidebar.shiftClickItems.end === null &&
               sidebar.inputPosition.referenceId !== 0,
-            isSpacer: true,
+            isSpacer: false,
           },
           {
             text: "Add Tags",
@@ -630,16 +655,33 @@ function Sidebar() {
               sidebar.shiftClickItems.end === null &&
               sidebar.inputPosition.referenceId !== 0,
             onClick: handleTag,
+            isSpacer: false,
           },
           {
             text: "Add To Favorites",
             icon: "⭐️",
             active:
+              !pages.active?.IS_FAVORITE &&
               sidebar.shiftClickItems.end === null &&
               sidebar.inputPosition.referenceId !== 0,
             onClick: handleAddToFavorites,
+            isSpacer: false,
           },
           {
+            text: "Remove From Favorites",
+            icon: "⭐️",
+            active:
+              (pages.active?.IS_FAVORITE &&
+                sidebar.shiftClickItems.end === null &&
+                sidebar.inputPosition.referenceId !== 0) ||
+              false,
+            onClick: handleAddToFavorites,
+            isSpacer: false,
+          },
+          {
+            text: "",
+            icon: "",
+            onClick: () => null,
             active:
               sidebar.shiftClickItems.end === null &&
               sidebar.inputPosition.referenceId !== 0,
@@ -652,6 +694,7 @@ function Sidebar() {
               sidebar.shiftClickItems.end === null &&
               sidebar.inputPosition.referenceId !== 0,
             onClick: handleRename,
+            isSpacer: false,
           },
           {
             text: "Delete",
@@ -660,6 +703,7 @@ function Sidebar() {
             onClick: sidebar.shiftClickItems.end
               ? handleDeleteMultiple
               : handleDeleteSingle,
+            isSpacer: false,
           },
         ]}
       />

@@ -12,34 +12,51 @@ import Caret from "../Icons/Caret";
 import PageIcon from "../Icons/PageIcon";
 import { renameFolder } from "../../../redux/folders";
 import { renamePage } from "../../../redux/pages";
+import { RootState } from "../../../redux/store";
+import { ItemState } from "../../../types";
+import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+import { ChangeEvent, MouseEvent } from "react";
 
 const ItemListItem = ({
   item,
-  combined,
   handleFolderClick,
   handlePageClick,
   handleOnContextMenu,
   handleRename,
   renameInputRef,
   inputPositionRef,
-  handleDragStart,
   handleDragEnter,
   handleNewPageSubmit,
   handleNewFolderSubmit,
   handleDrop,
   index,
+}: {
+  item: ItemState;
+  handleFolderClick: Function;
+  handlePageClick: Function;
+  handleOnContextMenu: Function;
+  handleRename: Function;
+  renameInputRef: React.MutableRefObject<HTMLInputElement | null>;
+  inputPositionRef: React.MutableRefObject<HTMLInputElement | null>;
+  handleDragStart: Function;
+  handleDragEnter: Function;
+  handleNewPageSubmit: Function;
+  handleNewFolderSubmit: Function;
+  handleDrop: Function;
+  index: number;
 }) => {
-  const sidebar = useSelector((state) => state.sidebar);
-  const tags = useSelector((state) => state.tags);
+  const sidebar = useSelector((state: RootState) => state.sidebar);
+  const tags = useSelector((state: RootState) => state.tags);
+  const combined = useSelector((state: RootState) => state.combined);
 
   const dispatch = useDispatch();
 
-  async function handleRenameSubmit(e, item) {
+  async function handleRenameSubmit(e: React.FormEvent, item: ItemState) {
     e.preventDefault();
     try {
       if (item.IS_PAGE) {
         const pageInfo = {
-          newName: e.target.newName.value,
+          newName: (e.target as HTMLFormElement).newName.value,
           pageId: item.PAGE_ID,
         };
 
@@ -59,11 +76,9 @@ const ItemListItem = ({
         if (!data) throw "There was an issue parsing /pages/rename response";
 
         dispatch(renamePage(pageInfo));
-        renameInputRef.current.blur();
-        dispatch(setRenameInputToggled(false));
       } else {
         const folderInfo = {
-          newName: e.target.newName.value,
+          newName: (e.target as HTMLFormElement).newName.value,
           folderId: item.ID,
         };
 
@@ -83,30 +98,30 @@ const ItemListItem = ({
         if (!data) throw "There was an issue parsing /tags/new response";
 
         dispatch(renameFolder(folderInfo));
-        renameInputRef.current.blur();
-        dispatch(setRenameInputToggled(false));
       }
+      dispatch(setRenameInputToggled(false));
+      dispatch(setNewNameForRename(""));
+      renameInputRef.current?.blur();
     } catch (error) {
       console.log(error);
     }
   }
 
-  function handleNewFolderOnChange(e) {
+  function handleNewFolderOnChange(e: ChangeEvent) {
     e.preventDefault();
-    dispatch(setNewFolderName(e.target.value));
+    dispatch(setNewFolderName((e.target as HTMLInputElement).value));
   }
 
-  function handleNewPageOnChange(e) {
+  function handleNewPageOnChange(e: ChangeEvent) {
     e.preventDefault();
-    dispatch(setNewPageName(e.target.value));
+    dispatch(setNewPageName((e.target as HTMLInputElement).value));
   }
 
-  function handleDragStart(e, pickedUpItem) {
-    e.stopPropagation();
+  function handleDragStart(pickedUpItem: ItemState) {
     dispatch(setGrabbedItem(pickedUpItem));
   }
 
-  function determineFolderContainerClass(itemFromList) {
+  function determineFolderContainerClass(itemFromList: ItemState) {
     let className = "folder-container";
 
     if (!sidebar.dragToggled || sidebar.inputPosition.referenceId !== itemFromList.ID) {
@@ -126,9 +141,10 @@ const ItemListItem = ({
     }
 
     if (
-      sidebar.draggedOverItem?.ID === itemFromList?.ID ||
-      (sidebar.draggedOverItem?.ID === itemFromList?.FOLDER_ID &&
-        itemFromList.FOLDER_ID !== null)
+      sidebar.draggedOverItem &&
+      (sidebar.draggedOverItem?.ID === itemFromList?.ID ||
+        (sidebar.draggedOverItem?.ID === itemFromList?.FOLDER_ID &&
+          itemFromList.FOLDER_ID !== null))
     ) {
       if (
         itemFromList.IS_PAGE &&
@@ -145,7 +161,7 @@ const ItemListItem = ({
     return className;
   }
 
-  function handleItemClick(e, item) {
+  function handleItemClick(e: MouseEvent, item: ItemState) {
     if (e.shiftKey) {
       if (sidebar.shiftClickItems.start !== null) {
         dispatch(
@@ -173,7 +189,7 @@ const ItemListItem = ({
     <div
       draggable={item.IS_PAGE}
       title={`${item.IS_PAGE ? "Page: " : "Folder: "} ${item.NAME}`}
-      onDragStart={(e) => handleDragStart(e, item)}
+      onDragStart={() => handleDragStart(item)}
       onDragEnter={(e) => handleDragEnter(e, item)}
       onDrop={(e) => handleDrop(e, sidebar.grabbedItem, item)}
       onDragOver={(e) => e.preventDefault()}
@@ -215,6 +231,7 @@ const ItemListItem = ({
                 onChange={(e) => dispatch(setNewNameForRename(e.target.value))}
                 className="rename-input"
                 ref={renameInputRef}
+                autoComplete="off"
               />
             </form>
           ) : (
@@ -225,6 +242,19 @@ const ItemListItem = ({
           <div className="tags">
             {item.TAGS.map((tagId, index) => {
               const tag = tags.list?.find((tag) => tag.ID === tagId);
+
+              if (!tag)
+                return (
+                  <span
+                    className="tag-color"
+                    style={{ backgroundColor: "black" }}
+                    key={index}
+                    title="Unknown Color (something happened)"
+                  >
+                    &nbsp;
+                  </span>
+                );
+
               return (
                 <span
                   className="tag-color"
@@ -241,27 +271,33 @@ const ItemListItem = ({
       </div>
       {sidebar.inputPosition.referenceId === item.ID && sidebar.inputPosition.toggled && (
         <form
-          onSubmit={
-            sidebar.inputPosition.forFolder ? handleNewFolderSubmit : handleNewPageSubmit
-          }
+          onSubmit={(e) => {
+            if (sidebar.inputPosition.forFolder) {
+              handleNewFolderSubmit(e);
+            } else {
+              handleNewPageSubmit(e);
+            }
+          }}
           style={{ paddingLeft: `calc(${item.TIER} * 10px)` }}
           className="new-folder-form"
         >
           <input
-            // name="new-page-folder-input"
             ref={inputPositionRef}
             onClick={(e) => e.stopPropagation()}
             spellCheck="false"
-            onChange={
-              sidebar.inputPosition.forFolder
-                ? handleNewFolderOnChange
-                : handleNewPageOnChange
-            }
+            onChange={(e) => {
+              if (sidebar.inputPosition.forFolder) {
+                handleNewFolderOnChange(e);
+              } else {
+                handleNewPageOnChange(e);
+              }
+            }}
             value={
               sidebar.inputPosition.forFolder
                 ? sidebar.newFolderName
                 : sidebar.newPageName
             }
+            autoComplete="off"
           />
         </form>
       )}

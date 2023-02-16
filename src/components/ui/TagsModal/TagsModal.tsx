@@ -6,27 +6,32 @@ import { toggleModal } from "../../../redux/modals";
 import { addTagToPage, removeTagFromPage } from "../../../redux/pages";
 import { addTagToFolder, removeTagFromFolder } from "../../../redux/folders";
 import Overlay from "../Overlay/Overlay";
-import ColorIcon from "../Icons/ColorIcon";
-import "./TagsModal.css";
 import ColorPicker from "../ColorPicker/ColorPicker";
+import { ItemState, ColorState, TagState, PageState, FolderState } from "../../../types";
+import { RootState } from "../../../redux/store";
+import "./TagsModal.css";
+import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 
 const TagsModal = () => {
-  const tagsModalRef = useRef(null);
-  const pages = useSelector((state) => state.pages);
-  const folders = useSelector((state) => state.folders);
-  const tags = useSelector((state) => state.tags);
+  const tagsModalRef = useRef<HTMLDivElement>(null);
+  const pages = useSelector((state: RootState) => state.pages);
+  const folders = useSelector((state: RootState) => state.folders);
+  const tags = useSelector((state: RootState) => state.tags);
+  const modals = useSelector((state: RootState) => state.modals);
 
   const dispatch = useDispatch();
 
   const [tagSearchValue, setTagSearchValue] = useState("");
-  const [tagColor, setTagColor] = useState(null);
+  const [tagColor, setTagColor] = useState<ColorState | null>(null);
 
   const selectedItem = pages.selected || folders.selected;
-  // const selectedItem = pages.list.find(page => page.SELECTED) || folders.list.find(page => page.SELECTED)
 
   useEffect(() => {
-    function handler(e) {
-      if (!tagsModalRef.current.contains(e.target)) {
+    function handler(e: MouseEvent) {
+      if (
+        !(e.target as HTMLDivElement).classList.contains("add-tags") &&
+        !(tagsModalRef.current as HTMLDivElement).contains(e.target as HTMLElement)
+      ) {
         dispatch(toggleModal("tagsModal"));
       }
     }
@@ -36,7 +41,7 @@ const TagsModal = () => {
     return () => window.removeEventListener("click", handler);
   });
 
-  async function handleTagInputSubmit(e) {
+  async function handleTagInputSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (tagSearchValue === "") return;
@@ -68,11 +73,11 @@ const TagsModal = () => {
     }
   }
 
-  function handleColorChange(color) {
+  function handleColorChange(color: ColorState) {
     setTagColor(color);
   }
 
-  async function handleTagClick(e, item, tag) {
+  async function handleTagClick(item: FolderState | PageState, tag: TagState) {
     try {
       const response = await fetch("http://localhost:3001/tags/tag-item", {
         method: "POST",
@@ -100,32 +105,30 @@ const TagsModal = () => {
           dispatch(addTagToPage({ item, tag }));
         }
       } else {
+        let allChildPages: Array<PageState> = [];
 
-        let allChildPages = [];
-
-        function getChildren(folderIdToCheck) {
+        function getChildren(folderIdToCheck: number | null) {
           const childPages = pages.list.filter(
-            (page) => page.FOLDER_ID === folderIdToCheck
+            (page: PageState) => page.FOLDER_ID === folderIdToCheck
           );
 
           allChildPages.push(...childPages);
 
           const childrenFolders = folders.list
-            .filter((folder) => folder.PARENT_FOLDER_ID === folderIdToCheck)
-            .map((folder) => folder.ID);
+            .filter((folder: FolderState) => folder.PARENT_FOLDER_ID === folderIdToCheck)
+            .map((folder: FolderState) => folder.ID);
 
           if (childrenFolders.length === 0) return;
 
-          childrenFolders.forEach((folderId) => getChildren(folderId));
+          childrenFolders.forEach((folderId: number) => getChildren(folderId));
         }
 
         getChildren(item.ID);
 
-
         if (item.TAGS.includes(tag.ID)) {
           dispatch(removeTagFromFolder({ item, tag }));
 
-          console.log(allChildPages)
+          console.log(allChildPages);
           if (allChildPages.length > 0) {
             allChildPages.forEach((page) => {
               dispatch(removeTagFromPage({ item: page, tag }));
@@ -139,7 +142,6 @@ const TagsModal = () => {
               dispatch(addTagToPage({ item: page, tag }));
             });
           }
-          // TODO - Look for child pages and add tags to them too (on front end)
         }
       }
     } catch (error) {
@@ -147,7 +149,7 @@ const TagsModal = () => {
     }
   }
 
-  if (!selectedItem) return "No selected item found";
+  if (!selectedItem) return <p>No selected item found</p>;
 
   return (
     <>
@@ -161,11 +163,8 @@ const TagsModal = () => {
             value={tagSearchValue}
             onChange={(e) => setTagSearchValue(e.target.value)}
             placeholder="Type to search or add a tag"
+            autoComplete="off"
           />
-          {/* <button className="custom-color-button">
-            <ColorIcon fill={tagColor} />
-            <input type="color" onChange={handleColorChange} value={tagColor} />
-          </button> */}
           <ColorPicker
             onColorSelect={handleColorChange}
             selectedColor={tagColor}
@@ -174,38 +173,24 @@ const TagsModal = () => {
         </form>
         {tagSearchValue && !tags.list.find((tag) => tag.NAME === tagSearchValue) && (
           <button className="tag-button" onClick={(e) => console.log("new tag input")}>
-            <span className="color-span" style={{ backgroundColor: tagColor }}>
+            <span
+              className="color-span"
+              style={{ backgroundColor: tagColor?.COLOR_CODE }}
+            >
               &nbsp;
             </span>
             {tagSearchValue}
           </button>
         )}
-        {/* {tags.list
-          .filter((tag) => selectedItem.TAGS.includes(tag.ID))
-          .map((tag, index) => (
-            <button
-              className={`tag-button ${
-                selectedItem?.TAGS.includes(tag.ID) ? "added" : ""
-              }`}
-              onClick={(e) => handleTagClick(e, selectedItem, tag)}
-              key={index}
-            >
-              {" "}
-              <span className="color-span" style={{ backgroundColor: tag.COLOR_CODE }}>
-                &nbsp;
-              </span>{" "}
-              <p>{tag.NAME}</p>
-            </button> */}
-
         {tags.list
-          ?.filter((tag) => tag.NAME.includes(tagSearchValue))
-          .map((tag, index) => {
+          ?.filter((tag: TagState) => tag.NAME.includes(tagSearchValue))
+          .map((tag: TagState, index: number) => {
             return (
               <button
                 className={`tag-button ${
                   selectedItem?.TAGS?.includes(tag.ID) ? "added" : ""
                 }`}
-                onClick={(e) => handleTagClick(e, selectedItem, tag)}
+                onClick={(e) => handleTagClick(selectedItem, tag)}
                 key={index}
               >
                 {" "}

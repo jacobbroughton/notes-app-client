@@ -29,7 +29,6 @@
 
 .items-list .folder-container .tier-blocks {
   display: flex;
-  /* gap: 5px; */
 }
 
 .items-list .folder-container .tier-blocks .tier-block {

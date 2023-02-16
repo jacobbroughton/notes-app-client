@@ -1,6 +1,5 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import Input from "../../ui/Input/Input";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 
 import "./Register.css";
@@ -56,6 +55,7 @@ const Login = () => {
           value={username}
           pattern="^\S*$"
           required
+          autoComplete="off"
         />
         <input
           type="password"
@@ -67,6 +67,7 @@ const Login = () => {
           required
           value={password}
           pattern="^\S*$"
+          autoComplete="off"
         />
         <button type="submit">Submit</button>
       </form>

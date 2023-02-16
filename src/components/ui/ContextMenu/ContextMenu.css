@@ -15,7 +15,6 @@
 .context-menu.active {
   display: flex;
   flex-direction: column;
-  /* gap: 3px; */
 }
 
 .context-menu button {
@@ -46,5 +45,5 @@
 
 .context-menu .icon {
   opacity: 1;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.10);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }

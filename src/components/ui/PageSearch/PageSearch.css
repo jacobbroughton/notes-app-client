@@ -5,7 +5,6 @@
   overflow-y: scroll;
   background-color: var(--primary-bg);
   border: 1px solid transparent;
-  /* padding: 1px 5px; */
   font-size: 0.875rem;
 }
 
@@ -22,7 +21,7 @@
 .page-search form input {
   width: 100%;
   padding: 5px;
-  background-color:  var(--secondary-bg);
+  background-color: var(--secondary-bg);
   color: var(--color-text-primary);
   border-radius: 3px;
   border: 1px solid var(--tertiary-bg);
@@ -63,7 +62,6 @@
   background-color: var(--color-matching-highlight);
 }
 
-
 .page-search .page-container .tier-block-and-name .tier-block {
   transition: border-color 0.05s ease, background-color 0.05s ease;
 }
@@ -71,7 +69,6 @@
 .page-search .page-container .tier-block-and-name .tier-block:not(:first-child) {
   width: 10px;
   border-right: 1px solid rgba(211, 211, 211, 0.292);
-  /* border-right: 1px solid var(--color-accent-primary); */
 }
 
 .page-search .page-container.selected .tier-block:first-child {

@@ -1,39 +1,42 @@
 import { useDispatch, useSelector } from "react-redux";
 import "./ColorPicker.css";
 import { setColorPickerMenu } from "../../../redux/colorPickerMenu";
-import ColorIcon from "../Icons/ColorIcon";
 import CheckIcon from "../Icons/CheckIcon";
 import XIcon from "../Icons/XIcon";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { addCustomColorOption } from "../../../redux/tags";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+import { ColorState } from "../../../types";
+import { RootState } from "../../../redux/store";
 
-const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
+const ColorPicker = ({
+  onColorSelect,
+  selectedColor,
+  showColorCode,
+}: {
+  onColorSelect: Function;
+  selectedColor: ColorState | null;
+  showColorCode: boolean;
+}) => {
   const dispatch = useDispatch();
-  const colorPickerMenu = useSelector((state) => state.colorPickerMenu);
-  const { colorOptions } = useSelector((state) => state.tags);
+  const colorPickerMenu = useSelector((state: RootState) => state.colorPickerMenu);
+  const { colorOptions } = useSelector((state: RootState) => state.tags);
   const [colorConfirmationShowing, setColorConfirmationShowing] = useState(false);
-  const [newCustomColor, setNewCustomColor] = useState(null);
+  const [newCustomColor, setNewCustomColor] = useState<string | null>(null);
   const [deleteModeToggled, setDeleteModeToggled] = useState(false);
-  const [colorToDelete, setColorToDelete] = useState(null);
-  const menuRef = useRef(null);
+  const [colorToDelete, setColorToDelete] = useState<ColorState | null>(null);
+  const menuRef = useRef<HTMLMenuElement>(null);
 
-  function isValidColor(strColor) {
-    const s = new Option().style;
-    s.color = strColor;
-    return s.color !== "";
-  }
-
-  function handleToggleClick(e) {
+  function handleToggleClick() {
     dispatch(setColorPickerMenu({ toggled: !colorPickerMenu.toggled }));
   }
 
-  function handleNewColorChange(e) {
-    setNewCustomColor(e.target.value);
+  function handleNewColorChange(e: React.ChangeEvent) {
+    setNewCustomColor((e.target as HTMLInputElement).value);
     setColorConfirmationShowing(true);
   }
 
-  async function addNewCustomColor(e) {
+  async function addNewCustomColor() {
     try {
       const payload = {
         colorCode: newCustomColor,
@@ -55,13 +58,12 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
       dispatch(addCustomColorOption(data.justCreatedColor));
       setNewCustomColor(null);
       setColorConfirmationShowing(false);
-
     } catch (error) {
       console.log(error);
     }
   }
 
-  async function deleteCustomColor(color) {
+  async function deleteCustomColor(color: ColorState) {
     try {
       const payload = {
         colorId: color.ID,
@@ -80,7 +82,7 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
 
       const data = await response.json();
 
-      if (!data) throw 'There was a problem parsing tags/color-options/delete response'
+      if (!data) throw "There was a problem parsing tags/color-options/delete response";
 
       setColorToDelete(null);
       setDeleteModeToggled(false);
@@ -89,11 +91,11 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
     }
   }
 
-  function handleDeleteClick(e) {
+  function handleDeleteClick() {
     setDeleteModeToggled(!deleteModeToggled);
   }
 
-  function handleColorClick(color) {
+  function handleColorClick(color: ColorState) {
     if (deleteModeToggled) {
       setColorToDelete(color);
     } else {
@@ -101,8 +103,7 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
     }
   }
 
-  function handleConfirmClick(e) {
-    e.stopPropagation();
+  function handleConfirmClick(): void {
     if (colorConfirmationShowing) {
       addNewCustomColor();
     }
@@ -112,8 +113,8 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
     }
   }
 
-  function handleCancelClick(e) {
-    e.stopPropagation();
+  function handleCancelClick() {
+    // e.stopPropagation();
     if (colorConfirmationShowing) {
       setNewCustomColor(null);
       setColorConfirmationShowing(false);
@@ -126,10 +127,10 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
   }
 
   useEffect(() => {
-    function handler(e) {
+    function handler(e: MouseEvent) {
       if (
-        !menuRef.current?.contains(e.target) &&
-        !e.target.classList.contains("color-picker-toggle")
+        !menuRef.current?.contains(e.target as HTMLElement) &&
+        !(e.target as HTMLElement).classList.contains("color-picker-toggle")
       ) {
         setNewCustomColor(null);
         setColorConfirmationShowing(false);
@@ -140,8 +141,8 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
 
       if (
         deleteModeToggled &&
-        !e.target.classList.contains("color-button") &&
-        !e.target.classList.contains("delete")
+        !(e.target as HTMLElement).classList.contains("color-button") &&
+        !(e.target as HTMLElement).classList.contains("delete")
       ) {
         setColorToDelete(null);
         setDeleteModeToggled(false);
@@ -164,10 +165,6 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
           title="Open Color Picker"
           style={{ ...(selectedColor && { backgroundColor: selectedColor.COLOR_CODE }) }}
         >
-          {/* <ColorIcon
-            // fill={isValidColor(updatedTagColor) ? updatedTagColor : tags.selected.COLOR_CODE}
-            fill={selectedColor}
-          /> */}
           &nbsp;
         </button>
         {showColorCode && (
@@ -221,22 +218,20 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
                 <input
                   type="color"
                   onChange={handleNewColorChange}
-                  // style={{ ...(colorConfirmationShowing && { marginLeft: "10px" }) }}
-                  // value={updatedTagColor}
                   onClick={(e) => e.stopPropagation()}
+                  autoComplete="off"
                 />
-                {/* {colorConfirmationShowing && <div className="spacer">&nbsp;</div>} */}
                 <div
-                  className="color-option add"
+                  className={`color-option add ${deleteModeToggled ? "disabled" : ""}`}
                   onClick={(e) => e.preventDefault()}
-                  disabled={deleteModeToggled}
                 >
                   +
                 </div>
                 <div
-                  className="color-option delete"
+                  className={`color-option delete ${
+                    colorConfirmationShowing ? "disabled" : ""
+                  }`}
                   onClick={handleDeleteClick}
-                  disabled={colorConfirmationShowing}
                 >
                   -
                 </div>
@@ -256,8 +251,8 @@ const ColorPicker = ({ onColorSelect, selectedColor, showColorCode }) => {
                 {colorConfirmationShowing && (
                   <div
                     className="new-color-example"
-                    title={newCustomColor}
-                    style={{ backgroundColor: newCustomColor }}
+                    title={newCustomColor || ""}
+                    style={{ backgroundColor: newCustomColor || "" }}
                   >
                     &nbsp;
                   </div>

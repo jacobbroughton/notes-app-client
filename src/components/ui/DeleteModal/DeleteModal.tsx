@@ -7,12 +7,14 @@ import "./DeleteModal.css";
 import PageIcon from "../Icons/PageIcon";
 import { setShiftClickItems } from "../../../redux/sidebar";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+import { RootState } from "../../../redux/store";
+import { PageState, ItemState, FolderState, SidebarItemState } from "../../../types";
 
 export function DeleteModal() {
   const dispatch = useDispatch();
-  const pages = useSelector((state) => state.pages);
-  const folders = useSelector((state) => state.folders);
-  const sidebar = useSelector((state) => state.sidebar);
+  const pages = useSelector((state: RootState) => state.pages);
+  const folders = useSelector((state: RootState) => state.folders);
+  const sidebar = useSelector((state: RootState) => state.sidebar);
 
   let itemToDelete = null;
 
@@ -22,7 +24,7 @@ export function DeleteModal() {
     itemToDelete = folders.stagedToDelete;
   }
 
-  async function deleteFolder(folderId) {
+  async function deleteFolder(folderId: number) {
     try {
       let response = await fetch("http://localhost:3001/folders/delete", {
         method: "post",
@@ -41,9 +43,9 @@ export function DeleteModal() {
 
       if (!data) throw "There was a problem parsing folders/delete response";
 
-      data.deletedFolders.forEach((folderId) => {
+      data.deletedFolders.forEach((folderId: number) => {
         dispatch(setFolderEffStatus(folderId));
-        pages.list.forEach((page) => {
+        pages.list.forEach((page: PageState) => {
           if (page.FOLDER_ID === folderId) dispatch(setPageEffStatus(page.PAGE_ID));
         });
       });
@@ -53,7 +55,7 @@ export function DeleteModal() {
     }
   }
 
-  async function deletePage(pageId) {
+  async function deletePage(pageId: number) {
     try {
       let response = await fetch("http://localhost:3001/pages/delete", {
         method: "POST",
@@ -73,10 +75,10 @@ export function DeleteModal() {
     }
   }
 
-  async function deleteMultiple(items) {
+  async function deleteMultiple(items: Array<SidebarItemState>) {
     try {
-      const selectionIncludesFolders = items.filter((item) => !item.IS_PAGE).length !== 0;
-      const selectionIncludesPages = items.filter((item) => item.IS_PAGE).length !== 0;
+      const selectionIncludesFolders = items.filter((item: SidebarItemState) => !item.IS_PAGE).length !== 0;
+      const selectionIncludesPages = items.filter((item: SidebarItemState) => item.IS_PAGE).length !== 0;
 
       if (selectionIncludesFolders) {
         let response = await fetch("http://localhost:3001/folders/delete-multiple", {
@@ -85,7 +87,7 @@ export function DeleteModal() {
             "content-type": "application/json;charset=UTF-8",
           },
           credentials: "include",
-          body: JSON.stringify({ folders: items.filter((item) => !item.IS_PAGE) }),
+          body: JSON.stringify({ folders: items.filter((item: SidebarItemState) => !item.IS_PAGE) }),
         });
 
         if (response.status !== 200) throwResponseStatusError(response, "POST");
@@ -137,7 +139,10 @@ export function DeleteModal() {
     dispatch(toggleModal("deleteModal"));
   }
 
-  function determinePromptText(itemToDelete) {
+  function determinePromptText(itemToDelete: FolderState | PageState | null) {
+
+    if (!itemToDelete) return "There was an error but are you sure you'd like to delete this? If its a folder, you'll also be deleting it's contents."
+
     if (sidebar.shiftClickItems.list.length > 1) {
       return `Are you sure you'd like to delete the following ${sidebar.shiftClickItems.list.length} items?`;
     }

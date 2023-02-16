@@ -1,24 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { useState } from "react";
-import SearchIcon from "../components/ui/Icons/SearchIcon";
-
-type SidebarState = {
-  width: number;
-  view: object;
-  viewOptions: object[];
-  searchValue: string;
-  shiftClickItems: object;
-  newTagFormToggled: boolean;
-  dragToggled: boolean;
-  draggedOverItem: object;
-  grabbedItem: object,
-  inputPosition: object,
-  renameInputToggled: boolean,
-  newNameForRename: string,
-  newPageName: string,
-  newFolderName: string
-};
+import { SidebarState, SidebarItemState } from "../types";
 
 const viewOptionsForState = [
   {
@@ -43,10 +25,7 @@ const initialState: SidebarState = {
   shiftClickItems: { start: null, end: null, list: [] },
   newTagFormToggled: false,
   dragToggled: false,
-  draggedOverItem: {
-    ID: null,
-    PAGE_ID: null,
-  },
+  draggedOverItem: null,
   grabbedItem: null,
   inputPosition: {
     referenceId: null,
@@ -54,27 +33,16 @@ const initialState: SidebarState = {
     forFolder: false,
   },
   renameInputToggled: false,
-  newNameForRename: '',
-  newPageName: '',
-  newFolderName: ''
+  newNameForRename: "",
+  newPageName: "",
+  newFolderName: "",
 };
 
 const sidebarSlice = createSlice({
   name: "sidebar",
   initialState,
   reducers: {
-    setSidebarWidth: (state, { payload }: PayloadAction<SidebarState>) => {
-      if (payload > state.width + 2) {
-        return {
-          ...state,
-          width: state.width + 3,
-        };
-      } else if (payload < state.width - 2) {
-        return {
-          ...state,
-          width: state.width - 3,
-        };
-      }
+    setSidebarWidth: (state, { payload }: PayloadAction<number>) => {
       return {
         ...state,
         width: payload,
@@ -99,7 +67,7 @@ const sidebarSlice = createSlice({
 
       if (payload.end !== null) {
         list = payload.list.filter(
-          (item) =>
+          (item: SidebarItemState) =>
             (item.ORDER >= payload.start && item.ORDER <= payload.end) ||
             (item.ORDER >= payload.end && item.ORDER <= payload.start)
         );
@@ -127,6 +95,7 @@ const sidebarSlice = createSlice({
       };
     },
     setDraggedOverItem: (state, { payload }) => {
+      console.log(current(state));
       return {
         ...state,
         draggedOverItem: {
@@ -141,40 +110,40 @@ const sidebarSlice = createSlice({
         grabbedItem: payload,
       };
     },
-    setInputPosition: (state,{payload}) => {
+    setInputPosition: (state, { payload }) => {
       return {
         ...state,
         inputPosition: {
           referenceId: payload.referenceId,
           toggled: payload.toggled,
           forFolder: payload.forFolder,
-        }
-      }
+        },
+      };
     },
-    setRenameInputToggled: (state, {payload}) => {
+    setRenameInputToggled: (state, { payload }) => {
       return {
         ...state,
-        renameInputToggled: payload
-      }
+        renameInputToggled: payload,
+      };
     },
-    setNewNameForRename: (state, {payload}) => {
+    setNewNameForRename: (state, { payload }) => {
       return {
         ...state,
-        newNameForRename: payload
-      }
+        newNameForRename: payload,
+      };
     },
-    setNewPageName: (state, {payload}) => {
+    setNewPageName: (state, { payload }) => {
       return {
         ...state,
-        newPageName: payload
-      }
+        newPageName: payload,
+      };
     },
-    setNewFolderName: (state, {payload}) => {
+    setNewFolderName: (state, { payload }) => {
       return {
         ...state,
-        newFolderName: payload
-      }
-    }
+        newFolderName: payload,
+      };
+    },
   },
 });
 
@@ -191,6 +160,7 @@ export const {
   setRenameInputToggled,
   setNewNameForRename,
   setNewPageName,
-  setNewFolderName
+  setNewFolderName,
 } = sidebarSlice.actions;
+
 export default sidebarSlice.reducer;

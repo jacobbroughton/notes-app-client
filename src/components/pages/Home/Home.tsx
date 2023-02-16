@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, ChangeEvent } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../../redux/user";
@@ -25,28 +25,29 @@ import TagsModal from "../../ui/TagsModal/TagsModal";
 import { setTags, setColorOptions } from "../../../redux/tags";
 import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+import { FolderState, PageState } from "../../../types";
+import { RootState } from "../../../redux/store";
 
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const editorRef = useRef(null);
-  const bodyFieldRef = useRef(null);
-  const titleFieldRef = useRef(null);
-  const [title, setTitle] = useState("");
-  const [noTitleWarningToggled, setNoTitleWarningToggled] = useState(false);
-  const [noTitleWarningTimeout, setNoTitleWarningTimeout] = useState(null);
-  const [body, setBody] = useState("");
-  const user = useSelector((state) => state.user);
-  const pages = useSelector((state) => state.pages);
-  const folders = useSelector((state) => state.folders);
-  const [loading, setLoading] = useState(true);
-  const modals = useSelector((state) => state.modals);
+  const titleFieldRef = useRef<HTMLInputElement>(null);
+  const bodyFieldRef = useRef<HTMLTextAreaElement>(null);
+  const [noTitleWarningToggled, setNoTitleWarningToggled] = useState<boolean>(false);
+  const [noTitleWarningTimeout, setNoTitleWarningTimeout] = useState<
+    number | undefined
+  >();
+  const [loading, setLoading] = useState<boolean>(true);
+  const user = useSelector((state: RootState) => state.user);
+  const pages = useSelector((state: RootState) => state.pages);
+  const folders = useSelector((state: RootState) => state.folders);
+  const modals = useSelector((state: RootState) => state.modals);
   let pageModified = false;
 
   if (pages.active) {
     if (
       pages.active.BODY !== pages.active.DRAFT_BODY ||
-      pages.active?.TITLE !== pages.active.DRAFT_TITLE
+      pages.active?.NAME !== pages.active.DRAFT_NAME
     )
       pageModified = true;
   }
@@ -79,11 +80,6 @@ const Home = () => {
 
   async function getData() {
     try {
-      // const [foldersResponse, pagesResponse] = Promise.allSettled([
-      //   getFolders(),
-      //   getPages(),
-      // ]);
-
       const foldersResponse = await getFolders();
       const pagesResponse = await getPages();
 
@@ -95,9 +91,7 @@ const Home = () => {
       const foldersData = await foldersResponse.json();
       const pagesData = await pagesResponse.json();
 
-      // const [foldersData, pagesData] = Promise.allSettled([foldersResponse.json(), pagesResponse.json()]);
-
-      let formattedFolders = formatFolders(foldersData.folders, folders.list, pages.list);
+      let formattedFolders = formatFolders(foldersData.folders, folders.list);
       let formattedPages = formatPages(pagesData.pages, formattedFolders);
 
       dispatch(setFolders(formattedFolders));
@@ -144,19 +138,22 @@ const Home = () => {
     }
   }
 
-  async function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    try {
-      console.log(pages.active.DRAFT_TITLE);
-      if (!pages.active.DRAFT_TITLE) {
-        bodyFieldRef.current?.blur();
-        titleFieldRef.current?.focus();
-        clearTimeout(noTitleWarningTimeout);
-        setNoTitleWarningToggled(true);
-        return;
-      }
+    if (!pages.active) {
+      bodyFieldRef.current?.blur();
+      titleFieldRef.current?.focus();
+      clearTimeout(noTitleWarningTimeout);
+      setNoTitleWarningToggled(true);
+      return;
+    }
 
+    editPage();
+  }
+
+  async function editPage() {
+    try {
       const response = await fetch("http://localhost:3001/pages/edit", {
         method: "POST",
         credentials: "include",
@@ -165,8 +162,8 @@ const Home = () => {
         },
         body: JSON.stringify({
           pageId: pages.active?.PAGE_ID,
-          title: pages.active.DRAFT_TITLE,
-          body: pages.active.DRAFT_BODY,
+          name: pages.active?.DRAFT_NAME,
+          body: pages.active?.DRAFT_BODY,
         }),
       });
 
@@ -179,7 +176,7 @@ const Home = () => {
       dispatch(updatePage(data.modifiedPage));
       dispatch(setPageModified(false));
 
-      if (modals.unsavedWarningVisible) {
+      if (modals.unsavedWarning) {
         dispatch(selectPage(pages.stagedToSwitch));
         dispatch(setPageStagedForSwitch(null));
         dispatch(selectFolder(null));
@@ -190,18 +187,21 @@ const Home = () => {
     }
   }
 
-  async function handleNewPageSubmit(e) {
+  function handleNewPageSubmit(e: React.FormEvent) {
     e.preventDefault();
-    try {
-      console.log(pages);
-      if (!pages.untitledPage.TITLE) {
-        bodyFieldRef.current?.blur();
-        titleFieldRef.current?.focus();
-        clearTimeout(noTitleWarningTimeout);
-        setNoTitleWarningToggled(true);
-        return;
-      }
+    if (!pages.untitledPage.NAME) {
+      bodyFieldRef.current?.blur();
+      titleFieldRef.current?.focus();
+      clearTimeout(noTitleWarningTimeout);
+      setNoTitleWarningToggled(true);
+      return;
+    }
 
+    addPage();
+  }
+
+  async function addPage() {
+    try {
       const response = await fetch("http://localhost:3001/pages/new", {
         method: "POST",
         credentials: "include",
@@ -210,7 +210,7 @@ const Home = () => {
         },
         body: JSON.stringify({
           parentFolderId: null,
-          newPageName: pages.untitledPage.TITLE.trim(),
+          newPageName: pages.untitledPage.NAME.trim(),
           newPageBody: pages.untitledPage.BODY.trim() || "",
         }),
       });
@@ -224,10 +224,6 @@ const Home = () => {
       clearTimeout(noTitleWarningTimeout);
       setNoTitleWarningToggled(false);
       getData();
-      // setTitle("");
-      // setBody("");
-      // dispatch(setPageDraftTitle(""));
-      // dispatch(setPageDraftBody(""));
       dispatch(setUntitledPageTitle(""));
       dispatch(setUntitledPageBody(""));
     } catch (error) {
@@ -235,16 +231,17 @@ const Home = () => {
     }
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: KeyboardEvent) {
     if (document.activeElement === bodyFieldRef.current) {
       if (e.keyCode === 9) {
         e.preventDefault();
-        const newBody =
-          body.slice(0, e.selectionStart) +
-          " " +
-          body.slice(e.selectionStart, body.length - 1);
+        // const newBody =
+        //   body.slice(0, e.selectionStart) +
+        //   " " +
+        //   body.slice(e.selectionStart, body.length - 1);
         // setBody(newBody);
-        dispatch(setPageDraftBody(newBody));
+        // dispatch(setPageDraftBody(newBody));
+        alert("Uncomment line above i guess");
       }
     }
     if (
@@ -252,30 +249,40 @@ const Home = () => {
       document.activeElement === titleFieldRef.current
     ) {
       if (e.metaKey && e.key === "s") {
-        if (pages.active) handleSubmit(e);
-        if (!pages.active) handleNewPageSubmit(e);
+        if (pages.active) editPage();
+        if (!pages.active) addPage();
       }
     }
   }
 
-  function handleBodyChange(e, isForUnsaved) {
+  function handleBodyChange(e: ChangeEvent, isForUnsaved: Boolean) {
     e.preventDefault();
     // setBody(e.target.value);
     if (isForUnsaved) {
-      dispatch(setUntitledPageBody(e.target.value));
+      dispatch(setUntitledPageBody((e.target as HTMLTextAreaElement).value));
     } else {
-      dispatch(setPageDraftBody({ page: pages.active, draftBody: e.target.value }));
+      dispatch(
+        setPageDraftBody({
+          page: pages.active,
+          draftBody: (e.target as HTMLTextAreaElement).value,
+        })
+      );
     }
   }
 
-  function handleTitleChange(e, isForUnsaved) {
+  function handleTitleChange(e: ChangeEvent, isForUnsaved: Boolean) {
     e.preventDefault();
 
     // setTitle(e.target.value);
     if (isForUnsaved) {
-      dispatch(setUntitledPageTitle(e.target.value));
+      dispatch(setUntitledPageTitle((e.target as HTMLTextAreaElement).value));
     } else {
-      dispatch(setPageDraftTitle({ page: pages.active, draftTitle: e.target.value }));
+      dispatch(
+        setPageDraftTitle({
+          page: pages.active,
+          draftTitle: (e.target as HTMLTextAreaElement).value,
+        })
+      );
     }
   }
 
@@ -291,12 +298,12 @@ const Home = () => {
     return "Up to date";
   }
 
-  function determinePath(page) {
-    let parentFolders = [];
+  function determinePath(page: PageState) {
+    let parentFolders: Array<FolderState> = [];
 
-    function getParentFolder(folderId) {
+    function getParentFolder(folderId: number | null) {
       if (!folderId) return;
-      let parent = folders.list?.find((folder) => folder.ID === folderId);
+      let parent = folders.list?.find((folder: FolderState) => folder.ID === folderId);
       if (!parent) return;
       parentFolders.unshift(parent);
       getParentFolder(parent.PARENT_FOLDER_ID);
@@ -324,19 +331,12 @@ const Home = () => {
   }, [noTitleWarningToggled]);
 
   useEffect(() => {
-    let newTitle = "";
-    if (pages.active?.TITLE) {
-      newTitle = pages.active?.TITLE;
+    let newName = "";
+    if (pages.active?.NAME) {
+      newName = pages.active?.NAME;
     } else if (pages.active?.NAME) {
-      newTitle = pages.active?.NAME;
+      newName = pages.active?.NAME;
     }
-
-    // if (pages.active) {
-    //   dispatch(setPageDraftTitle({ page: pages.active, draftTitle: newTitle }));
-    //   dispatch(
-    //     setPageDraftBody({ page: pages.active, draftBody: pages.active?.BODY || "" })
-    //   );
-    // }
 
     return () => {
       if (pages.active?.IS_MODIFIED) dispatch(toggleModal("unsavedWarning"));
@@ -346,14 +346,14 @@ const Home = () => {
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     if (pages.active) {
-      if (title && noTitleWarningToggled) {
+      if (noTitleWarningToggled) {
         clearTimeout(noTitleWarningTimeout);
         setNoTitleWarningToggled(false);
       }
 
       const isModified =
         pages.active.DRAFT_BODY !== pages.active?.BODY ||
-        pages.active.DRAFT_TITLE !== pages.active?.TITLE;
+        pages.active.DRAFT_NAME !== pages.active?.NAME;
 
       dispatch(setPageModified(isModified));
     }
@@ -362,10 +362,10 @@ const Home = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [
-    pages.active?.DRAFT_TITLE,
+    pages.active?.DRAFT_NAME,
     pages.active?.DRAFT_BODY,
     pages.untitledPage.BODY,
-    pages.untitledPage.TITLE,
+    pages.untitledPage.NAME,
   ]);
 
   if (loading && !user) {
@@ -378,7 +378,7 @@ const Home = () => {
 
   return (
     <div className="home-view">
-      {modals.unsavedWarningVisible && (
+      {modals.unsavedWarning && (
         <>
           <Overlay />
           <div className="unsaved-warning-modal">
@@ -399,8 +399,8 @@ const Home = () => {
           </div>
         </>
       )}
-      {modals.deleteModalVisible && <DeleteModal />}
-      {modals.tagsModalVisible && <TagsModal />}
+      {modals.deleteModal && <DeleteModal />}
+      {modals.tagsModal && <TagsModal />}
       <OpenPageNavigation />
       {!pages.active && (
         <form className="editor-form" onSubmit={handleNewPageSubmit}>
@@ -412,7 +412,7 @@ const Home = () => {
             )}
             <div
               className={`status-indicator ${
-                pages.untitledPage.TITLE !== "" || pages.untitledPage.BODY !== ""
+                pages.untitledPage.NAME !== "" || pages.untitledPage.BODY !== ""
                   ? "unsaved"
                   : "saved"
               }`}
@@ -421,18 +421,18 @@ const Home = () => {
             <input
               type="text"
               placeholder="Title / Topic"
-              value={pages.untitledPage.TITLE}
+              value={pages.untitledPage.NAME}
               spellCheck="false"
               required
               onChange={(e) => handleTitleChange(e, true)}
               ref={titleFieldRef}
               className={noTitleWarningToggled ? "error" : ""}
+              autoComplete="off"
               // tabIndex="0"
             />
           </div>
 
           <textarea
-            type="text"
             placeholder="Body"
             value={pages.untitledPage.BODY}
             spellCheck="false"
@@ -459,17 +459,17 @@ const Home = () => {
             <input
               type="text"
               placeholder="Title / Topic"
-              value={pages.active.DRAFT_TITLE}
+              value={pages.active.DRAFT_NAME}
               spellCheck="false"
               required
               onChange={(e) => handleTitleChange(e, false)}
               ref={titleFieldRef}
               className={noTitleWarningToggled ? "error" : ""}
+              autoComplete="off"
             />
           </div>
 
           <textarea
-            type="text"
             placeholder="Body"
             value={pages.active.DRAFT_BODY}
             spellCheck="false"
@@ -479,16 +479,15 @@ const Home = () => {
             data-gramm_editor="false"
             data-enable-grammarly="false"
           />
-          {/* {determinePath(pages.active).length !== 0 && ( */}
           <div className="page-path">
             /&nbsp;
-            {determinePath(pages.active).map((folder, i) => (
+            {determinePath(pages.active).map((folder: FolderState, i: number) => (
               <div className="folder-name-and-divider" key={i}>
                 <p>{folder.NAME}</p>
                 <span className="path-divider">&nbsp;/&nbsp;</span>
               </div>
             ))}
-            {determinePath(pages.active) === 0 && (
+            {!determinePath(pages.active) && (
               <div className="folder-name-and-divider">
                 <span className="path-divider">&nbsp;/&nbsp;</span>
               </div>
@@ -498,10 +497,8 @@ const Home = () => {
               <p>{pages.active.NAME}</p>
             </div>
           </div>
-          {/* )} */}
         </form>
       )}
-      {/* <div>Excel-like page selector here</div> */}
 
       {/* <button onClick={testProtectedRoute}>Protected Route</button>
       <button onClick={testAdminRoute}>Admin Route</button> */}

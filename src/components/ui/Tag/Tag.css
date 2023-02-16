@@ -1,7 +1,6 @@
 .tag {
   display: flex;
   gap: 10px;
-  /* justify-content: space-between; */
   align-items: center;
   padding: 5px 10px;
   overflow: hidden;

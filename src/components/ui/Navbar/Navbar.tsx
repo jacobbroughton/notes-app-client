@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import { RootState } from "../../../redux/store";
-import DownCaret from "../Icons/DownCaret";
+import Caret from "../Icons/Caret";
 import { setUser } from "../../../redux/user";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,18 +10,18 @@ import { FormEvent } from "react";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 
 const Navbar = () => {
-  const navDropdownRef = useRef(null);
+  const navDropdownRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
   const [navDropdownToggled, setNavDropdownToggled] = useState(false);
 
   useEffect(() => {
-    function handler(e) {
+    function handler(e: Event) {
       if (
         navDropdownRef.current &&
-        !navDropdownRef.current?.contains(e.target) &&
-        !e.target.classList.contains("nav-dropdown-toggle")
+        !navDropdownRef.current.contains(e.target as HTMLElement) &&
+        !(e.target as HTMLElement).classList.contains("nav-dropdown-toggle")
       ) {
         setNavDropdownToggled(false);
       }
@@ -75,7 +75,7 @@ const Navbar = () => {
                 />
                 {user.USERNAME[0].toUpperCase() +
                   user.USERNAME.slice(1, user.USERNAME.length)}{" "}
-                <DownCaret direction={navDropdownToggled ? "up" : "down"} />
+                <Caret direction={navDropdownToggled ? "up" : "down"} />
               </button>
               {navDropdownToggled && (
                 <div className="nav-dropdown" ref={navDropdownRef}>

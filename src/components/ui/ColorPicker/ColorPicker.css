@@ -14,7 +14,6 @@
   cursor: pointer;
   transition: box-shadow 0.1s ease;
   user-select: none;
-  
 }
 
 .color-picker-toggle:hover {
@@ -89,9 +88,6 @@ button.color-picker-toggle:hover {
 }
 
 .color-picker-parent .color-options-container .buttons {
-  /* display: flex;
-  gap: 5px;
-  flex-wrap: wrap; */
   display: grid;
   grid-template-columns: repeat(8, 15px);
   grid-gap: 5px;
@@ -135,14 +131,13 @@ button.color-picker-toggle:hover {
   color: white;
   text-shadow: 2px 2px 1px black;
   padding: 0;
-  /* font-size: 1.1rem; */
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.color-picker-parent .color-option[disabled],
+.color-picker-parent .color-option.disabled,
 .color-picker-parent .color-button:disabled {
   filter: grayscale(0.75);
   color: #ccc;
@@ -160,7 +155,10 @@ button.color-picker-toggle:hover {
   gap: 5px;
 }
 
-.color-picker-parent .custom-color-button-container .custom-color-options input[type="color"] {
+.color-picker-parent
+  .custom-color-button-container
+  .custom-color-options
+  input[type="color"] {
   position: absolute;
   z-index: 2;
   right: left;

@@ -1,8 +1,8 @@
 import formatDistanceToNowStrict from "date-fns/formatDistanceToNowStrict";
 
-export const getElapsedTime = (date) => {
+export const getElapsedTime = (date: string) => {
   // Split timestamp into [ Y, M, D, h, m, s ]
-  const datePostedArr = date.split(/[- :]|[T]|[.]/);
+  const datePostedArr = date.split(/[- :]|[T]|[.]/).map((numStr) => parseInt(numStr));
 
   // Apply each element to the Date function
   const utcDate = new Date(
@@ -26,8 +26,11 @@ export const getElapsedTime = (date) => {
   elapsedTime = elapsedTime.replace(" minutes", "m");
   elapsedTime = elapsedTime.replace(" minute", "m");
 
-  let matchStr = elapsedTime.match(/\d+/g);
-  let matchNum = parseInt(matchStr);
+  let matchArr = elapsedTime.match(/\d+/g);
+
+  if (!matchArr) throw "There was an error determining elapsed time";
+
+  let matchNum = parseInt(matchArr[0]);
 
   if (
     matchNum <= 10 &&

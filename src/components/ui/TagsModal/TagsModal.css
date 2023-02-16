@@ -3,9 +3,6 @@
   left: 0;
   width: 100%;
   max-width: 300px;
-  /* transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%; */
   transform: translateX(-50%);
   left: 50%;
   top: 100px;
@@ -53,7 +50,7 @@
   position: relative;
 }
 
-.tags-modal form .custom-color-button > input[type='color'] {
+.tags-modal form .custom-color-button > input[type="color"] {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -86,14 +83,12 @@
 .tags-modal .tag-button.added {
   border: 1px solid var(--color-accent-primary);
   font-weight: 600;
-  color: var(--color-accent-primary)
+  color: var(--color-accent-primary);
 }
 
 .tags-modal .tag-button:hover {
   border: 1px solid var(--color-accent-primary);
 }
-
-
 
 .tags-modal .color-span {
   min-width: 10px;

@@ -1,83 +1,55 @@
 nav {
-    position: fixed;
-    top: 0;
-    z-index: 3;
-    width: 100%;
-    background-color: var(--secondary-bg);
-    height: 50px;
+  position: fixed;
+  top: 0;
+  z-index: 3;
+  width: 100%;
+  background-color: var(--secondary-bg);
+  height: 50px;
 }
 
 nav .container {
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 nav .container .nav-links {
-    display: flex;
-    gap: 10px;
-}
-
-/* nav .container .nav-dropdown-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 0;
-    gap: 15px;
-    font-size: 1rem;
-    border-radius: 99px;
-    font-weight: 600;
-    padding: 5px 15px;
-    cursor: pointer;
-    transition: background-color 0.1s ease;
-    background-color: var(--tertiary-bg);
-}
-
-nav .container .nav-dropdown-toggle:hover {
-    background-color: #666;
-}
-
-nav .container .nav-dropdown-toggle img {
-    width: 18px; 
-    height: 18px;
-    /* background-color: white; */
-    border-radius: 3px;
-    /* padding: 1px; */
-    margin-right: -5px;
+  display: flex;
+  gap: 10px;
 }
 
 nav .container .nav-dropdown-toggle svg {
-    width: 15px;
-    height: 15px;
-    fill: #fff;
+  width: 15px;
+  height: 15px;
+  fill: #fff;
 }
 
 nav .container .nav-dropdown {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: calc(100% + 5px);
-    right: 15px;
-    padding: 5px;
-    border: var(--color-accent-primary) solid 1px;
-    border-radius: 3px;
-    background-color: var(--tertiary-bg);
-    min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 15px;
+  padding: 5px;
+  border: var(--color-accent-primary) solid 1px;
+  border-radius: 3px;
+  background-color: var(--tertiary-bg);
+  min-width: 150px;
 }
 
 nav .container .nav-dropdown button,
 nav .container .nav-dropdown a {
-    background-color: transparent;
-    border: 0;
-    color: var(--color-text-secondary);
-    font-size: 1rem;
-    text-align: start;
-    padding: 5px 8px;
-    cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  text-align: start;
+  padding: 5px 8px;
+  cursor: pointer;
 }
 
 nav .container .nav-dropdown button:hover,
 nav .container .nav-dropdown a:hover {
-    background-color: var(--tertiary-bg); 
-} */
+  background-color: var(--tertiary-bg);
+}

@@ -3,22 +3,20 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectPage } from "../../../redux/pages";
 import { setSearchValue } from "../../../redux/sidebar";
 import PageIcon from "../Icons/PageIcon";
+import { PageState } from "../../../types";
+import { RootState } from "../../../redux/store";
 import "./PageSearch.css";
 
 const PageSearch = () => {
-  const sidebar = useSelector((state) => state.sidebar);
-  const pages = useSelector((state) => state.pages);
+  const sidebar = useSelector((state: RootState) => state.sidebar);
+  const pages = useSelector((state: RootState) => state.pages);
   const dispatch = useDispatch();
 
-  function handleSearchInputChange(e) {
-    dispatch(setSearchValue(e.target.value));
-  }
-
-  function handlePageClick(e, page) {
+  function handlePageClick(page: PageState) {
     dispatch(selectPage(page));
   }
   let searchResults = pages.list.filter(
-    (page) => page.EFF_STATUS && page.BODY.includes(sidebar.searchValue)
+    (page: PageState) => page.EFF_STATUS && page.BODY.includes(sidebar.searchValue)
   );
 
   return (
@@ -27,7 +25,8 @@ const PageSearch = () => {
         <input
           placeholder="Search pages"
           value={sidebar.searchValue}
-          onChange={handleSearchInputChange}
+          onChange={(e) => dispatch(setSearchValue((e.target as HTMLInputElement).value))}
+          autoComplete="off"
         />
       </form>
       {searchResults.length === 0 && (
@@ -37,9 +36,18 @@ const PageSearch = () => {
         searchResults.map((page, i) => {
           let body = page.BODY;
 
-          let startingMatchIndexes = [];
+          type MatchingCharacter = {
+            startingIndex: number;
+            index: number;
+            char: string;
+          };
 
-          function findStartingMatchIndex(string, lastMatchingIndex) {
+          let startingMatchIndexes: Array<{
+            startingIndex: number;
+            matchingCharacters: Array<MatchingCharacter>;
+          }> = [];
+
+          function findStartingMatchIndex(string: string, lastMatchingIndex: number) {
             const matchingStartingIndex = string.indexOf(
               sidebar.searchValue,
               lastMatchingIndex
@@ -55,14 +63,12 @@ const PageSearch = () => {
 
             if (indexAlreadyInArray) return;
 
-            let matchingCharacters = [
+            const matchingCharacters = [
               ...string.slice(
                 matchingStartingIndex,
                 matchingStartingIndex + sidebar.searchValue.length
               ),
-            ];
-
-            matchingCharacters = matchingCharacters.map((char, index) => {
+            ].map((char, index) => {
               return {
                 startingIndex: matchingStartingIndex,
                 index: matchingStartingIndex + index,
@@ -83,11 +89,11 @@ const PageSearch = () => {
           return (
             <div
               draggable="true"
-              className={`page-container hoverable ${page.SELECTED ? 'selected' : ''}`}
+              className={`page-container hoverable ${page.SELECTED ? "selected" : ""}`}
               key={i}
-              onClick={(e) => handlePageClick(e, page)}
+              onClick={() => handlePageClick(page)}
             >
-              <div className='tier-block-and-name'>
+              <div className="tier-block-and-name">
                 <div key={i} className="tier-block">
                   &nbsp;
                 </div>
@@ -105,7 +111,7 @@ const PageSearch = () => {
                       {[...body].map((char, charIndex) => {
                         let matching = false;
 
-                        if (charIndex === match.index) matching = true;
+                        if (charIndex === match.startingIndex) matching = true;
 
                         let matchingCharacter =
                           match.matchingCharacters[charIndex - match.startingIndex];
