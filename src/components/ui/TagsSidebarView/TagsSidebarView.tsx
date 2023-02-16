@@ -10,6 +10,7 @@ import Tag from "../Tag/Tag";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { RootState } from "../../../redux/store";
 import { TagState, ColorState } from "../../../types";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const TagsSidebarView = () => {
   const dispatch = useDispatch();
@@ -90,7 +91,7 @@ const TagsSidebarView = () => {
         id: tagId,
       };
 
-      const response = await fetch("http://localhost:3001/tags/edit", {
+      const response = await fetch(`${getApiUrl()}/tags/edit`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -124,7 +125,7 @@ const TagsSidebarView = () => {
         id: tagId,
       };
 
-      const response = await fetch("http://localhost:3001/tags/new", {
+      const response = await fetch(`${getApiUrl()}/tags/new`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -158,7 +159,7 @@ const TagsSidebarView = () => {
         id: tagId,
       };
 
-      const response = await fetch("http://localhost:3001/tags/delete", {
+      const response = await fetch(`${getApiUrl()}/tags/delete`, {
         method: "POST",
         credentials: "include",
         headers: {

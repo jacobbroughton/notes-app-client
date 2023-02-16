@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../../redux/user";
 import { Link, useNavigate } from "react-router-dom";
 import "./UserMenu.css";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const UserMenu = ({
   setUserMenuToggled,
@@ -16,7 +17,7 @@ const UserMenu = ({
   async function handleLogout(e: FormEvent) {
     e.preventDefault();
 
-    await fetch("http://localhost:3001/logout", {
+    await fetch(`${getApiUrl()}/logout`, {
       credentials: "include",
     });
 

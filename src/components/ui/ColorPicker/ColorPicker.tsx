@@ -8,6 +8,7 @@ import { addCustomColorOption } from "../../../redux/tags";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { ColorState } from "../../../types";
 import { RootState } from "../../../redux/store";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const ColorPicker = ({
   onColorSelect,
@@ -42,7 +43,7 @@ const ColorPicker = ({
         colorCode: newCustomColor,
       };
 
-      const response = await fetch("http://localhost:3001/tags/color-options/new", {
+      const response = await fetch(`${getApiUrl()}/tags/color-options/new`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -69,7 +70,7 @@ const ColorPicker = ({
         colorId: color.ID,
       };
 
-      const response = await fetch("http://localhost:3001/tags/color-options/delete", {
+      const response = await fetch(`${getApiUrl()}/tags/color-options/delete`, {
         method: "POST",
         credentials: "include",
         headers: {

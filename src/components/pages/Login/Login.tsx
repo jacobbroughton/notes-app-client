@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import "./Login.css";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/login", {
+      const response = await fetch(`${getApiUrl()}/login`, {
         method: "post",
         headers: {
           "content-type": "application/json;charset=UTF-8",

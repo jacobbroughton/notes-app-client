@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import "./Navbar.css";
 import { FormEvent } from "react";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const Navbar = () => {
   const navDropdownRef = useRef<HTMLDivElement>(null);
@@ -38,7 +39,7 @@ const Navbar = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/logout", {
+      const response = await fetch(`${getApiUrl()}/logout`, {
         credentials: "include",
       });
 

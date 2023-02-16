@@ -11,6 +11,7 @@ import { ItemState, ColorState, TagState, PageState, FolderState } from "../../.
 import { RootState } from "../../../redux/store";
 import "./TagsModal.css";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const TagsModal = () => {
   const tagsModalRef = useRef<HTMLDivElement>(null);
@@ -47,7 +48,7 @@ const TagsModal = () => {
     if (tagSearchValue === "") return;
 
     try {
-      const response = await fetch("http://localhost:3001/tags/new", {
+      const response = await fetch(`${getApiUrl()}/tags/new`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -79,7 +80,7 @@ const TagsModal = () => {
 
   async function handleTagClick(item: FolderState | PageState, tag: TagState) {
     try {
-      const response = await fetch("http://localhost:3001/tags/tag-item", {
+      const response = await fetch(`${getApiUrl()}/tags/tag-item`, {
         method: "POST",
         credentials: "include",
         headers: {

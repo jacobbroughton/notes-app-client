@@ -16,6 +16,7 @@ import { RootState } from "../../../redux/store";
 import { ItemState } from "../../../types";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { ChangeEvent, MouseEvent } from "react";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const ItemListItem = ({
   item,
@@ -60,7 +61,7 @@ const ItemListItem = ({
           pageId: item.PAGE_ID,
         };
 
-        const response = await fetch("http://localhost:3001/pages/rename", {
+        const response = await fetch(`${getApiUrl()}/pages/rename`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -82,7 +83,7 @@ const ItemListItem = ({
           folderId: item.ID,
         };
 
-        const response = await fetch("http://localhost:3001/folders/rename", {
+        const response = await fetch(`${getApiUrl()}/folders/rename`, {
           method: "POST",
           credentials: "include",
           headers: {

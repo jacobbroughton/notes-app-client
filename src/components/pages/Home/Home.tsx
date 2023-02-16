@@ -27,6 +27,7 @@ import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { FolderState, PageState } from "../../../types";
 import { RootState } from "../../../redux/store";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const Home = () => {
   }
 
   async function testApi() {
-    const response = await fetch("http://localhost:3001", {
+    const response = await fetch(getApiUrl(), {
       credentials: "include",
     });
     const data = await response.json();
@@ -65,14 +66,14 @@ const Home = () => {
   }
 
   async function getFolders() {
-    return await fetch("http://localhost:3001/folders", {
+    return await fetch(`${getApiUrl()}/folders`, {
       method: "GET",
       credentials: "include",
     });
   }
 
   async function getPages() {
-    return await fetch("http://localhost:3001/pages", {
+    return await fetch(`${getApiUrl()}/pages`, {
       method: "GET",
       credentials: "include",
     });
@@ -103,7 +104,7 @@ const Home = () => {
 
   async function getTags() {
     try {
-      let response = await fetch("http://localhost:3001/tags", {
+      let response = await fetch(`${getApiUrl()}/tags`, {
         method: "GET",
         credentials: "include",
       });
@@ -119,7 +120,7 @@ const Home = () => {
 
   async function getColorOptions() {
     try {
-      let response = await fetch("http://localhost:3001/tags/color-options", {
+      let response = await fetch(`${getApiUrl()}/tags/color-options`, {
         method: "GET",
         credentials: "include",
       });
@@ -154,7 +155,7 @@ const Home = () => {
 
   async function editPage() {
     try {
-      const response = await fetch("http://localhost:3001/pages/edit", {
+      const response = await fetch(`${getApiUrl()}/pages/edit`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -202,7 +203,7 @@ const Home = () => {
 
   async function addPage() {
     try {
-      const response = await fetch("http://localhost:3001/pages/new", {
+      const response = await fetch(`${getApiUrl()}/pages/new`, {
         method: "POST",
         credentials: "include",
         headers: {

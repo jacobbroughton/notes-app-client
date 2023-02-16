@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 
 import "./Register.css";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -14,7 +15,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/register", {
+      const response = await fetch(`${getApiUrl()}/register`, {
         method: "post",
         headers: {
           "content-type": "application/json;charset=UTF-8",

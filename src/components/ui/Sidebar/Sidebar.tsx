@@ -36,6 +36,7 @@ import { throwResponseStatusError } from "../../../utils/throwResponseStatusErro
 import { setInputPosition } from "../../../redux/sidebar";
 import { ItemState } from "../../../types";
 import { RootState } from "../../../redux/store";
+import { getApiUrl } from "../../../utils/getUrl";
 
 function Sidebar() {
   const sidebarRef = useRef<HTMLElement | null>(null);
@@ -97,7 +98,7 @@ function Sidebar() {
   async function handleNewFolderSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/folders/new", {
+      const response = await fetch(`${getApiUrl()}/folders/new`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -137,7 +138,7 @@ function Sidebar() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/pages/new", {
+      const response = await fetch(`${getApiUrl()}/pages/new`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -275,7 +276,7 @@ function Sidebar() {
 
   async function getData() {
     try {
-      let foldersResponse = await fetch("http://localhost:3001/folders", {
+      let foldersResponse = await fetch(`${getApiUrl()}/folders`, {
         method: "GET",
         credentials: "include",
       });
@@ -283,7 +284,7 @@ function Sidebar() {
       if (foldersResponse.status !== 200)
         throwResponseStatusError(foldersResponse, "GET");
 
-      let pagesResponse = await fetch("http://localhost:3001/pages", {
+      let pagesResponse = await fetch(`${getApiUrl()}/pages`, {
         method: "GET",
         credentials: "include",
       });
@@ -322,7 +323,7 @@ function Sidebar() {
     try {
       e.stopPropagation();
 
-      const response = await fetch("http://localhost:3001/pages/favorite", {
+      const response = await fetch(`${getApiUrl()}/pages/favorite`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",

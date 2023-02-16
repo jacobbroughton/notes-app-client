@@ -14,6 +14,7 @@ import ItemListItem from "../ItemListItem/ItemListItem";
 import { RootState } from "../../../redux/store";
 import { SidebarItemState, ItemState, FolderState, PageState } from "../../../types";
 import "./ItemList.css";
+import { getApiUrl } from "../../../utils/getUrl";
 
 const ItemList = ({
   setContextMenu,
@@ -122,7 +123,7 @@ const ItemList = ({
           })
         );
 
-        const response = await fetch("http://localhost:3001/pages/updateParentFolder", {
+        const response = await fetch(`${getApiUrl()}pages/updateParentFolder`, {
           method: "POST",
           credentials: "include",
           headers: {
