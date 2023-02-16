@@ -56,6 +56,10 @@ const Home = () => {
   async function testApi() {
     const response = await fetch(getApiUrl(), {
       credentials: "include",
+      headers: {
+        'Access-Control-Allow-Origin': "true",
+
+      }
     });
     const data = await response.json();
     if (data.user && !user) {
@@ -159,6 +163,7 @@ const Home = () => {
         method: "POST",
         credentials: "include",
         headers: {
+          'Access-Control-Allow-Origin': "true",
           "content-type": "application/json;charset=UTF-8",
         },
         body: JSON.stringify({
