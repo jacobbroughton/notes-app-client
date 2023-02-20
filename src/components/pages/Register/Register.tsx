@@ -1,9 +1,9 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
+import { getApiUrl } from "../../../utils/getUrl";
 
 import "./Register.css";
-import { getApiUrl } from "../../../utils/getUrl";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -16,10 +16,9 @@ const Login = () => {
 
     try {
       const response = await fetch(`${getApiUrl()}/register`, {
-        method: "post",
+        method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "true",
         },
         credentials: "include",
         body: JSON.stringify({
