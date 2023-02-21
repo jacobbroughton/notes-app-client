@@ -54,6 +54,7 @@ const Home = () => {
   }
 
   async function testApi() {
+    console.log("testApi called")
     const response = await fetch(getApiUrl(), {
       credentials: "include",
     });
