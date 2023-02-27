@@ -158,11 +158,11 @@ const Home = () => {
 
   async function editPage() {
     try {
+      console.log("editpage")
       const response = await fetch(`${getApiUrl()}/pages/edit`, {
         method: "POST",
         credentials: "include",
         headers: {
-          "Access-Control-Allow-Origin": "true",
           "content-type": "application/json;charset=UTF-8",
         },
         body: JSON.stringify({
@@ -183,7 +183,7 @@ const Home = () => {
 
       if (modals.unsavedWarning) {
         // dispatch(selectPage(pages.stagedToSwitch));
-        dispatch(setPageClosed(pages.active))
+        dispatch(setPageClosed(pages.active));
         dispatch(setPageStagedForSwitch(null));
         dispatch(selectFolder(null));
         dispatch(toggleModal("unsavedWarning"));
@@ -255,6 +255,7 @@ const Home = () => {
       document.activeElement === titleFieldRef.current
     ) {
       if (e.metaKey && e.key === "s") {
+        e.preventDefault()
         if (pages.active) editPage();
         if (!pages.active) addPage();
       }
@@ -350,6 +351,7 @@ const Home = () => {
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
+
     if (pages.active) {
       if (noTitleWarningToggled) {
         clearTimeout(noTitleWarningTimeout);
