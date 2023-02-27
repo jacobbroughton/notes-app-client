@@ -29,7 +29,6 @@ import SearchIcon from "../Icons/SearchIcon";
 import TagIcon from "../Icons/TagIcon";
 import UserIcon from "../Icons/UserIcon";
 import PageIcon from "../Icons/PageIcon";
-import Draggable, { DraggableData } from "react-draggable";
 import "./Sidebar.css";
 import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
 import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
@@ -42,7 +41,7 @@ function Sidebar() {
   const sidebarRef = useRef<HTMLElement | null>(null);
   const inputPositionRef = useRef<HTMLInputElement | null>(null);
   const contextMenuRef = useRef<HTMLMenuElement | null>(null);
-  const draggableRef = useRef(null);
+  const draggableRef = useRef<HTMLMenuElement | null>(null);
   const renameInputRef = useRef<HTMLInputElement | null>(null);
   const [contextMenu, setContextMenu] = useState<{
     position: {
@@ -166,7 +165,7 @@ function Sidebar() {
           forFolder: false,
         })
       );
-      setNewPageName("");
+      dispatch(setNewPageName(""));
       resetContextMenu();
       getData();
     } catch (error) {
@@ -205,7 +204,7 @@ function Sidebar() {
   }
 
   function handleRename(e: MouseEvent, item: ItemState) {
-    e.stopPropagation();
+    // e.stopPropagation();
 
     resetContextMenu();
     console.log(item);
@@ -373,7 +372,7 @@ function Sidebar() {
         !(event.target as HTMLElement).classList.contains("new-page-button")
       ) {
         dispatch(setNewFolderName(""));
-        setNewPageName("");
+        dispatch(setNewPageName(""));
         resetContextMenu();
         dispatch(
           setInputPosition({
@@ -384,9 +383,12 @@ function Sidebar() {
         );
       }
 
-      if (!contextMenuRef.current?.contains(event.target as HTMLElement)) {
+      if (
+        contextMenu.toggled &&
+        !contextMenuRef.current?.contains(event.target as HTMLElement)
+      ) {
         dispatch(setNewFolderName(""));
-        setNewPageName("");
+        dispatch(setNewPageName(""));
         resetContextMenu();
       }
 
@@ -399,10 +401,10 @@ function Sidebar() {
       }
     };
 
-    document.addEventListener("click", inputPositionHandler);
+    window.addEventListener("click", inputPositionHandler);
 
     return () => {
-      document.removeEventListener("click", inputPositionHandler);
+      window.removeEventListener("click", inputPositionHandler);
     };
   });
 
@@ -509,7 +511,7 @@ function Sidebar() {
       ref={sidebarRef}
       className="sidebar"
       style={{ width: `${sidebar.width ? `${sidebar.width}px` : "275px"}` }}
-      onMouseDown={(e) => e.preventDefault()}
+      // onMouseDown={(e) => e.preventDefault()}
     >
       <div className="sidebar-nav">
         {sidebar.viewOptions.map((viewOption, index) => (
@@ -600,17 +602,15 @@ function Sidebar() {
             </div>
           )}
         {sidebar.view.name === "Notes" && (
-          <>
-            <ItemList
-              setContextMenu={setContextMenu}
-              handleNewFolderSubmit={handleNewFolderSubmit}
-              handleNewPageSubmit={handleNewPageSubmit}
-              inputPositionRef={inputPositionRef}
-              resetContextMenu={resetContextMenu}
-              handleRename={handleRename}
-              renameInputRef={renameInputRef}
-            />
-          </>
+          <ItemList
+            setContextMenu={setContextMenu}
+            handleNewFolderSubmit={handleNewFolderSubmit}
+            handleNewPageSubmit={handleNewPageSubmit}
+            inputPositionRef={inputPositionRef}
+            resetContextMenu={resetContextMenu}
+            handleRename={handleRename}
+            renameInputRef={renameInputRef}
+          />
         )}
         {sidebar.view.name === "Search" && <PageSearch />}
         {sidebar.view.name === "Tags" && <TagsSidebarView />}
@@ -629,14 +629,14 @@ function Sidebar() {
           {
             text: "New Page",
             icon: "📄",
-            active: sidebar.shiftClickItems.end === null,
+            active: !pages.selected?.IS_FAVORITE && sidebar.shiftClickItems.end === null,
             onClick: handleNewPage,
             isSpacer: false,
           },
           {
             text: "New Folder",
             icon: "📁",
-            active: sidebar.shiftClickItems.end === null,
+            active: !pages.selected?.IS_FAVORITE && sidebar.shiftClickItems.end === null,
             onClick: handleNewFolder,
             isSpacer: false,
           },
@@ -645,9 +645,10 @@ function Sidebar() {
             icon: "",
             onClick: () => null,
             active:
+              !pages.selected?.IS_FAVORITE &&
               sidebar.shiftClickItems.end === null &&
               sidebar.inputPosition.referenceId !== 0,
-            isSpacer: false,
+            isSpacer: true,
           },
           {
             text: "Add Tags",

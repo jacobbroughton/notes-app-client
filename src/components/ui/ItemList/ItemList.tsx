@@ -5,6 +5,8 @@ import {
   setDraggedOverItem,
   setGrabbedItem,
   setInputPosition,
+  setNewFolderName,
+  setNewPageName,
   setShiftClickItems,
 } from "../../../redux/sidebar";
 import { selectPage, updateParentFolderId } from "../../../redux/pages";
@@ -253,6 +255,7 @@ const ItemList = ({
       ))}
       {favoritesList.length !== 0 && <div className="spacer"></div>}
       <p className="item-list-heading all">All</p>
+      {allList.length === 0 && <p className="no-items-found">No items found</p>}
 
       {allList.map((item, index) => {
         let hasChildren =
@@ -295,6 +298,8 @@ const ItemList = ({
                 forFolder: false,
               })
             );
+            if (sidebar.newPageName) dispatch(setNewPageName(""));
+            if (sidebar.newFolderName) dispatch(setNewFolderName(""));
           }}
         ></div>
       )}

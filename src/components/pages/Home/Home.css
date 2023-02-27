@@ -1,3 +1,11 @@
+.loading-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+}
+
 .home-view {
   display: flex;
   flex-direction: column;

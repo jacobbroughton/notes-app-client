@@ -23,7 +23,8 @@ const Login = () => {
       const response = await fetch(`${getApiUrl()}/login`, {
         method: "post",
         headers: {
-          "content-type": "application/json;charset=UTF-8",
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
         },
         credentials: "include",
         body: JSON.stringify({

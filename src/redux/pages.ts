@@ -272,11 +272,11 @@ const pagesSlice = createSlice({
         }),
       };
     },
-    setPageClosed: (state, { payload }): PagesState => {
+    setPageClosed: (state, { payload }: { payload: PageState | null }): PagesState => {
       const updatedPages = state.list.map((page) => {
         return {
           ...page,
-          ...(page.PAGE_ID === payload.PAGE_ID && { OPEN: false, SELECTED: false }),
+          ...(page.PAGE_ID === payload?.PAGE_ID && { OPEN: false, SELECTED: false }),
         };
       });
 

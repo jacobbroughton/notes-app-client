@@ -12,6 +12,7 @@ import {
   setPageDraftTitle,
   setUntitledPageBody,
   setUntitledPageTitle,
+  setPageClosed,
 } from "../../../redux/pages";
 import { selectFolder, setFolders } from "../../../redux/folders";
 import { toggleModal } from "../../../redux/modals";
@@ -54,11 +55,13 @@ const Home = () => {
   }
 
   async function testApi() {
-    console.log("testApi called")
     const response = await fetch(getApiUrl(), {
+      method: "GET",
       credentials: "include",
     });
+
     const data = await response.json();
+
     if (data.user && !user) {
       dispatch(setUser(data.user));
       setLoading(false);
@@ -66,32 +69,31 @@ const Home = () => {
     if (!data.user) navigate("/login");
   }
 
-  async function getFolders() {
-    return await fetch(`${getApiUrl()}/folders`, {
-      method: "GET",
-      credentials: "include",
-    });
-  }
-
-  async function getPages() {
-    return await fetch(`${getApiUrl()}/pages`, {
-      method: "GET",
-      credentials: "include",
-    });
-  }
-
   async function getData() {
     try {
-      const foldersResponse = await getFolders();
-      const pagesResponse = await getPages();
+      const [foldersResponse, pagesResponse] = await Promise.all([
+        fetch(`${getApiUrl()}/folders`, {
+          method: "GET",
+          credentials: "include",
+        }),
+        fetch(`${getApiUrl()}/pages`, {
+          method: "GET",
+          credentials: "include",
+        }),
+      ]);
 
-      if (foldersResponse.status !== 200)
+      if (foldersResponse.status !== 200) {
         throwResponseStatusError(foldersResponse, "GET");
+      }
 
-      if (pagesResponse.status !== 200) throwResponseStatusError(pagesResponse, "GET");
+      if (pagesResponse.status !== 200) {
+        throwResponseStatusError(pagesResponse, "GET");
+      }
 
-      const foldersData = await foldersResponse.json();
-      const pagesData = await pagesResponse.json();
+      const [foldersData, pagesData] = await Promise.all([
+        foldersResponse.json(),
+        pagesResponse.json(),
+      ]);
 
       let formattedFolders = formatFolders(foldersData.folders, folders.list);
       let formattedPages = formatPages(pagesData.pages, formattedFolders);
@@ -180,7 +182,8 @@ const Home = () => {
       dispatch(setPageModified(false));
 
       if (modals.unsavedWarning) {
-        dispatch(selectPage(pages.stagedToSwitch));
+        // dispatch(selectPage(pages.stagedToSwitch));
+        dispatch(setPageClosed(pages.active))
         dispatch(setPageStagedForSwitch(null));
         dispatch(selectFolder(null));
         dispatch(toggleModal("unsavedWarning"));
@@ -260,7 +263,6 @@ const Home = () => {
 
   function handleBodyChange(e: ChangeEvent, isForUnsaved: Boolean) {
     e.preventDefault();
-    // setBody(e.target.value);
     if (isForUnsaved) {
       dispatch(setUntitledPageBody((e.target as HTMLTextAreaElement).value));
     } else {
@@ -347,7 +349,7 @@ const Home = () => {
   }, [pages.active?.PAGE_ID]);
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     if (pages.active) {
       if (noTitleWarningToggled) {
         clearTimeout(noTitleWarningTimeout);
@@ -362,7 +364,7 @@ const Home = () => {
     }
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [
     pages.active?.DRAFT_NAME,
@@ -372,7 +374,11 @@ const Home = () => {
   ]);
 
   if (loading && !user) {
-    return <p>Loading...</p>;
+    return (
+      <div className="loading-view">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   if (!loading && !user) {

@@ -11,6 +11,11 @@
   border: 1px solid var(--tertiary-bg);
 }
 
+.items-list .no-items-found {
+  margin: 0px 10px;
+  font-size: 0.875rem;
+}
+
 .items-list .spacer {
   border-top: 1px solid var(--tertiary-bg);
   width: calc(100% - 6px);

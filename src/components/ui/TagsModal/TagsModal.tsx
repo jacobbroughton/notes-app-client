@@ -162,6 +162,7 @@ const TagsModal = () => {
         <form onSubmit={handleTagInputSubmit}>
           <input
             value={tagSearchValue}
+
             onChange={(e) => setTagSearchValue(e.target.value)}
             placeholder="Type to search or add a tag"
             autoComplete="off"

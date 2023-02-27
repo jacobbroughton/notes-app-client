@@ -28,10 +28,10 @@ const Navbar = () => {
       }
     }
 
-    window.addEventListener("mousedown", handler);
+    window.addEventListener("click", handler);
 
     return () => {
-      window.removeEventListener("mousedown", handler);
+      window.removeEventListener("click", handler);
     };
   });
 
