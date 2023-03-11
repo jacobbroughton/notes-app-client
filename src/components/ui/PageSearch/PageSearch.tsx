@@ -47,11 +47,17 @@ const PageSearch = () => {
             matchingCharacters: Array<MatchingCharacter>;
           }> = [];
 
+          const bodySeparatedBySpaces = body.split(" ");
+
+          console.log(bodySeparatedBySpaces);
+
           function findStartingMatchIndex(string: string, lastMatchingIndex: number) {
             const matchingStartingIndex = string.indexOf(
               sidebar.searchValue,
               lastMatchingIndex
             );
+
+            // console.log(matchingStartingIndex)
 
             if (matchingStartingIndex < 0) return;
 
@@ -81,7 +87,7 @@ const PageSearch = () => {
               matchingCharacters,
             });
 
-            findStartingMatchIndex(string, lastMatchingIndex + 1);
+            findStartingMatchIndex(string, matchingStartingIndex + 1);
           }
 
           if (sidebar.searchValue !== "") findStartingMatchIndex(body, 0);
@@ -106,19 +112,40 @@ const PageSearch = () => {
               </div>
               <div className="matching-body-examples">
                 {startingMatchIndexes.map((match, i) => {
+                  console.log("");
+                  console.log("");
+                  // console.log(match);
+                  const startingIndex = match.startingIndex;
+                  const slicedBody = [...body].slice(startingIndex, startingIndex + 35);
+                  const slicedBodyLength = slicedBody.length;
+                  const bodyLength = body.length;
+
                   return (
                     <p key={i}>
-                      {[...body].map((char, charIndex) => {
+                      {/* {[...body].map((char, charIndex) => { */}
+                      {slicedBody.map((char, charIndex) => {
+                        const compedBodyIndex = bodyLength - slicedBodyLength + charIndex;
+
+                        // console.log({
+                        //   bodyLength,
+                        //   slicedBodyLength,
+                        //   charIndex,
+                        //   startingIndex,
+                        //   compedBodyIndex,
+                        // });
+
                         let matching = false;
 
-                        if (charIndex === match.startingIndex) matching = true;
+                        if (compedBodyIndex === match.startingIndex) matching = true;
+                        // if (compedBodyIndex === charIndex) matching = true;
 
-                        let matchingCharacter =
-                          match.matchingCharacters[charIndex - match.startingIndex];
+                        // let matchingCharacter = match.matchingCharacters[charIndex];
 
-                        if (matchingCharacter?.index == charIndex) {
-                          matching = true;
-                        }
+                        // console.log(match, match.matchingCharacters, compedBodyIndex)
+
+                        // if (matchingCharacter?.index == compedBodyIndex) {
+                        //   matching = true;
+                        // }
 
                         return (
                           <span className={matching ? "matching" : ""} key={charIndex}>

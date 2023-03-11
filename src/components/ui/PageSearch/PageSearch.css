@@ -39,9 +39,11 @@
 
 .page-container .tier-block-and-name {
   display: flex;
+  line-height: 1.5rem;
 }
 
-.page-search .page-container:hover {
+.page-search .page-container:hover,
+.page-search .page-container.selected {
   background-color: var(--tertiary-bg);
 }
 
@@ -60,6 +62,7 @@
 
 .page-search .page-container .matching-body-examples p span.matching {
   background-color: var(--color-matching-highlight);
+  text-shadow: var(--color-matching-highlight-shadow);
 }
 
 .page-search .page-container .tier-block-and-name .tier-block {
@@ -88,8 +91,14 @@
 
 .page-search .name-and-caret {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.page-search .name-and-caret p {
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .page-search .caret-container {

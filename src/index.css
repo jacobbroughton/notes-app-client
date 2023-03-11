@@ -31,6 +31,7 @@ body[data-theme="dark"] {
   --color-accent-primary: #646cff;
   --color-accent-secondary: #e3bd27;
   --color-matching-highlight: #e3bd27;
+  --color-matching-highlight-shadow: 1px 1px 1px rgba(0, 0, 0, 1);
   --color-unsaved: #ffd300;
   --color-saved: #03c04a;
   --color-icon-light-bg: #ccc;
@@ -53,6 +54,7 @@ body[data-theme="light"] {
   --color-accent-secondary: #333;
   --color-accent-primary: #646cff;
   --color-matching-highlight: #e3bd27;
+  --color-matching-highlight-shadow: 0;
   --color-unsaved: #ffd300;
   --color-saved: #03c04a;
   --color-icon-light-bg: #ccc;

@@ -39,6 +39,8 @@ const Home = () => {
   const [noTitleWarningTimeout, setNoTitleWarningTimeout] = useState<
     number | undefined
   >();
+  const [titleTooLong, setTitleTooLong] = useState(false);
+  const [bodyTooLong, setBodyTooLong] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const user = useSelector((state: RootState) => state.user);
   const pages = useSelector((state: RootState) => state.pages);
@@ -158,7 +160,19 @@ const Home = () => {
 
   async function editPage() {
     try {
-      console.log("editpage")
+      if (titleTooLong && bodyTooLong) {
+        alert(
+          "Your title and body are too long (Title Max: 1000 characters, Body Max: 10000 characters)"
+        );
+        return;
+      } else if (titleTooLong) {
+        alert("Your title is too long (Max 1000 characters)");
+        return;
+      } else if (bodyTooLong) {
+        alert("Your text body is too long (Max 10000 characters)");
+        return;
+      }
+
       const response = await fetch(`${getApiUrl()}/pages/edit`, {
         method: "POST",
         credentials: "include",
@@ -195,6 +209,20 @@ const Home = () => {
 
   function handleNewPageSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (bodyTooLong || titleTooLong) {
+      if (titleTooLong) {
+        alert("Your title is too long (Max 1000 characters)");
+      } else if (bodyTooLong) {
+        alert("Your text body is too long (Max 10000 characters)");
+      } else {
+        alert(
+          "Your title and body are too long (Title Max: 1000 characters, Body Max: 10000 characters)"
+        );
+      }
+      return;
+    }
+
     if (!pages.untitledPage.NAME) {
       bodyFieldRef.current?.blur();
       titleFieldRef.current?.focus();
@@ -237,17 +265,23 @@ const Home = () => {
     }
   }
 
-  function handleKeyDown(e: KeyboardEvent) {
+  function handleKeyDown(e:any) {
     if (document.activeElement === bodyFieldRef.current) {
-      if (e.keyCode === 9) {
+      if (e.key === "Tab") {
         e.preventDefault();
-        // const newBody =
-        //   body.slice(0, e.selectionStart) +
-        //   " " +
-        //   body.slice(e.selectionStart, body.length - 1);
+        const newBody = "";
+
+        console.log(e.selectionStart)
+
+        if (pages.active) {
+          pages.active.BODY.slice(0, e.selectionStart) +
+            " " +
+            pages.active.BODY.slice(e.selectionStart, pages.active.BODY.length - 1);
+        }
+
         // setBody(newBody);
-        // dispatch(setPageDraftBody(newBody));
-        alert("Uncomment line above i guess");
+        dispatch(setPageDraftBody(newBody));
+        // alert("Uncomment line above i guess");
       }
     }
     if (
@@ -255,7 +289,7 @@ const Home = () => {
       document.activeElement === titleFieldRef.current
     ) {
       if (e.metaKey && e.key === "s") {
-        e.preventDefault()
+        e.preventDefault();
         if (pages.active) editPage();
         if (!pages.active) addPage();
       }
@@ -264,6 +298,13 @@ const Home = () => {
 
   function handleBodyChange(e: ChangeEvent, isForUnsaved: Boolean) {
     e.preventDefault();
+
+    if ((e.target as HTMLTextAreaElement).value.length > 10000 && !bodyTooLong) {
+      setBodyTooLong(true);
+    } else if ((e.target as HTMLTextAreaElement).value.length <= 10000 && bodyTooLong) {
+      setBodyTooLong(false);
+    }
+
     if (isForUnsaved) {
       dispatch(setUntitledPageBody((e.target as HTMLTextAreaElement).value));
     } else {
@@ -279,7 +320,12 @@ const Home = () => {
   function handleTitleChange(e: ChangeEvent, isForUnsaved: Boolean) {
     e.preventDefault();
 
-    // setTitle(e.target.value);
+    if ((e.target as HTMLTextAreaElement).value.length > 10000 && !titleTooLong) {
+      setTitleTooLong(true);
+    } else if ((e.target as HTMLTextAreaElement).value.length <= 10000 && titleTooLong) {
+      setTitleTooLong(false);
+    }
+
     if (isForUnsaved) {
       dispatch(setUntitledPageTitle((e.target as HTMLTextAreaElement).value));
     } else {
@@ -435,11 +481,11 @@ const Home = () => {
               value={pages.untitledPage.NAME}
               spellCheck="false"
               required
+              maxLength={1000}
               onChange={(e) => handleTitleChange(e, true)}
               ref={titleFieldRef}
-              className={noTitleWarningToggled ? "error" : ""}
+              className={noTitleWarningToggled || titleTooLong ? "error" : ""}
               autoComplete="off"
-              // tabIndex="0"
             />
           </div>
 
@@ -447,11 +493,14 @@ const Home = () => {
             placeholder="Body"
             value={pages.untitledPage.BODY}
             spellCheck="false"
+            maxLength={10000}
             onChange={(e) => handleBodyChange(e, true)}
             ref={bodyFieldRef}
             data-gramm="false"
             data-gramm_editor="false"
             data-enable-grammarly="false"
+            className={bodyTooLong ? "error" : ""}
+            onMouseDown={(e) => console.log(e)}
           />
         </form>
       )}
@@ -475,7 +524,7 @@ const Home = () => {
               required
               onChange={(e) => handleTitleChange(e, false)}
               ref={titleFieldRef}
-              className={noTitleWarningToggled ? "error" : ""}
+              className={noTitleWarningToggled || titleTooLong ? "error" : ""}
               autoComplete="off"
             />
           </div>
@@ -489,6 +538,7 @@ const Home = () => {
             data-gramm="false"
             data-gramm_editor="false"
             data-enable-grammarly="false"
+            className={bodyTooLong ? "error" : ""}
           />
           <div className="page-path">
             /&nbsp;

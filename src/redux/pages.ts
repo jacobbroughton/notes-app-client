@@ -297,6 +297,9 @@ const pagesSlice = createSlice({
         selected: openPages[0] || null,
       };
     },
+    setCursorPosition: (state, { payload }) => {
+      return state;
+    },
     setPageDraftTitle: (state, { payload }): PagesState => {
       const { page: affectedPage, draftTitle } = payload;
 
@@ -384,5 +387,6 @@ export const {
   setUntitledPageBody,
   setUntitledPageTitle,
   setFavoriteStatus,
+  setCursorPosition,
 } = pagesSlice.actions;
 export const pagesReducer = pagesSlice.reducer;

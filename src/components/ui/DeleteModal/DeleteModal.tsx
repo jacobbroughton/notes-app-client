@@ -58,7 +58,7 @@ export function DeleteModal() {
 
   async function deletePage(pageId: number) {
     try {
-      let response = await fetch(`${getApiUrl()}pages/delete`, {
+      let response = await fetch(`${getApiUrl()}/pages/delete`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -84,7 +84,7 @@ export function DeleteModal() {
         items.filter((item: SidebarItemState) => item.IS_PAGE).length !== 0;
 
       if (selectionIncludesFolders) {
-        let response = await fetch(`${getApiUrl()}folders/delete-multiple`, {
+        let response = await fetch(`${getApiUrl()}/folders/delete-multiple`, {
           method: "POST",
           headers: {
             "content-type": "application/json;charset=UTF-8",
@@ -104,7 +104,7 @@ export function DeleteModal() {
       }
 
       if (selectionIncludesPages) {
-        let response = await fetch(`${getApiUrl()}pages/delete-multiple`, {
+        let response = await fetch(`${getApiUrl()}/pages/delete-multiple`, {
           method: "POST",
           headers: {
             "content-type": "application/json;charset=UTF-8",
@@ -144,17 +144,18 @@ export function DeleteModal() {
     dispatch(toggleModal("deleteModal"));
   }
 
-  function determinePromptText(itemToDelete: FolderState | PageState | null) {
-    if (!itemToDelete)
-      return "There was an error but are you sure you'd like to delete this? If its a folder, you'll also be deleting it's contents.";
-
+  function determinePromptText(itemsToDelete: FolderState | PageState | null) {
     if (sidebar.shiftClickItems.list.length > 1) {
       return `Are you sure you'd like to delete the following ${sidebar.shiftClickItems.list.length} items?`;
     }
-    if (itemToDelete.IS_PAGE) {
-      return `Are you sure you want to delete '${itemToDelete?.NAME}'`;
+
+    if (!itemsToDelete)
+      return "There was an error but are you sure you'd like to delete this? If its a folder, you'll also be deleting it's contents.";
+
+    if (itemsToDelete.IS_PAGE) {
+      return `Are you sure you want to delete '${itemsToDelete?.NAME}'`;
     } else {
-      return `Are you sure you want to delete '${itemToDelete?.NAME}' and it's contents?`;
+      return `Are you sure you want to delete '${itemsToDelete?.NAME}' and it's contents?`;
     }
   }
 

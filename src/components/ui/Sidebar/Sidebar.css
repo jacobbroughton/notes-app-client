@@ -159,6 +159,7 @@
   z-index: 5;
   cursor: e-resize;
   transition: 0.1s ease background-color;
+  cursor: ew-resize;
 }
 
 .sidebar .drag-sidebar-button:hover {
