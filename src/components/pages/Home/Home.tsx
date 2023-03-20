@@ -13,6 +13,7 @@ import {
   setUntitledPageBody,
   setUntitledPageTitle,
   setPageClosed,
+  resetUntitledPage,
 } from "../../../redux/pages";
 import { selectFolder, setFolders } from "../../../redux/folders";
 import { toggleModal } from "../../../redux/modals";
@@ -29,6 +30,8 @@ import { throwResponseStatusError } from "../../../utils/throwResponseStatusErro
 import { FolderState, PageState } from "../../../types";
 import { RootState } from "../../../redux/store";
 import { getApiUrl } from "../../../utils/getUrl";
+import Editor from "../../ui/Editor/Editor";
+import { emptyEditorState } from "../../../utils/editorUtils";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -144,8 +147,8 @@ const Home = () => {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function handleSubmit(e: React.FormEvent | null) {
+    e?.preventDefault();
 
     if (!pages.active) {
       bodyFieldRef.current?.blur();
@@ -207,9 +210,8 @@ const Home = () => {
     }
   }
 
-  function handleNewPageSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
+  function handleNewPageSubmit(e: React.FormEvent | null) {
+    e?.preventDefault();
     if (bodyTooLong || titleTooLong) {
       if (titleTooLong) {
         alert("Your title is too long (Max 1000 characters)");
@@ -222,6 +224,8 @@ const Home = () => {
       }
       return;
     }
+
+    console.log(pages.untitledPage);
 
     if (!pages.untitledPage.NAME) {
       bodyFieldRef.current?.blur();
@@ -245,7 +249,7 @@ const Home = () => {
         body: JSON.stringify({
           parentFolderId: null,
           newPageName: pages.untitledPage.NAME.trim(),
-          newPageBody: pages.untitledPage.BODY.trim() || "",
+          newPageBody: pages.untitledPage.BODY.trim() || emptyEditorState,
         }),
       });
 
@@ -258,40 +262,23 @@ const Home = () => {
       clearTimeout(noTitleWarningTimeout);
       setNoTitleWarningToggled(false);
       getData();
-      dispatch(setUntitledPageTitle(""));
-      dispatch(setUntitledPageBody(""));
+      // dispatch(setUntitledPageTitle(""));
+      // dispatch(setUntitledPageBody(emptyEditorState));
+      dispatch(resetUntitledPage(null));
     } catch (error) {
       console.log(error);
     }
   }
 
-  function handleKeyDown(e:any) {
-    if (document.activeElement === bodyFieldRef.current) {
-      if (e.key === "Tab") {
-        e.preventDefault();
-        const newBody = "";
-
-        console.log(e.selectionStart)
-
-        if (pages.active) {
-          pages.active.BODY.slice(0, e.selectionStart) +
-            " " +
-            pages.active.BODY.slice(e.selectionStart, pages.active.BODY.length - 1);
-        }
-
-        // setBody(newBody);
-        dispatch(setPageDraftBody(newBody));
-        // alert("Uncomment line above i guess");
-      }
-    }
+  function handleKeyDown(e: any) {
     if (
-      document.activeElement === bodyFieldRef.current ||
+      bodyFieldRef.current?.contains(document.activeElement) ||
       document.activeElement === titleFieldRef.current
     ) {
       if (e.metaKey && e.key === "s") {
         e.preventDefault();
-        if (pages.active) editPage();
-        if (!pages.active) addPage();
+        if (pages.active) handleSubmit(null);
+        if (!pages.active) handleNewPageSubmit(null);
       }
     }
   }
@@ -469,7 +456,8 @@ const Home = () => {
             )}
             <div
               className={`status-indicator ${
-                pages.untitledPage.NAME !== "" || pages.untitledPage.BODY !== ""
+                pages.untitledPage.NAME !== "" ||
+                pages.untitledPage.BODY !== emptyEditorState
                   ? "unsaved"
                   : "saved"
               }`}
@@ -489,7 +477,9 @@ const Home = () => {
             />
           </div>
 
-          <textarea
+          <Editor page={pages.untitledPage} bodyFieldRef={bodyFieldRef} />
+
+          {/* <textarea
             placeholder="Body"
             value={pages.untitledPage.BODY}
             spellCheck="false"
@@ -501,7 +491,7 @@ const Home = () => {
             data-enable-grammarly="false"
             className={bodyTooLong ? "error" : ""}
             onMouseDown={(e) => console.log(e)}
-          />
+          /> */}
         </form>
       )}
       {pages.active && (
@@ -529,7 +519,7 @@ const Home = () => {
             />
           </div>
 
-          <textarea
+          {/* <textarea
             placeholder="Body"
             value={pages.active.DRAFT_BODY}
             spellCheck="false"
@@ -539,7 +529,8 @@ const Home = () => {
             data-gramm_editor="false"
             data-enable-grammarly="false"
             className={bodyTooLong ? "error" : ""}
-          />
+          /> */}
+          <Editor page={pages.active} />
           <div className="page-path">
             /&nbsp;
             {determinePath(pages.active).map((folder: FolderState, i: number) => (

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PagesState, PageState, FolderState, TagState } from "../types";
+import { emptyEditorState } from "../utils/editorUtils";
 
 const initialState: PagesState = {
   list: [],
@@ -9,7 +10,9 @@ const initialState: PagesState = {
   stagedToDelete: null,
   untitledPage: {
     NAME: "",
-    BODY: "",
+    BODY: emptyEditorState,
+    IS_UNTITLED: true,
+    IS_INITIAL: true,
   },
 };
 
@@ -340,6 +343,7 @@ const pagesSlice = createSlice({
         untitledPage: {
           ...state.untitledPage,
           BODY: payload,
+          IS_INITIAL: false,
         },
       };
     },
@@ -349,6 +353,18 @@ const pagesSlice = createSlice({
         untitledPage: {
           ...state.untitledPage,
           NAME: payload,
+          // IS_INITIAL: false,
+        },
+      };
+    },
+    resetUntitledPage: (state, { payload }) => {
+      return {
+        ...state,
+        untitledPage: {
+          ...state.untitledPage,
+          NAME: "",
+          BODY: emptyEditorState,
+          IS_INITIAL: true,
         },
       };
     },
@@ -386,6 +402,7 @@ export const {
   setPageDraftBody,
   setUntitledPageBody,
   setUntitledPageTitle,
+  resetUntitledPage,
   setFavoriteStatus,
   setCursorPosition,
 } = pagesSlice.actions;

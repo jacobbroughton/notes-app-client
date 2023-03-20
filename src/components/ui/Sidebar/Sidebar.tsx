@@ -275,31 +275,32 @@ function Sidebar() {
 
   async function getData() {
     try {
-      let foldersResponse = await fetch(`${getApiUrl()}/folders`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const [foldersResponse, pagesResponse] = await Promise.all([
+        fetch(`${getApiUrl()}/folders`, {
+          method: "GET",
+          credentials: "include",
+        }),
+        fetch(`${getApiUrl()}/pages`, {
+          method: "GET",
+          credentials: "include",
+        }),
+      ]);
 
-      if (foldersResponse.status !== 200)
+      if (foldersResponse.status !== 200) {
         throwResponseStatusError(foldersResponse, "GET");
+      }
 
-      let pagesResponse = await fetch(`${getApiUrl()}/pages`, {
-        method: "GET",
-        credentials: "include",
-      });
+      if (pagesResponse.status !== 200) {
+        throwResponseStatusError(pagesResponse, "GET");
+      }
 
-      if (pagesResponse.status !== 200) throwResponseStatusError(pagesResponse, "GET");
-
-      let foldersData = await foldersResponse.json();
-
-      if (!foldersData) throw "There was an issue parsing /folders response";
-
-      let pagesData = await pagesResponse.json();
-
-      if (!pagesData) throw "There was an issue parsing /pages response";
+      const [foldersData, pagesData] = await Promise.all([
+        foldersResponse.json(),
+        pagesResponse.json(),
+      ]);
 
       let formattedFolders = formatFolders(foldersData.folders, folders.list);
-      let formattedPages = formatPages(pagesData.pages, formattedFolders, pages.list);
+      let formattedPages = formatPages(pagesData.pages, formattedFolders);
 
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));

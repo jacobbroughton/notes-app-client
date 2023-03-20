@@ -72,6 +72,8 @@ export type PagesState = {
   untitledPage: {
     NAME: string;
     BODY: string;
+    IS_UNTITLED: boolean;
+    IS_INITIAL: boolean;
   };
 };
 

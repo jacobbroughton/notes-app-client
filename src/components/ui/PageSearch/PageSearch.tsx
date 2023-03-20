@@ -112,9 +112,6 @@ const PageSearch = () => {
               </div>
               <div className="matching-body-examples">
                 {startingMatchIndexes.map((match, i) => {
-                  console.log("");
-                  console.log("");
-                  // console.log(match);
                   const startingIndex = match.startingIndex;
                   const slicedBody = [...body].slice(startingIndex, startingIndex + 35);
                   const slicedBodyLength = slicedBody.length;

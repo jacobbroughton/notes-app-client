@@ -27,7 +27,7 @@ export function DeleteModal() {
 
   async function deleteFolder(folderId: number) {
     try {
-      let response = await fetch(`${getApiUrl()}folders/delete`, {
+      let response = await fetch(`${getApiUrl()}/folders/delete`, {
         method: "post",
         headers: {
           "content-type": "application/json;charset=UTF-8",
