@@ -20,6 +20,9 @@ const pagesSlice = createSlice({
   name: "pages",
   initialState,
   reducers: {
+    resetPagesState: () => {
+      return initialState;
+    },
     setPages: (state, { payload }) => {
       const pages: Array<PageState> = payload.map((page: PageState) => {
         const existingPage = state.list?.find(
@@ -385,6 +388,7 @@ const pagesSlice = createSlice({
 });
 
 export const {
+  resetPagesState,
   setPages,
   setPageEffStatus,
   selectPage,

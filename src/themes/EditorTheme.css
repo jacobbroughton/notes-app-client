@@ -39,7 +39,7 @@
   list-style-position: inside;
 }
 .EditorTheme__listItem {
-  margin: 0 32px;
+  /* margin: 0 32px; */
 }
 .EditorTheme__listItemChecked,
 .EditorTheme__listItemUnchecked {

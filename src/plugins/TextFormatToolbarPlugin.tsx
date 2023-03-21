@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { FORMAT_TEXT_COMMAND } from "lexical";
+import BoldIcon from "../components/ui/Icons/BoldIcon";
+import ItalicIcon from "../components/ui/Icons/ItalicIcon";
+import UnderlineIcon from "../components/ui/Icons/UnderlineIcon";
+import StrikeThroughIcon from "../components/ui/Icons/StrikeThroughIcon";
 
 type formatType = "bold" | "strikethrough" | "italic" | "underline";
 
@@ -8,8 +12,11 @@ export function TextFormatToolbarPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [dropdownToggled, setDropdownToggled] = useState(false);
 
-  const formatTypeTags: formatType[] = ["bold", "strikethrough", "italic", "underline"];
-  const onClick = (e: MouseEvent, type: formatType) => {
+  // const formatTypeTags: formatType[] = ["bold", "strikethrough", "italic", "underline"];
+  const onClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    type: formatType
+  ) => {
     e.preventDefault();
     editor.dispatchCommand(FORMAT_TEXT_COMMAND, type);
     setDropdownToggled(!dropdownToggled);
@@ -21,8 +28,8 @@ export function TextFormatToolbarPlugin(): JSX.Element {
   // <UnderlineIcon />
 
   return (
-    <div className="toolbar-dropdown">
-      <button
+    <div className="button-group">
+      {/* <button
         className="dropdown-toggle"
         onClick={(e) => {
           e.preventDefault();
@@ -30,7 +37,7 @@ export function TextFormatToolbarPlugin(): JSX.Element {
         }}
       >
         Text Format
-      </button>
+      </button> 
       {dropdownToggled && (
         <div className="dropdown-options">
           {formatTypeTags.map((tag, i) => (
@@ -39,7 +46,20 @@ export function TextFormatToolbarPlugin(): JSX.Element {
             </button>
           ))}
         </div>
-      )}
+      )} */}
+
+      <button onClick={(e) => onClick(e, "bold")}>
+        <BoldIcon />
+      </button>
+      <button onClick={(e) => onClick(e, "italic")}>
+        <ItalicIcon />
+      </button>
+      <button onClick={(e) => onClick(e, "underline")}>
+        <UnderlineIcon />
+      </button>
+      <button onClick={(e) => onClick(e, "strikethrough")}>
+        <StrikeThroughIcon />
+      </button>
     </div>
   );
 }

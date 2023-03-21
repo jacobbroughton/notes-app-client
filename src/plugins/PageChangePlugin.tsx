@@ -4,20 +4,19 @@ import { parseEditorState } from "lexical/LexicalUpdates";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { emptyEditorState } from "../utils/editorUtils";
+import { RootState } from "../redux/store";
 
 function PageChangePlugin() {
-  const pages = useSelector((state) => state.pages);
+  const pages = useSelector((state: RootState) => state.pages);
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     let parsedEditorState = editor.parseEditorState(emptyEditorState);
 
-    console.log(pages.untitledPage)
-
     if (pages.untitledPage?.IS_UNTITLED && !pages.active) {
       parsedEditorState = editor.parseEditorState(pages.untitledPage?.BODY);
-    } else {
-      if (pages.active?.DRAFT_BODY !== pages.active?.BODY) {
+    } else if (pages.active) {
+      if (pages.active.DRAFT_BODY !== pages.active.BODY) {
         parsedEditorState = editor.parseEditorState(pages.active?.DRAFT_BODY);
       } else {
         parsedEditorState = editor.parseEditorState(pages.active?.BODY);

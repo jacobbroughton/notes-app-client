@@ -12,6 +12,9 @@ const modalsSlice = createSlice({
   name: "modals",
   initialState,
   reducers: {
+    resetModalsState: () => {
+      return initialState;
+    },
     toggleModal: (state, { payload }: PayloadAction<keyof ModalsState>) => {
       if (!["unsavedWarning", "deleteModal", "tagsModal"].includes(payload)) return state;
 
@@ -24,4 +27,4 @@ const modalsSlice = createSlice({
 });
 
 export default modalsSlice.reducer;
-export const { toggleModal } = modalsSlice.actions;
+export const { resetModalsState, toggleModal } = modalsSlice.actions;

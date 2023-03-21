@@ -1,9 +1,17 @@
 import { FormEvent, useRef, useEffect, MouseEvent } from "react";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../../redux/user";
+import { resetUserState, setUser } from "../../../redux/user";
 import { Link, useNavigate } from "react-router-dom";
 import "./UserMenu.css";
 import { getApiUrl } from "../../../utils/getUrl";
+import { resetThemeState } from "../../../redux/theme";
+import { resetTagsState } from "../../../redux/tags";
+import { resetSidebarState } from "../../../redux/sidebar";
+import { resetPagesState } from "../../../redux/pages";
+import { resetFoldersState } from "../../../redux/folders";
+import { resetModalsState } from "../../../redux/modals";
+import { resetCombinedState } from "../../../redux/combined";
+import { resetColorPickerMenuState } from "../../../redux/colorPickerMenu";
 
 const UserMenu = ({
   setUserMenuToggled,
@@ -21,7 +29,16 @@ const UserMenu = ({
       credentials: "include",
     });
 
-    dispatch(setUser(null));
+    // dispatch(setUser(null));
+    dispatch(resetUserState())
+    dispatch(resetThemeState())
+    dispatch(resetTagsState())
+    dispatch(resetSidebarState())
+    dispatch(resetPagesState())
+    dispatch(resetFoldersState())
+    dispatch(resetModalsState())
+    dispatch(resetCombinedState())
+    dispatch(resetColorPickerMenuState())
     setUserMenuToggled(false);
     navigate("/login");
   }

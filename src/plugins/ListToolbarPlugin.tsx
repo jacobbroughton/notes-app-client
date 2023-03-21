@@ -9,6 +9,9 @@ import {
   INSERT_CHECK_LIST_COMMAND,
   REMOVE_LIST_COMMAND,
 } from "@lexical/list";
+import OrderedListIcon from "../components/ui/Icons/OrderedList";
+import UnorderedListIcon from "../components/ui/Icons/UnorderedList";
+import CheckBoxListIcon from "../components/ui/Icons/CheckBoxList";
 
 type ListTag = "ol" | "ul" | "checklist";
 
@@ -17,7 +20,7 @@ export function ListToolbarPlugin(): JSX.Element {
   const [dropdownToggled, setDropdownToggled] = useState(false);
 
   const listTags: ListTag[] = ["ol", "ul", "checklist"];
-  const onClick = (e: MouseEvent, tag: ListTag) => {
+  const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, tag: ListTag) => {
     e.preventDefault();
     if (tag === "ol") {
       // <OrderedListIcon />
@@ -28,13 +31,14 @@ export function ListToolbarPlugin(): JSX.Element {
     } else if (tag === "checklist") {
       // <CheckBoxListIcon />
       editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
+    } else {
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     }
-    editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     setDropdownToggled(!dropdownToggled);
   };
   return (
-    <div className="toolbar-dropdown">
-      <button
+    <div className="button-group">
+      {/* <button
         className="dropdown-toggle"
         onClick={(e) => {
           e.preventDefault();
@@ -51,7 +55,16 @@ export function ListToolbarPlugin(): JSX.Element {
             </button>
           ))}
         </div>
-      )}
+      )} */}
+      <button onClick={(e) => onClick(e, "ol")}>
+        <OrderedListIcon />
+      </button>
+      <button onClick={(e) => onClick(e, "ul")}>
+        <UnorderedListIcon />
+      </button>
+      {/* <button onClick={(e) => onClick(e, "checkbox")}>
+        <CheckBoxListIcon />
+      </button> */}
     </div>
   );
 }

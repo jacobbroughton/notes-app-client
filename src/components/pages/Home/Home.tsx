@@ -37,7 +37,7 @@ const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const titleFieldRef = useRef<HTMLInputElement>(null);
-  const bodyFieldRef = useRef<HTMLTextAreaElement>(null);
+  const bodyFieldRef = useRef<HTMLDivElement>(null);
   const [noTitleWarningToggled, setNoTitleWarningToggled] = useState<boolean>(false);
   const [noTitleWarningTimeout, setNoTitleWarningTimeout] = useState<
     number | undefined
@@ -271,6 +271,11 @@ const Home = () => {
   }
 
   function handleKeyDown(e: any) {
+    console.log(
+      bodyFieldRef.current,
+      document.activeElement,
+      document.activeElement === titleFieldRef.current
+    );
     if (
       bodyFieldRef.current?.contains(document.activeElement) ||
       document.activeElement === titleFieldRef.current
@@ -530,7 +535,7 @@ const Home = () => {
             data-enable-grammarly="false"
             className={bodyTooLong ? "error" : ""}
           /> */}
-          <Editor page={pages.active} />
+          <Editor page={pages.active} bodyFieldRef={bodyFieldRef} />
           <div className="page-path">
             /&nbsp;
             {determinePath(pages.active).map((folder: FolderState, i: number) => (

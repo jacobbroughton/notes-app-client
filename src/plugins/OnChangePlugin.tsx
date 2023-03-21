@@ -10,7 +10,6 @@ export function OnChangePlugin(props: {
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
-      console.log("Hello")
       onChange(editorState);
     });
   }, [onChange, editor]);

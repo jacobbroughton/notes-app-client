@@ -20,38 +20,43 @@ import { setUntitledPageBody } from "../../../redux/pages";
 import PageChangePlugin from "../../../plugins/PageChangePlugin";
 import { emptyEditorState } from "../../../utils/editorUtils";
 import { OnChangePlugin } from "../../../plugins/OnChangePlugin";
-import { PageState } from "../../../types";
+import { PageState, UntitledPageState } from "../../../types";
 
-function Editor({ page, bodyFieldRef }: { page: PageState }) {
+function Editor({
+  page,
+  bodyFieldRef,
+}: {
+  page: PageState | UntitledPageState;
+  bodyFieldRef: React.MutableRefObject<HTMLDivElement | null>;
+}) {
   const dispatch = useDispatch();
-  const editorStateRef = useRef();
+  // const editorStateRef = useRef();
 
   let editorState = emptyEditorState;
 
-  useEffect(() => {
-    editorStateRef.current = editorState;
-  }, [page]);
+  // useEffect(() => {
+  //   if (editorStateRef.current) {
+  //     editorStateRef.current = editorState;
+  //   }
+  // }, [page]);
 
   if (page.BODY) {
     editorState = page.BODY;
   }
 
   const editorConfig = {
-    editorState, // pass json string here
+    namespace: "Notes Editor",
+    editorState,
     theme: EditorTheme,
-    onError: (error) => {
+    onError: (error: Error) => {
       throw error;
     },
     nodes: [ListItemNode, ListNode, HeadingNode, QuoteNode],
   };
 
-  function onChange(editorState: EditorState, editor: LexicalEditor): void {
-    console.log("onChange running", page)
-    // editorStateRef.current = editorState;
+  function onChange(editorState: EditorState): void {
     if (page.IS_UNTITLED) {
-      // if (!page.IS_INITIAL) {
-        dispatch(setUntitledPageBody(JSON.stringify(editorState)));
-      // }
+      dispatch(setUntitledPageBody(JSON.stringify(editorState)));
     } else {
       dispatch(setPageDraftBody({ page, draftBody: JSON.stringify(editorState) }));
     }

@@ -9,6 +9,9 @@ const combinedSlice = createSlice({
   name: "combined",
   initialState,
   reducers: {
+    resetCombinedState: () => {
+      return initialState;
+    },
     setCombined: (state, { payload }) => {
       return payload;
     },
@@ -16,4 +19,4 @@ const combinedSlice = createSlice({
 });
 
 export default combinedSlice.reducer;
-export const { setCombined } = combinedSlice.actions;
+export const { resetCombinedState, setCombined } = combinedSlice.actions;

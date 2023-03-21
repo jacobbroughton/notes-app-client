@@ -30,6 +30,13 @@ export type TagState = {
   SELECTED: boolean;
 };
 
+export type UntitledPageState = {
+  NAME: string;
+  BODY: string;
+  IS_UNTITLED: boolean;
+  IS_INITIAL: boolean;
+};
+
 export type PageState = {
   ID: number | null;
   PAGE_ID: number;
@@ -54,6 +61,7 @@ export type PageState = {
   OPEN: boolean;
   ACTIVE: boolean;
   IS_MODIFIED: boolean;
+  IS_UNTITLED: boolean;
 };
 
 export type FoldersState = {

@@ -7,14 +7,14 @@ const viewOptionsForState = [
     id: 1,
     name: "Notes",
   },
-  {
-    id: 2,
-    name: "Search",
-  },
-  {
-    id: 3,
-    name: "Tags",
-  },
+  // {
+  //   id: 2,
+  //   name: "Search",
+  // },
+  // {
+  //   id: 3,
+  //   name: "Tags",
+  // },
 ];
 
 const initialState: SidebarState = {
@@ -42,6 +42,9 @@ const sidebarSlice = createSlice({
   name: "sidebar",
   initialState,
   reducers: {
+    resetSidebarState: () => {
+      return initialState;
+    },
     setSidebarWidth: (state, { payload }: PayloadAction<number>) => {
       return {
         ...state,
@@ -148,6 +151,7 @@ const sidebarSlice = createSlice({
 });
 
 export const {
+  resetSidebarState,
   setSidebarWidth,
   setSidebarView,
   setSearchValue,

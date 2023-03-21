@@ -13,6 +13,9 @@ const foldersSlice = createSlice({
   name: "folders",
   initialState,
   reducers: {
+    resetFoldersState: () => {
+      return initialState;
+    },
     setFolders: (state, { payload }: PayloadAction<Array<FolderState>>) => {
       const folders = payload.map((folder: FolderState) => {
         return {
@@ -268,6 +271,7 @@ const foldersSlice = createSlice({
 });
 
 export const {
+  resetFoldersState,
   setFolders,
   setExpandedStatus,
   collapseFolders,

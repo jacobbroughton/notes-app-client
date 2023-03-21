@@ -9,6 +9,9 @@ const colorPickerMenuSlice = createSlice({
   name: "colorPickerMenu",
   initialState,
   reducers: {
+    resetColorPickerMenuState: (state) => {
+      return initialState;
+    },
     setColorPickerMenu: (state, { payload }) => {
       const { toggled } = payload;
 
@@ -21,4 +24,5 @@ const colorPickerMenuSlice = createSlice({
 });
 
 export default colorPickerMenuSlice.reducer;
-export const { setColorPickerMenu } = colorPickerMenuSlice.actions;
+export const { resetColorPickerMenuState, setColorPickerMenu } =
+  colorPickerMenuSlice.actions;

@@ -33,7 +33,11 @@ const Login = () => {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      console.log({ response });
+
+      if (response.status !== 200) {
+        throw "ERROR: " + response;
+      }
 
       const data = await response.json();
 
@@ -44,10 +48,12 @@ const Login = () => {
         setTimeout(() => {
           setLoginError("");
         }, 5000);
+        return;
       }
 
       if (loginError) setLoginError("");
       dispatch(setUser(data.user));
+      console.log("asdfkjahsdlfkjahs");
       navigate("/");
     } catch (error) {
       console.log(error);

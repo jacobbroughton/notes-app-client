@@ -15,6 +15,9 @@ const tagsSlice = createSlice({
   name: "tags",
   initialState,
   reducers: {
+    resetTagsState: () => {
+      return initialState
+    },
     setTags: (state, { payload }) => {
       return {
         ...state,
@@ -104,6 +107,7 @@ const tagsSlice = createSlice({
 
 export default tagsSlice.reducer;
 export const {
+  resetTagsState,
   setTags,
   selectTag,
   deselectTag,

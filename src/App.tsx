@@ -6,7 +6,7 @@ import Register from "./components/pages/Register/Register";
 import Sidebar from "./components/ui/Sidebar/Sidebar";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
-import AuthenticatedRoutes from "./utils/AuthenticatedRoutes";
+import { AuthenticatedRoutes } from "./utils/AuthenticatedRoutes";
 
 function App() {
   const sidebar = useSelector((state: RootState) => state.sidebar);
