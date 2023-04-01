@@ -25,7 +25,7 @@ const UserMenu = ({
   async function handleLogout(e: FormEvent) {
     e.preventDefault();
 
-    await fetch(`${getApiUrl()}/logout`, {
+    await fetch(`${getApiUrl()}/logout/`, {
       credentials: "include",
     });
 

@@ -61,7 +61,7 @@ const ItemListItem = ({
           pageId: item.PAGE_ID,
         };
 
-        const response = await fetch(`${getApiUrl()}/pages/rename`, {
+        const response = await fetch(`${getApiUrl()}/pages/rename/`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -83,7 +83,7 @@ const ItemListItem = ({
           folderId: item.ID,
         };
 
-        const response = await fetch(`${getApiUrl()}/folders/rename`, {
+        const response = await fetch(`${getApiUrl()}/folders/rename/`, {
           method: "POST",
           credentials: "include",
           headers: {

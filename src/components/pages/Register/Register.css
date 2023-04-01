@@ -9,6 +9,13 @@
   color: var(--color-text-primary);
 }
 
+.register-view .register-error {
+  background-color: crimson;
+  color: var(--color-text-secondary);
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
 .register-view form {
   display: flex;
   flex-direction: column;

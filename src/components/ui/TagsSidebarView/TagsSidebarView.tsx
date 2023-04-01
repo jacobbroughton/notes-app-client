@@ -91,7 +91,7 @@ const TagsSidebarView = () => {
         id: tagId,
       };
 
-      const response = await fetch(`${getApiUrl()}/tags/edit`, {
+      const response = await fetch(`${getApiUrl()}/tags/edit/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -125,7 +125,7 @@ const TagsSidebarView = () => {
         id: tagId,
       };
 
-      const response = await fetch(`${getApiUrl()}/tags/new`, {
+      const response = await fetch(`${getApiUrl()}/tags/new/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -159,7 +159,7 @@ const TagsSidebarView = () => {
         id: tagId,
       };
 
-      const response = await fetch(`${getApiUrl()}/tags/delete`, {
+      const response = await fetch(`${getApiUrl()}/tags/delete/`, {
         method: "POST",
         credentials: "include",
         headers: {

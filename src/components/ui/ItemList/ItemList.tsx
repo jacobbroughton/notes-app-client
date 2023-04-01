@@ -125,7 +125,7 @@ const ItemList = ({
           })
         );
 
-        const response = await fetch(`${getApiUrl()}pages/updateParentFolder`, {
+        const response = await fetch(`${getApiUrl()}pages/updateParentFolder/`, {
           method: "POST",
           credentials: "include",
           headers: {

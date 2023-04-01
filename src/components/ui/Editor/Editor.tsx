@@ -20,6 +20,7 @@ import { setUntitledPageBody } from "../../../redux/pages";
 import PageChangePlugin from "../../../plugins/PageChangePlugin";
 import { emptyEditorState } from "../../../utils/editorUtils";
 import { OnChangePlugin } from "../../../plugins/OnChangePlugin";
+import { FocusPlugin } from "../../../plugins/FocusPlugin";
 import { PageState, UntitledPageState } from "../../../types";
 
 function Editor({
@@ -64,7 +65,7 @@ function Editor({
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className="editor-wrapper" ref={bodyFieldRef}>
+      <div className="editor-wrapper" ref={bodyFieldRef} tabIndex={2} onFocus={() => console.log("Hello focus")}>
         <ToolbarPlugin />
         <RichTextPlugin
           contentEditable={<ContentEditable className="content-editable" />}
@@ -77,6 +78,7 @@ function Editor({
         <TabIndentationPlugin />
         <OnChangePlugin onChange={onChange} />
         <PageChangePlugin />
+        <FocusPlugin/>
       </div>
     </LexicalComposer>
   );

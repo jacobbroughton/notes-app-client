@@ -20,7 +20,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${getApiUrl()}/login`, {
+      const response = await fetch(`${getApiUrl()}/login/`, {
+        mode: 'cors',
         method: "post",
         headers: {
           Accept: "application/json",
@@ -53,7 +54,6 @@ const Login = () => {
 
       if (loginError) setLoginError("");
       dispatch(setUser(data.user));
-      console.log("asdfkjahsdlfkjahs");
       navigate("/");
     } catch (error) {
       console.log(error);

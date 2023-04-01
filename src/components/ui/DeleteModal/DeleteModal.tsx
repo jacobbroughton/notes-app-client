@@ -27,7 +27,7 @@ export function DeleteModal() {
 
   async function deleteFolder(folderId: number) {
     try {
-      let response = await fetch(`${getApiUrl()}/folders/delete`, {
+      let response = await fetch(`${getApiUrl()}/folders/delete/`, {
         method: "post",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -58,7 +58,7 @@ export function DeleteModal() {
 
   async function deletePage(pageId: number) {
     try {
-      let response = await fetch(`${getApiUrl()}/pages/delete`, {
+      let response = await fetch(`${getApiUrl()}/pages/delete/`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -84,7 +84,7 @@ export function DeleteModal() {
         items.filter((item: SidebarItemState) => item.IS_PAGE).length !== 0;
 
       if (selectionIncludesFolders) {
-        let response = await fetch(`${getApiUrl()}/folders/delete-multiple`, {
+        let response = await fetch(`${getApiUrl()}/folders/delete-multiple/`, {
           method: "POST",
           headers: {
             "content-type": "application/json;charset=UTF-8",
@@ -104,7 +104,7 @@ export function DeleteModal() {
       }
 
       if (selectionIncludesPages) {
-        let response = await fetch(`${getApiUrl()}/pages/delete-multiple`, {
+        let response = await fetch(`${getApiUrl()}/pages/delete-multiple/`, {
           method: "POST",
           headers: {
             "content-type": "application/json;charset=UTF-8",

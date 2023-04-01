@@ -49,7 +49,7 @@ const ColorPicker = ({
         colorCode: newCustomColor,
       };
 
-      const response = await fetch(`${getApiUrl()}/tags/color-options/new`, {
+      const response = await fetch(`${getApiUrl()}/tags/color-options/new/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -78,7 +78,7 @@ const ColorPicker = ({
         colorId: color.ID,
       };
 
-      const response = await fetch(`${getApiUrl()}/tags/color-options/delete`, {
+      const response = await fetch(`${getApiUrl()}/tags/color-options/delete/`, {
         method: "POST",
         credentials: "include",
         headers: {

@@ -97,7 +97,7 @@ function Sidebar() {
   async function handleNewFolderSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
-      const response = await fetch(`${getApiUrl()}/folders/new`, {
+      const response = await fetch(`${getApiUrl()}/folders/new/`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -137,7 +137,7 @@ function Sidebar() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${getApiUrl()}/pages/new`, {
+      const response = await fetch(`${getApiUrl()}/pages/new/`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -204,10 +204,10 @@ function Sidebar() {
   }
 
   function handleRename(e: MouseEvent, item: ItemState) {
-    // e.stopPropagation();
+    e.stopPropagation();
 
     resetContextMenu();
-    console.log(item);
+    // console.log(item);
 
     new Promise((resolve) => {
       dispatch(setRenameInputToggled(true));
@@ -276,11 +276,11 @@ function Sidebar() {
   async function getData() {
     try {
       const [foldersResponse, pagesResponse] = await Promise.all([
-        fetch(`${getApiUrl()}/folders`, {
+        fetch(`${getApiUrl()}/folders/`, {
           method: "GET",
           credentials: "include",
         }),
-        fetch(`${getApiUrl()}/pages`, {
+        fetch(`${getApiUrl()}/pages/`, {
           method: "GET",
           credentials: "include",
         }),
@@ -323,7 +323,7 @@ function Sidebar() {
     try {
       e.stopPropagation();
 
-      const response = await fetch(`${getApiUrl()}/pages/favorite`, {
+      const response = await fetch(`${getApiUrl()}/pages/favorite/`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -395,7 +395,8 @@ function Sidebar() {
 
       if (
         sidebar.renameInputToggled &&
-        !(event.target as HTMLElement).classList.contains("rename-input")
+        !(event.target as HTMLElement).classList.contains("rename-input") &&
+        !(event.target as HTMLElement).classList.contains("rename")
       ) {
         dispatch(setRenameInputToggled(false));
         dispatch(setNewNameForRename(""));
@@ -651,15 +652,15 @@ function Sidebar() {
               sidebar.inputPosition.referenceId !== 0,
             isSpacer: true,
           },
-          {
-            text: "Add Tags",
-            icon: "#️⃣",
-            active:
-              sidebar.shiftClickItems.end === null &&
-              sidebar.inputPosition.referenceId !== 0,
-            onClick: handleTag,
-            isSpacer: false,
-          },
+          // {
+          //   text: "Add Tags",
+          //   icon: "#️⃣",
+          //   active:
+          //     sidebar.shiftClickItems.end === null &&
+          //     sidebar.inputPosition.referenceId !== 0,
+          //   onClick: handleTag,
+          //   isSpacer: false,
+          // },
           {
             text: "Add To Favorites",
             icon: "⭐️",

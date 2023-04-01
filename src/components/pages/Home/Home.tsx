@@ -5,7 +5,6 @@ import { setUser } from "../../../redux/user";
 import {
   updatePage,
   setPageModified,
-  selectPage,
   setPages,
   setPageStagedForSwitch,
   setPageDraftBody,
@@ -60,9 +59,10 @@ const Home = () => {
   }
 
   async function testApi() {
-    const response = await fetch(getApiUrl(), {
+    const response = await fetch(getApiUrl() + '/', {
       method: "GET",
       credentials: "include",
+      mode: 'cors',
     });
 
     const data = await response.json();
@@ -77,11 +77,11 @@ const Home = () => {
   async function getData() {
     try {
       const [foldersResponse, pagesResponse] = await Promise.all([
-        fetch(`${getApiUrl()}/folders`, {
+        fetch(`${getApiUrl()}/folders/`, {
           method: "GET",
           credentials: "include",
         }),
-        fetch(`${getApiUrl()}/pages`, {
+        fetch(`${getApiUrl()}/pages/`, {
           method: "GET",
           credentials: "include",
         }),
@@ -112,7 +112,7 @@ const Home = () => {
 
   async function getTags() {
     try {
-      let response = await fetch(`${getApiUrl()}/tags`, {
+      let response = await fetch(`${getApiUrl()}/tags/`, {
         method: "GET",
         credentials: "include",
       });
@@ -128,7 +128,7 @@ const Home = () => {
 
   async function getColorOptions() {
     try {
-      let response = await fetch(`${getApiUrl()}/tags/color-options`, {
+      let response = await fetch(`${getApiUrl()}/tags/color-options/`, {
         method: "GET",
         credentials: "include",
       });
@@ -176,7 +176,7 @@ const Home = () => {
         return;
       }
 
-      const response = await fetch(`${getApiUrl()}/pages/edit`, {
+      const response = await fetch(`${getApiUrl()}/pages/edit/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -240,7 +240,7 @@ const Home = () => {
 
   async function addPage() {
     try {
-      const response = await fetch(`${getApiUrl()}/pages/new`, {
+      const response = await fetch(`${getApiUrl()}/pages/new/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -262,8 +262,6 @@ const Home = () => {
       clearTimeout(noTitleWarningTimeout);
       setNoTitleWarningToggled(false);
       getData();
-      // dispatch(setUntitledPageTitle(""));
-      // dispatch(setUntitledPageBody(emptyEditorState));
       dispatch(resetUntitledPage(null));
     } catch (error) {
       console.log(error);
@@ -271,11 +269,6 @@ const Home = () => {
   }
 
   function handleKeyDown(e: any) {
-    console.log(
-      bodyFieldRef.current,
-      document.activeElement,
-      document.activeElement === titleFieldRef.current
-    );
     if (
       bodyFieldRef.current?.contains(document.activeElement) ||
       document.activeElement === titleFieldRef.current
@@ -328,6 +321,14 @@ const Home = () => {
         })
       );
     }
+  }
+
+  function handleTabPress(e: React.KeyboardEvent<HTMLInputElement>) {
+    // if (e.key === "Tab") {
+    //   e.preventDefault();
+    //   console.log(e.key);
+    //   bodyFieldRef.current?.focus();
+    // }
   }
 
   function determineSavedStatus() {
@@ -476,9 +477,11 @@ const Home = () => {
               required
               maxLength={1000}
               onChange={(e) => handleTitleChange(e, true)}
+              onKeyDown={(e) => handleTabPress(e)}
               ref={titleFieldRef}
               className={noTitleWarningToggled || titleTooLong ? "error" : ""}
               autoComplete="off"
+              tabIndex={1}
             />
           </div>
 
@@ -521,6 +524,7 @@ const Home = () => {
               ref={titleFieldRef}
               className={noTitleWarningToggled || titleTooLong ? "error" : ""}
               autoComplete="off"
+              tabIndex={1}
             />
           </div>
 

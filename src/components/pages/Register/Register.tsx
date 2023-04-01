@@ -8,6 +8,8 @@ import "./Register.css";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [registerError, setRegisterError] = useState("");
+
   const navigate = useNavigate();
   let [searchParams, setSearchParams] = useSearchParams();
 
@@ -15,7 +17,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${getApiUrl()}/register`, {
+      const response = await fetch(`${getApiUrl()}/register/`, {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -27,11 +29,21 @@ const Login = () => {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw "Registering user was unsuccessful";
 
-      const result = await response.json();
+      const data = await response.json();
 
-      if (!result) throw "There was a problem registering user";
+      if (!data) throw "There was a problem registering user";
+
+      if (!data.user) {
+        setRegisterError(data.message);
+        setTimeout(() => {
+          setRegisterError("");
+        }, 5000);
+        return;
+      }
+
+      if (registerError) setRegisterError("");
 
       navigate({
         pathname: "/login",
@@ -44,6 +56,7 @@ const Login = () => {
 
   return (
     <div className="register-view">
+      {registerError && <div className="register-error">{registerError}</div>}
       <h1>Register</h1>
       <form onSubmit={handleSubmit}>
         <input

@@ -48,7 +48,7 @@ const TagsModal = () => {
     if (tagSearchValue === "") return;
 
     try {
-      const response = await fetch(`${getApiUrl()}/tags/new`, {
+      const response = await fetch(`${getApiUrl()}/tags/new/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -80,7 +80,7 @@ const TagsModal = () => {
 
   async function handleTagClick(item: FolderState | PageState, tag: TagState) {
     try {
-      const response = await fetch(`${getApiUrl()}/tags/tag-item`, {
+      const response = await fetch(`${getApiUrl()}/tags/tag-item/`, {
         method: "POST",
         credentials: "include",
         headers: {

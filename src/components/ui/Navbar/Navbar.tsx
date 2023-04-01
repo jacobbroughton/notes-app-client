@@ -39,7 +39,7 @@ const Navbar = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${getApiUrl()}/logout`, {
+      const response = await fetch(`${getApiUrl()}/logout/`, {
         credentials: "include",
       });
 
