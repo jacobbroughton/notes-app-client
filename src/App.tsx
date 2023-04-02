@@ -20,9 +20,9 @@ function App() {
     document.body.dataset.theme = theme;
   }, [theme]);
 
-  alert(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
+  // alert(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
 
-  if (browser?.name === "safari")
+  if (browser?.name === "safari" || browser?.name === "ios")
     return (
       <div className="wrong-browser-view">
         <div className="wrong-browser-container">
