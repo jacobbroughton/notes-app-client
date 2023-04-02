@@ -26,7 +26,7 @@ function App() {
         <div className="wrong-browser-container">
           <h1>Oops!</h1>
           <p>
-            It looks like you're using safari. Unforunately, the safari browser has disabled third-party
+            It looks like you're using safari. Unfortunately, the safari browser has disabled third-party
             cookies from cross-origin domains. The only way around this is to purchase a yearly domain.
           </p>
           <p>
