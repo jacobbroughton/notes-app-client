@@ -20,9 +20,9 @@ function App() {
     document.body.dataset.theme = theme;
   }, [theme]);
 
-  // alert(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
+  alert(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
 
-  if (browser?.name === "safari" || browser?.os === "IOS")
+  if (browser?.name === "safari" || browser?.name === "ios" || browser?.os === "IOS")
     return (
       <div className="wrong-browser-view">
         <div className="wrong-browser-container">
@@ -34,7 +34,8 @@ function App() {
           </p>
           <p>
             Since this is a portfolio project (not a for-profit app), I ask you to view
-            this on a non-webkit browser (like chrome or firefox on desktop) to ensure the optimal experience.
+            this on a non-webkit browser (like chrome or firefox on desktop) to ensure the
+            optimal experience.
           </p>
           <strong>
             By the way, i'm sorry about this. Thanks in advance for checking out the
