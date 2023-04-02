@@ -20,6 +20,8 @@ function App() {
     document.body.dataset.theme = theme;
   }, [theme]);
 
+  alert(browser.toString())
+
   if (browser?.name === "safari")
     return (
       <div className="wrong-browser-view">
