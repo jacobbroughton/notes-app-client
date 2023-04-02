@@ -136,6 +136,7 @@ textarea:focus {
   background-color: var(--secondary-bg);
   color: var(--color-text-primary);
   padding: 15px;
+  margin: 15px;
   display: flex;
   flex-direction: column;
   gap: 5px;
