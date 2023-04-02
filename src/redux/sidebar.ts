@@ -36,6 +36,7 @@ const initialState: SidebarState = {
   newNameForRename: "",
   newPageName: "",
   newFolderName: "",
+  loading: false,
 };
 
 const sidebarSlice = createSlice({
@@ -147,6 +148,12 @@ const sidebarSlice = createSlice({
         newFolderName: payload,
       };
     },
+    setSidebarLoading: (state, { payload }) => {
+      return {
+        ...state,
+        loading: payload,
+      };
+    },
   },
 });
 
@@ -165,6 +172,7 @@ export const {
   setNewNameForRename,
   setNewPageName,
   setNewFolderName,
+  setSidebarLoading,
 } = sidebarSlice.actions;
 
 export default sidebarSlice.reducer;

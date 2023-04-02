@@ -210,4 +210,5 @@ export type SidebarState = {
   newNameForRename: string;
   newPageName: string;
   newFolderName: string;
+  loading: boolean
 };

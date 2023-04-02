@@ -15,6 +15,7 @@ import {
   resetUntitledPage,
 } from "../../../redux/pages";
 import { selectFolder, setFolders } from "../../../redux/folders";
+import { setSidebarLoading } from "../../../redux/sidebar";
 import { toggleModal } from "../../../redux/modals";
 import { getElapsedTime } from "../../../utils/getElapsedTime";
 import { formatFolders, formatPages } from "../../../utils/formatData";
@@ -59,7 +60,7 @@ const Home = () => {
   }
 
   async function testApi() {
-    const response = await fetch(getApiUrl() + '/', {
+    const response = await fetch(getApiUrl() + "/", {
       method: "GET",
       credentials: "include",
       // mode: 'cors',
@@ -76,6 +77,7 @@ const Home = () => {
 
   async function getData() {
     try {
+      dispatch(setSidebarLoading(true));
       const [foldersResponse, pagesResponse] = await Promise.all([
         fetch(`${getApiUrl()}/folders/`, {
           method: "GET",
@@ -88,10 +90,14 @@ const Home = () => {
       ]);
 
       if (foldersResponse.status !== 200) {
+        dispatch(setSidebarLoading(false));
+
         throwResponseStatusError(foldersResponse, "GET");
       }
 
       if (pagesResponse.status !== 200) {
+        dispatch(setSidebarLoading(false));
+
         throwResponseStatusError(pagesResponse, "GET");
       }
 
@@ -105,6 +111,7 @@ const Home = () => {
 
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
+      dispatch(setSidebarLoading(false));
     } catch (error) {
       console.log(error);
     }

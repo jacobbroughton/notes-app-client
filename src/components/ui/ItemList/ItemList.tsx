@@ -17,6 +17,7 @@ import { RootState } from "../../../redux/store";
 import { SidebarItemState, ItemState, FolderState, PageState } from "../../../types";
 import "./ItemList.css";
 import { getApiUrl } from "../../../utils/getUrl";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 const ItemList = ({
   setContextMenu,
@@ -254,7 +255,10 @@ const ItemList = ({
         />
       ))}
       {favoritesList.length !== 0 && <div className="spacer"></div>}
-      <p className="item-list-heading all">All</p>
+      <div className='item-list-heading-and-spinner'>
+        <p className="item-list-heading all">All</p>
+        {sidebar.loading.toString()}
+      </div>
       {allList.length === 0 && <p className="no-items-found">No items found</p>}
 
       {allList.map((item, index) => {

@@ -23,6 +23,13 @@
   margin-bottom: 10px
 }
 
+.items-list .item-list-heading-and-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .items-list .item-list-heading {
   margin-left: 10px;
   font-size: 0.875rem;
@@ -30,6 +37,10 @@
   text-decoration: underline;
   margin-bottom: 5px;
   margin-top: 5px;
+}
+
+.items-list .item-list-heading .spinner {
+  max-width: 25px;
 }
 
 .items-list .new-folder-form input,
