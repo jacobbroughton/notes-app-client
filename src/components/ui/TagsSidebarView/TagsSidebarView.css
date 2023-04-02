@@ -8,7 +8,7 @@
 
 .tags-sidebar-view .no-tags-found {
   margin-left: 10px;
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
 }
 
 .tags-sidebar-view .tag-controls {
@@ -102,7 +102,7 @@
 
 .tags-sidebar-view .cancel-and-done-btns button {
   padding: 2px 5px;
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
   cursor: pointer;
   background-color: var(--secondary-bg);
   color: var(--color-text-primary);
@@ -143,7 +143,7 @@
 
 .tags-sidebar-view form .tag-color label,
 .tags-sidebar-view form .tag-name label {
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
   font-weight: 500;
 }
 
@@ -183,7 +183,7 @@
 }
 
 .tags-sidebar-view form .invalid-text {
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
   color: crimson;
 }
 
@@ -195,7 +195,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
 }
 
 .tags-sidebar-view .tag-controls .are-you-sure-container button {

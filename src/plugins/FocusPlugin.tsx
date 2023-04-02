@@ -18,10 +18,5 @@ export function FocusPlugin() {
   const [editor] = useLexicalComposerContext();
   const [hasFocus, setFocus] = useEditorFocus();
 
-  useEffect(() => {
-    console.log("Swag");
-    // setFocus(true);
-  }, [pages.untitledPage?.NAME]);
-
   return <></>;
 }

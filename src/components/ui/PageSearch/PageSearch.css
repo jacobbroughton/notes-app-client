@@ -5,7 +5,7 @@
   overflow-y: scroll;
   background-color: var(--primary-bg);
   border: 1px solid transparent;
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
 }
 
 .page-search .no-results-found {
@@ -117,7 +117,7 @@
 
 .page-search .name-and-buttons p {
   white-space: nowrap;
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
   font-weight: 500;
   text-overflow: ellipsis;
   overflow: hidden;

@@ -22,19 +22,19 @@ function App() {
 
   // alert(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
 
-  if (browser?.name === "safari" || browser?.name === "ios")
+  if (browser?.name === "safari" || browser?.os === "IOS")
     return (
       <div className="wrong-browser-view">
         <div className="wrong-browser-container">
           <h1>Oops!</h1>
           <p>
-            It looks like you're using safari. Unfortunately, the safari browser has
-            disabled third-party cookies from cross-origin domains. The only way around
-            this is to purchase a yearly domain.
+            It looks like you're using a browser that has disabled third-party cookies
+            from cross-origin domains. This breaks this app's authentication, rendering it
+            unusable. The only way around this is to purchase a yearly domain.
           </p>
           <p>
             Since this is a portfolio project (not a for-profit app), I ask you to view
-            this on a non-webkit browser (like chrome) to ensure the optimal experience.
+            this on a non-webkit browser (like chrome or firefox on desktop) to ensure the optimal experience.
           </p>
           <strong>
             By the way, i'm sorry about this. Thanks in advance for checking out the

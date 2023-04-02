@@ -7,7 +7,7 @@
   padding: 5px;
   border-radius: 3px;
   border: 1px solid var(--color-accent-primary);
-  font-size: 0.875rem;
+  /* font-size: 0.875rem; */
   width: 100%;
   max-width: 250px;
 }

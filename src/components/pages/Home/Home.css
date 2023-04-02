@@ -62,7 +62,7 @@
 }
 
 .home-view .page-path p {
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
   white-space: nowrap;
   color: var(--color-text-primary);
 }
@@ -159,7 +159,7 @@
   top: calc(100% + 10px);
   left: 15px;
   padding: 3px 5px;
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
   z-index: 3;
 }
 

@@ -65,7 +65,7 @@ function Editor({
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className="editor-wrapper" ref={bodyFieldRef} tabIndex={2} onFocus={() => console.log("Hello focus")}>
+      <div className="editor-wrapper" ref={bodyFieldRef} tabIndex={2}>
         <ToolbarPlugin />
         <RichTextPlugin
           contentEditable={<ContentEditable className="content-editable" />}
@@ -78,7 +78,7 @@ function Editor({
         <TabIndentationPlugin />
         <OnChangePlugin onChange={onChange} />
         <PageChangePlugin />
-        <FocusPlugin/>
+        <FocusPlugin />
       </div>
     </LexicalComposer>
   );

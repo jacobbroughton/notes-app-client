@@ -257,7 +257,7 @@ const ItemList = ({
       {favoritesList.length !== 0 && <div className="spacer"></div>}
       <div className='item-list-heading-and-spinner'>
         <p className="item-list-heading all">All </p>
-        {sidebar.loading && <LoadingSpinner />}
+        {/* {sidebar.loading && <LoadingSpinner />} */}
       </div>
       {allList.length === 0 && <p className="no-items-found">No items found</p>}
 

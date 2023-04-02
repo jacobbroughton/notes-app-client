@@ -136,6 +136,7 @@ export function DeleteModal() {
     } else if (folders.stagedToDelete) {
       deleteFolder(folders.stagedToDelete.ID);
     }
+    dispatch(setShiftClickItems({ start: null, end: null, list: [] }));
   }
 
   function handleCancel() {

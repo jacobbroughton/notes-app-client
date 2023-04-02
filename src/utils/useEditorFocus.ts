@@ -32,9 +32,9 @@ export const useEditorFocus = () => {
     // );
   }, [editor]);
 
-  useEffect(() => {
-    console.log("Has focus:", hasFocus)
-  }, [hasFocus])
+  // useEffect(() => {
+  //   console.log("Has focus:", hasFocus)
+  // }, [hasFocus])
 
   return [hasFocus, setHasFocus]
 };

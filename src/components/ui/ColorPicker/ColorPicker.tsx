@@ -101,7 +101,7 @@ const ColorPicker = ({
   }
 
   function handleDeleteClick() {
-    console.log('1')
+    console.log('delete button')
     setDeleteModeToggled(!deleteModeToggled);
   }
 

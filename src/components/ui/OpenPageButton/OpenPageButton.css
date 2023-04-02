@@ -13,7 +13,7 @@
 
 .open-page-navigation .page-button {
   padding: 7px 5px 7px 12px;
-  font-size: 0.875rem;
+/* font-size: 0.875rem; */
   white-space: nowrap;
   border-top: 1px solid transparent;
   user-select: none;
