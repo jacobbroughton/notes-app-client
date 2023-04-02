@@ -17,6 +17,7 @@ import {
   setNewNameForRename,
   setNewPageName,
   setNewFolderName,
+  setSidebarLoading,
 } from "../../../redux/sidebar";
 import { formatFolders, formatPages } from "../../../utils/formatData";
 import { toggleModal } from "../../../redux/modals";
@@ -275,6 +276,7 @@ function Sidebar() {
 
   async function getData() {
     try {
+      dispatch(setSidebarLoading(true));
       const [foldersResponse, pagesResponse] = await Promise.all([
         fetch(`${getApiUrl()}/folders/`, {
           method: "GET",
@@ -287,10 +289,12 @@ function Sidebar() {
       ]);
 
       if (foldersResponse.status !== 200) {
+        dispatch(setSidebarLoading(false));
         throwResponseStatusError(foldersResponse, "GET");
       }
 
       if (pagesResponse.status !== 200) {
+        dispatch(setSidebarLoading(false));
         throwResponseStatusError(pagesResponse, "GET");
       }
 
@@ -304,6 +308,7 @@ function Sidebar() {
 
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
+      dispatch(setSidebarLoading(false));
     } catch (error) {
       console.log(error);
     }
