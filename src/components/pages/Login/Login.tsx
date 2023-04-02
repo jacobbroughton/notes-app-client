@@ -22,7 +22,7 @@ const Login = () => {
     try {
       const response = await fetch(`${getApiUrl()}/login/`, {
         mode: 'cors',
-        method: "post",
+        method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json;charset=UTF-8",
@@ -51,6 +51,8 @@ const Login = () => {
         }, 5000);
         return;
       }
+
+      console.log(data)
 
       if (loginError) setLoginError("");
       dispatch(setUser(data.user));

@@ -62,7 +62,7 @@ const Home = () => {
     const response = await fetch(getApiUrl() + '/', {
       method: "GET",
       credentials: "include",
-      mode: 'cors',
+      // mode: 'cors',
     });
 
     const data = await response.json();
