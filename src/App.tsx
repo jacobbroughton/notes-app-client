@@ -20,7 +20,7 @@ function App() {
     document.body.dataset.theme = theme;
   }, [theme]);
 
-  alert(browser?.toString())
+  alert(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
 
   if (browser?.name === "safari")
     return (
@@ -28,14 +28,18 @@ function App() {
         <div className="wrong-browser-container">
           <h1>Oops!</h1>
           <p>
-            It looks like you're using safari. Unfortunately, the safari browser has disabled third-party
-            cookies from cross-origin domains. The only way around this is to purchase a yearly domain.
+            It looks like you're using safari. Unfortunately, the safari browser has
+            disabled third-party cookies from cross-origin domains. The only way around
+            this is to purchase a yearly domain.
           </p>
           <p>
             Since this is a portfolio project (not a for-profit app), I ask you to view
             this on a non-webkit browser (like chrome) to ensure the optimal experience.
           </p>
-          <strong>By the way, i'm sorry about this. Thanks in advance for checking out the project.</strong>
+          <strong>
+            By the way, i'm sorry about this. Thanks in advance for checking out the
+            project.
+          </strong>
         </div>
       </div>
     );
