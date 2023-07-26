@@ -6,9 +6,8 @@ import Overlay from "../Overlay/Overlay";
 import "./DeleteModal.css";
 import PageIcon from "../Icons/PageIcon";
 import { setShiftClickItems } from "../../../redux/sidebar";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { RootState } from "../../../redux/store";
-import { PageState, ItemState, FolderState, SidebarItemState } from "../../../types";
+import { PageState, FolderState, SidebarItemState } from "../../../types";
 import { getApiUrl } from "../../../utils/getUrl";
 
 export function DeleteModal() {

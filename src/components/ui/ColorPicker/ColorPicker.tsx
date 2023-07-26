@@ -5,7 +5,6 @@ import CheckIcon from "../Icons/CheckIcon";
 import XIcon from "../Icons/XIcon";
 import React, { useEffect, useRef, useState } from "react";
 import { addCustomColorOption } from "../../../redux/tags";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { ColorState } from "../../../types";
 import { RootState } from "../../../redux/store";
 import { getApiUrl } from "../../../utils/getUrl";

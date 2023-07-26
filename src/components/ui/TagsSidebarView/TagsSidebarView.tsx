@@ -7,7 +7,6 @@ import "./TagsSidebarView.css";
 import { setNewTagFormToggled } from "../../../redux/sidebar";
 import ColorPicker from "../ColorPicker/ColorPicker";
 import Tag from "../Tag/Tag";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { RootState } from "../../../redux/store";
 import { TagState, ColorState } from "../../../types";
 import { getApiUrl } from "../../../utils/getUrl";

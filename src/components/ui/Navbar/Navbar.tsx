@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import "./Navbar.css";
 import { FormEvent } from "react";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { getApiUrl } from "../../../utils/getUrl";
 
 const Navbar = () => {

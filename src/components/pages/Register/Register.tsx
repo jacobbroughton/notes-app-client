@@ -1,6 +1,5 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { getApiUrl } from "../../../utils/getUrl";
 
 import "./Register.css";
@@ -11,7 +10,6 @@ const Login = () => {
   const [registerError, setRegisterError] = useState("");
 
   const navigate = useNavigate();
-  let [searchParams, setSearchParams] = useSearchParams();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

@@ -32,7 +32,6 @@ import UserIcon from "../Icons/UserIcon";
 import PageIcon from "../Icons/PageIcon";
 import "./Sidebar.css";
 import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { setInputPosition } from "../../../redux/sidebar";
 import { ItemState } from "../../../types";
 import { RootState } from "../../../redux/store";
@@ -548,8 +547,8 @@ function Sidebar() {
             title={viewOption.name}
           >
             {viewOption.id === 1 && <PageIcon />}
-            {viewOption.id === 2 && <SearchIcon />}
-            {viewOption.id === 3 && <TagIcon />}
+            {/* {viewOption.id === 2 && <SearchIcon />} */}
+            {/* {viewOption.id === 3 && <TagIcon />} */}
           </button>
         ))}
         <button

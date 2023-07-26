@@ -10,7 +10,6 @@ import ColorPicker from "../ColorPicker/ColorPicker";
 import { ItemState, ColorState, TagState, PageState, FolderState } from "../../../types";
 import { RootState } from "../../../redux/store";
 import "./TagsModal.css";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { getApiUrl } from "../../../utils/getUrl";
 
 const TagsModal = () => {
@@ -18,7 +17,6 @@ const TagsModal = () => {
   const pages = useSelector((state: RootState) => state.pages);
   const folders = useSelector((state: RootState) => state.folders);
   const tags = useSelector((state: RootState) => state.tags);
-  const modals = useSelector((state: RootState) => state.modals);
 
   const dispatch = useDispatch();
 

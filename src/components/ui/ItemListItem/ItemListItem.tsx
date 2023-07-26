@@ -14,7 +14,6 @@ import { renameFolder } from "../../../redux/folders";
 import { renamePage } from "../../../redux/pages";
 import { RootState } from "../../../redux/store";
 import { ItemState } from "../../../types";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { ChangeEvent, MouseEvent } from "react";
 import { getApiUrl } from "../../../utils/getUrl";
 

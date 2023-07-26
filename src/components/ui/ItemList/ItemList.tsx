@@ -10,14 +10,12 @@ import {
   setShiftClickItems,
 } from "../../../redux/sidebar";
 import { selectPage, updateParentFolderId } from "../../../redux/pages";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { setCombined } from "../../../redux/combined";
 import ItemListItem from "../ItemListItem/ItemListItem";
 import { RootState } from "../../../redux/store";
 import { SidebarItemState, ItemState, FolderState, PageState } from "../../../types";
 import "./ItemList.css";
 import { getApiUrl } from "../../../utils/getUrl";
-import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 const ItemList = ({
   setContextMenu,
