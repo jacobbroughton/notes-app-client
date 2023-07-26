@@ -29,20 +29,20 @@ const ColorPicker = ({
   const menuRef = useRef<HTMLMenuElement>(null);
 
   function handleToggleClick() {
-    console.log('8')
+    console.log("8");
 
     dispatch(setColorPickerMenu({ toggled: !colorPickerMenu.toggled }));
   }
 
   function handleNewColorChange(e: React.ChangeEvent) {
-    console.log('7')
+    console.log("7");
 
     setNewCustomColor((e.target as HTMLInputElement).value);
     setColorConfirmationShowing(true);
   }
 
   async function addNewCustomColor() {
-    console.log('6')
+    console.log("6");
 
     try {
       const payload = {
@@ -58,20 +58,24 @@ const ColorPicker = ({
         body: JSON.stringify(payload),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
       dispatch(addCustomColorOption(data.justCreatedColor));
       setNewCustomColor(null);
       setColorConfirmationShowing(false);
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error adding a custom color");
+      }
     }
   }
 
   async function deleteCustomColor(color: ColorState) {
-    console.log('5')
+    console.log("5");
 
     try {
       const payload = {
@@ -87,7 +91,7 @@ const ColorPicker = ({
         body: JSON.stringify(payload),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -95,18 +99,22 @@ const ColorPicker = ({
 
       setColorToDelete(null);
       setDeleteModeToggled(false);
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error deleting the custom color");
+      }
     }
   }
 
   function handleDeleteClick() {
-    console.log('delete button')
+    console.log("delete button");
     setDeleteModeToggled(!deleteModeToggled);
   }
 
   function handleColorClick(color: ColorState) {
-    console.log('2')
+    console.log("2");
 
     if (deleteModeToggled) {
       setColorToDelete(color);
@@ -116,7 +124,7 @@ const ColorPicker = ({
   }
 
   function handleConfirmClick(): void {
-    console.log('3')
+    console.log("3");
 
     if (colorConfirmationShowing) {
       addNewCustomColor();
@@ -128,7 +136,7 @@ const ColorPicker = ({
   }
 
   function handleCancelClick() {
-    console.log('4')
+    console.log("4");
 
     // e.stopPropagation();
     if (colorConfirmationShowing) {
@@ -145,7 +153,7 @@ const ColorPicker = ({
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (
-        colorPickerMenu.toggled && 
+        colorPickerMenu.toggled &&
         !menuRef.current?.contains(e.target as HTMLElement) &&
         !(e.target as HTMLElement).classList.contains("color-picker-toggle")
       ) {

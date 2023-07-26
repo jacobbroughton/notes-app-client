@@ -100,7 +100,7 @@ const TagsSidebarView = () => {
         body: JSON.stringify(payload),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -108,8 +108,12 @@ const TagsSidebarView = () => {
 
       dispatch(editTag(payload));
       dispatch(deselectTag());
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error editing the tag");
+      }
     }
   }
 
@@ -134,7 +138,7 @@ const TagsSidebarView = () => {
         body: JSON.stringify(payload),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -148,8 +152,12 @@ const TagsSidebarView = () => {
       setNewTagColor(null);
       setNewTagName("");
       dispatch(setNewTagFormToggled(false));
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an creating a new tag");
+      }
     }
   }
 
@@ -168,7 +176,7 @@ const TagsSidebarView = () => {
         body: JSON.stringify(payload),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -177,8 +185,12 @@ const TagsSidebarView = () => {
       dispatch(deleteTag(payload));
       dispatch(deselectTag());
       setDeleteWarningToggled(false);
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an deleting the tag");
+      }
     }
   }
 

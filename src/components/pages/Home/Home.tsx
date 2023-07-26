@@ -44,6 +44,7 @@ const Home = () => {
   >();
   const [titleTooLong, setTitleTooLong] = useState(false);
   const [bodyTooLong, setBodyTooLong] = useState(false);
+  const [error, setError] = useState<null | string>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const user = useSelector((state: RootState) => state.user);
   const pages = useSelector((state: RootState) => state.pages);
@@ -63,7 +64,6 @@ const Home = () => {
     const response = await fetch(getApiUrl() + "/", {
       method: "GET",
       credentials: "include",
-      // mode: 'cors',
     });
 
     const data = await response.json();
@@ -91,14 +91,12 @@ const Home = () => {
 
       if (foldersResponse.status !== 200) {
         dispatch(setSidebarLoading(false));
-
-        throwResponseStatusError(foldersResponse, "GET");
+        throw foldersResponse.statusText;
       }
 
       if (pagesResponse.status !== 200) {
         dispatch(setSidebarLoading(false));
-
-        throwResponseStatusError(pagesResponse, "GET");
+        throw pagesResponse.statusText;
       }
 
       const [foldersData, pagesData] = await Promise.all([
@@ -112,8 +110,8 @@ const Home = () => {
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
       dispatch(setSidebarLoading(false));
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      setError(error as string);
     }
   }
 
@@ -124,12 +122,12 @@ const Home = () => {
         credentials: "include",
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "GET");
+      if (response.status !== 200) throw response.statusText;
 
       let tagsData = await response.json();
       dispatch(setTags(tagsData.tags));
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      setError(error as string);
     }
   }
 
@@ -140,7 +138,9 @@ const Home = () => {
         credentials: "include",
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "GET");
+      if (response.status !== 200) {
+        throw response.statusText;
+      }
 
       let colorOptionsData = await response.json();
       dispatch(
@@ -149,8 +149,8 @@ const Home = () => {
           userCreatedOptions: colorOptionsData.userCreatedOptions,
         })
       );
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      setError(error as string);
     }
   }
 
@@ -196,7 +196,7 @@ const Home = () => {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -206,14 +206,13 @@ const Home = () => {
       dispatch(setPageModified(false));
 
       if (modals.unsavedWarning) {
-        // dispatch(selectPage(pages.stagedToSwitch));
         dispatch(setPageClosed(pages.active));
         dispatch(setPageStagedForSwitch(null));
         dispatch(selectFolder(null));
         dispatch(toggleModal("unsavedWarning"));
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      setError(error as string);
     }
   }
 
@@ -260,7 +259,7 @@ const Home = () => {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const result = await response.json();
 
@@ -270,8 +269,8 @@ const Home = () => {
       setNoTitleWarningToggled(false);
       getData();
       dispatch(resetUntitledPage(null));
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      setError(error as string);
     }
   }
 
@@ -425,6 +424,10 @@ const Home = () => {
     return (
       <div className="loading-view">
         <p>Loading...</p>
+        <p>
+          The initial load may take longer than expected due to the server spinning down
+          after not being used for a while.
+        </p>
       </div>
     );
   }

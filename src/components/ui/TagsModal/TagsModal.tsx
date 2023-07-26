@@ -62,15 +62,19 @@ const TagsModal = () => {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
       if (!data) throw "There was an issue parsing /tags/new response";
 
       setTagSearchValue("");
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error creating a new tag");
+      }
     }
   }
 
@@ -93,7 +97,7 @@ const TagsModal = () => {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -145,8 +149,12 @@ const TagsModal = () => {
           }
         }
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error handling tag click");
+      }
     }
   }
 
@@ -162,7 +170,6 @@ const TagsModal = () => {
         <form onSubmit={handleTagInputSubmit}>
           <input
             value={tagSearchValue}
-
             onChange={(e) => setTagSearchValue(e.target.value)}
             placeholder="Type to search or add a tag"
             autoComplete="off"

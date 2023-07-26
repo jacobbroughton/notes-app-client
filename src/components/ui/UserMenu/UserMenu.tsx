@@ -25,30 +25,40 @@ const UserMenu = ({
   async function handleLogout(e: FormEvent) {
     e.preventDefault();
 
-    await fetch(`${getApiUrl()}/logout/`, {
-      credentials: "include",
-    });
+    try {
+      const response = await fetch(`${getApiUrl()}/logout/`, {
+        credentials: "include",
+      });
 
-    // dispatch(setUser(null));
-    dispatch(resetUserState())
-    dispatch(resetThemeState())
-    dispatch(resetTagsState())
-    dispatch(resetSidebarState())
-    dispatch(resetPagesState())
-    dispatch(resetFoldersState())
-    dispatch(resetModalsState())
-    dispatch(resetCombinedState())
-    dispatch(resetColorPickerMenuState())
-    setUserMenuToggled(false);
-    navigate("/login");
+      if (response.status !== 200) throw response.statusText;
+
+      // dispatch(setUser(null));
+      dispatch(resetUserState());
+      dispatch(resetThemeState());
+      dispatch(resetTagsState());
+      dispatch(resetSidebarState());
+      dispatch(resetPagesState());
+      dispatch(resetFoldersState());
+      dispatch(resetModalsState());
+      dispatch(resetCombinedState());
+      dispatch(resetColorPickerMenuState());
+      setUserMenuToggled(false);
+      navigate("/login");
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error logging out");
+      }
+    }
   }
 
   useEffect(() => {
     function handler(e: Event) {
       if (
         userMenuRef.current &&
-        !userMenuRef.current.contains((e.target as HTMLElement)) &&
-        !(e.target as HTMLElement).classList.contains("user-button") && 
+        !userMenuRef.current.contains(e.target as HTMLElement) &&
+        !(e.target as HTMLElement).classList.contains("user-button") &&
         !(e.target as HTMLElement).classList.contains("user-icon")
       ) {
         setUserMenuToggled(false);
@@ -59,7 +69,6 @@ const UserMenu = ({
 
     return () => window.removeEventListener("click", handler);
   });
-
 
   return (
     <div className="user-menu" ref={userMenuRef}>

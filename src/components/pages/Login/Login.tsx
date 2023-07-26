@@ -21,7 +21,7 @@ const Login = () => {
 
     try {
       const response = await fetch(`${getApiUrl()}/login/`, {
-        mode: 'cors',
+        mode: "cors",
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -34,10 +34,8 @@ const Login = () => {
         }),
       });
 
-      console.log({ response });
-
       if (response.status !== 200) {
-        throw "ERROR: " + response;
+        throw "ERROR: " + response.statusText;
       }
 
       const data = await response.json();
@@ -52,13 +50,15 @@ const Login = () => {
         return;
       }
 
-      console.log(data)
-
       if (loginError) setLoginError("");
       dispatch(setUser(data.user));
       navigate("/");
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        setLoginError(error);
+      } else {
+        alert("There was an error logging in");
+      }
     }
   }
 

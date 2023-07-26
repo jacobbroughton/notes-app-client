@@ -1,10 +1,24 @@
 .loading-view {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  /* align-items: center; */
   justify-content: center;
-  width: 100vw;
+  margin-left: auto;
+  margin-right: auto;
   height: 100vh;
+  max-width: 300px;
+
   color: var(--color-text-primary);
+}
+
+.loading-view p:first-child {
+  font-weight: 600;
+  font-size: 1.15rem;
+}
+
+.loading-view p:not(:first-child) {
+  font-size: 0.875rem;
 }
 
 .home-view {
@@ -62,7 +76,7 @@
 }
 
 .home-view .page-path p {
-/* font-size: 0.875rem; */
+  /* font-size: 0.875rem; */
   white-space: nowrap;
   color: var(--color-text-primary);
 }
@@ -159,7 +173,7 @@
   top: calc(100% + 10px);
   left: 15px;
   padding: 3px 5px;
-/* font-size: 0.875rem; */
+  /* font-size: 0.875rem; */
   z-index: 3;
 }
 

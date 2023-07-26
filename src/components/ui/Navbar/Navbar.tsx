@@ -43,7 +43,7 @@ const Navbar = () => {
         credentials: "include",
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "GET");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -52,8 +52,12 @@ const Navbar = () => {
       dispatch(setUser(null));
       setNavDropdownToggled(false);
       navigate("/login");
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error deleting the custom color");
+      }
     }
   }
 

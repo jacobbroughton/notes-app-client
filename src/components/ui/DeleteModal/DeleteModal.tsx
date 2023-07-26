@@ -38,7 +38,7 @@ export function DeleteModal() {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       let data = await response.json();
 
@@ -51,8 +51,12 @@ export function DeleteModal() {
         });
       });
       dispatch(toggleModal("deleteModal"));
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error deleting the custom color");
+      }
     }
   }
 
@@ -68,11 +72,18 @@ export function DeleteModal() {
           pageId,
         }),
       });
-      let data = await response.json();
+
+      if (response.status !== 200) throw response.statusText;
+
+      await response.json();
       dispatch(setPageEffStatus(pageId));
       dispatch(toggleModal("deleteModal"));
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error deleting the page");
+      }
     }
   }
 
@@ -95,7 +106,7 @@ export function DeleteModal() {
           }),
         });
 
-        if (response.status !== 200) throwResponseStatusError(response, "POST");
+        if (response.status !== 200) throw response.statusText;
 
         let deleteFoldersData = await response.json();
         for (let i = 0; i < deleteFoldersData.deletedFolderIds.length; i++) {
@@ -113,7 +124,7 @@ export function DeleteModal() {
           body: JSON.stringify({ pages: items.filter((item) => item.IS_PAGE) }),
         });
 
-        if (response.status !== 200) throwResponseStatusError(response, "POST");
+        if (response.status !== 200) throw response.statusText;
 
         let deletePagesData = await response.json();
 
@@ -123,8 +134,12 @@ export function DeleteModal() {
       }
       dispatch(setShiftClickItems({ start: null, end: null, list: [] }));
       dispatch(toggleModal("deleteModal"));
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error deleting multiple pages");
+      }
     }
   }
 

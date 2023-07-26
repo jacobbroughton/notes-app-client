@@ -29,19 +29,11 @@ const Login = () => {
         }),
       });
 
-      if (response.status !== 200) throw "Registering user was unsuccessful";
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
       if (!data) throw "There was a problem registering user";
-
-      if (!data.user) {
-        setRegisterError(data.message);
-        setTimeout(() => {
-          setRegisterError("");
-        }, 5000);
-        return;
-      }
 
       if (registerError) setRegisterError("");
 
@@ -49,8 +41,8 @@ const Login = () => {
         pathname: "/login",
         search: `?redirectedFrom=register&message=Account '${username}' has been created&status=success`,
       });
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      setRegisterError(error as string);
     }
   }
 

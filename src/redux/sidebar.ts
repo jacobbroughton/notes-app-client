@@ -7,14 +7,14 @@ const viewOptionsForState = [
     id: 1,
     name: "Notes",
   },
-  // {
-  //   id: 2,
-  //   name: "Search",
-  // },
-  // {
-  //   id: 3,
-  //   name: "Tags",
-  // },
+  {
+    id: 2,
+    name: "Search",
+  },
+  {
+    id: 3,
+    name: "Tags",
+  },
 ];
 
 const initialState: SidebarState = {

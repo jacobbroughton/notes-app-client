@@ -138,7 +138,7 @@ const ItemList = ({
           }),
         });
 
-        if (response.status !== 200) throwResponseStatusError(response, "POST");
+        if (response.status !== 200) throw response.statusText;
 
         const data = await response.json();
 
@@ -152,8 +152,12 @@ const ItemList = ({
           PAGE_ID: null,
         })
       );
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error moving item");
+      }
     }
   }
 
@@ -255,7 +259,7 @@ const ItemList = ({
         />
       ))}
       {favoritesList.length !== 0 && <div className="spacer"></div>}
-      <div className='item-list-heading-and-spinner'>
+      <div className="item-list-heading-and-spinner">
         <p className="item-list-heading all">All </p>
         {/* {sidebar.loading && <LoadingSpinner />} */}
       </div>

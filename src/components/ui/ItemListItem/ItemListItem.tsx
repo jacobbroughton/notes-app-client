@@ -70,7 +70,7 @@ const ItemListItem = ({
           body: JSON.stringify(pageInfo),
         });
 
-        if (response.status !== 200) throwResponseStatusError(response, "POST");
+        if (response.status !== 200) throw response.statusText;
 
         const data = await response.json();
 
@@ -92,7 +92,7 @@ const ItemListItem = ({
           body: JSON.stringify(folderInfo),
         });
 
-        if (response.status !== 200) throwResponseStatusError(response, "POST");
+        if (response.status !== 200) throw response.statusText;
 
         const data = await response.json();
 
@@ -103,8 +103,12 @@ const ItemListItem = ({
       dispatch(setRenameInputToggled(false));
       dispatch(setNewNameForRename(""));
       renameInputRef.current?.blur();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error renaming the item");
+      }
     }
   }
 

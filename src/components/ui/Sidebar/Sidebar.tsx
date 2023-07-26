@@ -113,7 +113,7 @@ function Sidebar() {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -129,8 +129,12 @@ function Sidebar() {
       dispatch(setNewFolderName(""));
       resetContextMenu();
       getData();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error adding the new folder");
+      }
     }
   }
 
@@ -153,7 +157,7 @@ function Sidebar() {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -169,8 +173,12 @@ function Sidebar() {
       dispatch(setNewPageName(""));
       resetContextMenu();
       getData();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error creating the new page");
+      }
     }
   }
 
@@ -290,12 +298,12 @@ function Sidebar() {
 
       if (foldersResponse.status !== 200) {
         dispatch(setSidebarLoading(false));
-        throwResponseStatusError(foldersResponse, "GET");
+        throw foldersResponse.statusText;
       }
 
       if (pagesResponse.status !== 200) {
         dispatch(setSidebarLoading(false));
-        throwResponseStatusError(pagesResponse, "GET");
+        throw pagesResponse.statusText;
       }
 
       const [foldersData, pagesData] = await Promise.all([
@@ -309,8 +317,12 @@ function Sidebar() {
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
       dispatch(setSidebarLoading(false));
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error getting folders and pages");
+      }
     }
   }
 
@@ -340,7 +352,7 @@ function Sidebar() {
         }),
       });
 
-      if (response.status !== 200) throwResponseStatusError(response, "POST");
+      if (response.status !== 200) throw response.statusText;
 
       const data = await response.json();
 
@@ -351,8 +363,12 @@ function Sidebar() {
           setFavoriteStatus({ favoriteStatus: item.IS_FAVORITE ? 0 : 1, page: item })
         );
       resetContextMenu();
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (typeof error === "string") {
+        alert(error);
+      } else {
+        alert("There was an error adding the item to your favorites");
+      }
     }
   }
 

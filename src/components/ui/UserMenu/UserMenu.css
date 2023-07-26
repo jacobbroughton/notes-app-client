@@ -9,6 +9,7 @@
   border-radius: 3px;
   background-color: var(--secondary-bg);
   min-width: 150px;
+  z-index: 3;
 }
 
 .user-menu button,
