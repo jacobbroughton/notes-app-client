@@ -26,7 +26,6 @@ import "./Home.css";
 import TagsModal from "../../ui/TagsModal/TagsModal";
 import { setTags, setColorOptions } from "../../../redux/tags";
 import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import { FolderState, PageState } from "../../../types";
 import { RootState } from "../../../redux/store";
 import { getApiUrl } from "../../../utils/getUrl";

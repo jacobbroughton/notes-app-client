@@ -1,8 +1,7 @@
-import { FormEvent, ReactEventHandler, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { setUser } from "../../../redux/user";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { throwResponseStatusError } from "../../../utils/throwResponseStatusError";
 import "./Login.css";
 import { getApiUrl } from "../../../utils/getUrl";
 
