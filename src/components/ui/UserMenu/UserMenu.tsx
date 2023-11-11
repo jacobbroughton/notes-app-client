@@ -28,6 +28,9 @@ const UserMenu = ({
     try {
       const response = await fetch(`${getApiUrl()}/logout/`, {
         credentials: "include",
+        headers: {
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
       });
 
       if (response.status !== 200) throw response.statusText;
@@ -44,11 +47,11 @@ const UserMenu = ({
       dispatch(resetColorPickerMenuState());
       setUserMenuToggled(false);
       navigate("/login");
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error logging out");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }

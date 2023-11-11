@@ -12,6 +12,25 @@
   color: var(--color-text-primary);
 }
 
+.loading-view .error {
+  border: crimson 1px solid;
+  border-radius: 3px;
+  margin-top: 10px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(243, 211, 218);
+  gap: 3px;
+}
+
+.loading-view .error p {
+  font-size: 1rem;
+}
+
+.loading-view .error code {
+  font-size: 0.875rem;
+}
+
 .loading-view p:first-child {
   font-weight: 600;
   font-size: 1.15rem;
@@ -226,3 +245,34 @@
 .home-view .unsaved-warning-modal .buttons button.save-btn {
   background-color: var(--color-accent-primary);
 }
+
+.home-view .save-button {
+  padding: 5px 10px;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.431);
+  border: 0;
+  border: 1px transparent solid;
+  box-shadow: var(--container-shadow);
+  border-radius: 3px;
+  appearance: none;
+  color: white;
+  transition: 0.1s ease background-color, 0.1s ease color;
+}
+
+.home-view .save-button:not(:disabled) {
+  background-color: #03c04a;
+}
+
+.home-view .save-button:disabled {
+  color: var(--tertiary-bg);
+  background-color: transparent;
+  border: 1px solid var(--tertiary-bg);
+  text-shadow: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.home-view .save-button:not(:disabled):active {
+  box-shadow: none;
+  transform: translateY(1px);
+}error

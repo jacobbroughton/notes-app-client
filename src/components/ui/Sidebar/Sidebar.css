@@ -6,7 +6,35 @@
   box-shadow: 0 1px 2px rgb(0 0 0 / 20%);
   z-index: 3;
   overflow: hidden;
-  min-width: 50px;
+  min-width: 45px;
+  /* border-right: #aaa 1px solid; */
+}
+
+.sidebar .drag-sidebar-button {
+  position: absolute;
+  right: 0;
+  width: 1px;
+  background-color: #555;
+  border: 0;
+  height: 100%;
+  z-index: 5;
+  cursor: e-resize;
+  transition: 0.1s ease background-color;
+  cursor: ew-resize;
+}
+
+.sidebar .drag-sidebar-button.disabled {
+  pointer-events: none;
+}
+
+.sidebar .drag-sidebar-button:not(.disabled):hover {
+  background-color: var(--color-accent-primary);
+}
+
+.sidebar .drag-sidebar-button:not(.disabled):active,
+.sidebar .drag-sidebar-button:not(.disabled).active {
+  width: 2px;
+  background-color: var(--color-accent-primary);
 }
 
 .sidebar .sidebar-nav {
@@ -28,6 +56,7 @@
 
 .sidebar .new-folder-form input,
 .sidebar .new-page-form input {
+  font-size: 1rem;
   width: calc(100% - 10px);
   background: var(--secondary-bg);
   border: 1px solid var(--color-accent-primary);
@@ -37,14 +66,14 @@
 }
 
 .sidebar .sidebar-nav > button {
-  padding: 15px;
+  padding: 12px;
   background-color: transparent;
   border: 0;
   width: 100%;
   height: 100%;
-  max-width: 50px;
+  max-width: 45px;
   /* cursor: pointer; */
-  max-height: 50px;
+  max-height: 45px;
   position: relative;
 }
 
@@ -72,11 +101,41 @@
   transition: 0.1s ease fill;
 }
 
+.sidebar .sidebar-nav > button.sidebar-toggle-button {
+  cursor: pointer;
+}
+
+.sidebar .sidebar-nav > button.sidebar-toggle-button:hover,
+.sidebar .sidebar-nav > button.theme-button:hover,
+.sidebar .sidebar-nav > button.user-button:hover,
+.sidebar .sidebar-nav > button.floating-sidebar-button:hover {
+  background-color: #444;
+  
+}
+
+.sidebar .sidebar-nav > button.floating-sidebar-button {
+  padding: 10px;
+  font-size: 1.3rem;
+  position: absolute;
+  bottom: 90px;
+  cursor: pointer;
+  width: 44px;
+}
+
+.sidebar .sidebar-nav > button.floating-sidebar-button svg {
+  opacity: 0.5;
+}
+
+.sidebar .sidebar-nav > button.floating-sidebar-button.toggled svg {
+  opacity: 1;
+}
+
 .sidebar .sidebar-nav > button.theme-button {
   padding: 10px;
   font-size: 1.3rem;
   position: absolute;
-  bottom: 50px;
+  bottom: 45px;
+  cursor: pointer;
 }
 
 .sidebar .sidebar-nav > button.user-button {
@@ -84,6 +143,12 @@
   font-size: 1.3rem;
   position: absolute;
   bottom: 0;
+  cursor: pointer;
+}
+
+.sidebar .sidebar-nav > button.user-button svg {
+  pointer-events: none;
+  fill: white !important;
 }
 
 .sidebar .sidebar-body {
@@ -98,7 +163,6 @@
   display: flex;
   align-items: center;
   background-color: var(--color-sidebar-nav);
-/* font-size: 0.875rem; */
 }
 
 .sidebar .sidebar-body .current-view p {
@@ -133,43 +197,19 @@
 }
 
 .sidebar .header p {
-/* font-size: 0.875rem; */
+  /* font-size: 0.875rem; */
 }
 
 .sidebar .sidebar-overlay {
   position: absolute;
   top: 35px;
   right: 0;
-  left: 50px;
+  left: 45px;
   bottom: 0;
   height: calc(100% - 35px);
   background-color: var(--primary-bg);
   opacity: 0.5;
   z-index: 2;
-}
-
-.sidebar .drag-sidebar-button {
-  position: absolute;
-  right: 0;
-  width: 1px;
-  background-color: var(--tertiary-bg);
-  border: 0;
-  height: calc(100% - 35px);
-  margin-top: 35px;
-  z-index: 5;
-  cursor: e-resize;
-  transition: 0.1s ease background-color;
-  cursor: ew-resize;
-}
-
-.sidebar .drag-sidebar-button:hover {
-  background-color: var(--color-accent-primary);
-}
-
-.sidebar .drag-sidebar-button:active,
-.sidebar .drag-sidebar-button.active {
-  width: 2px;
-  background-color: var(--color-accent-primary);
 }
 
 .sidebar .header .sidebar-header-buttons {

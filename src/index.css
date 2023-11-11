@@ -84,7 +84,8 @@ a:hover {
 }
 
 button {
-  /* font-size: 1rem; */
+  appearance: none;
+  font-size: 1rem;
 }
 
 #root,

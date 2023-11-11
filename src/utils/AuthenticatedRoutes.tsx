@@ -5,6 +5,5 @@ import { RootState } from "../redux/store";
 
 export const AuthenticatedRoutes = (): JSX.Element => {
   const user = useSelector((state: RootState) => state.user);
-
   return user ? <Navigate to="/" /> : <Outlet />;
 };

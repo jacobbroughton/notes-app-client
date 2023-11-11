@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PagesState, PageState, FolderState, TagState } from "../types";
-import { emptyEditorState } from "../utils/editorUtils";
 
 const initialState: PagesState = {
   list: [],
@@ -10,7 +9,7 @@ const initialState: PagesState = {
   stagedToDelete: null,
   untitledPage: {
     NAME: "",
-    BODY: emptyEditorState,
+    BODY: '' /*// TODO -  this was emptyEditor state */,
     IS_UNTITLED: true,
     IS_INITIAL: true,
   },
@@ -366,7 +365,7 @@ const pagesSlice = createSlice({
         untitledPage: {
           ...state.untitledPage,
           NAME: "",
-          BODY: emptyEditorState,
+          BODY: '', /* // TODO -  this was emptyEditor state */
           IS_INITIAL: true,
         },
       };

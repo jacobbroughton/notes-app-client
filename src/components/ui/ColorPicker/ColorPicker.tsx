@@ -53,6 +53,7 @@ const ColorPicker = ({
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify(payload),
       });
@@ -64,11 +65,11 @@ const ColorPicker = ({
       dispatch(addCustomColorOption(data.justCreatedColor));
       setNewCustomColor(null);
       setColorConfirmationShowing(false);
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error adding a custom color");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -86,6 +87,7 @@ const ColorPicker = ({
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify(payload),
       });
@@ -98,11 +100,11 @@ const ColorPicker = ({
 
       setColorToDelete(null);
       setDeleteModeToggled(false);
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error deleting the custom color");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
