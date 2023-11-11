@@ -35,7 +35,6 @@ const foldersSlice = createSlice({
       const folders = [...state?.list];
 
       let idsToUpdateVisibility: Array<number> = [];
-      console.log(idsToUpdateVisibility);
 
       function checkForChildren(folderToCheck: FolderState) {
         for (let i = 0; i < folders.length; i++) {

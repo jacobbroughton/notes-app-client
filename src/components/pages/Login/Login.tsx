@@ -33,8 +33,6 @@ const Login = () => {
         }),
       });
 
-      console.log(response);
-
       if (response.status !== 200) {
         throw "ERROR: " + response.statusText;
       }

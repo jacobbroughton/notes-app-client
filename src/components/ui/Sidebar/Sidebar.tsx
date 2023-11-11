@@ -93,7 +93,6 @@ function Sidebar() {
         const unitsFromLeft =
           mouseMoveEvent.clientX - sidebarRef.current.getBoundingClientRect().left;
         if (unitsFromLeft >= 40) dispatch(setSidebarWidth(unitsFromLeft));
-        console.log("wassup", unitsFromLeft);
       }
     },
     [isResizingSidebar]
@@ -231,7 +230,6 @@ function Sidebar() {
     e.stopPropagation();
 
     resetContextMenu();
-    // console.log(item);
 
     new Promise((resolve) => {
       dispatch(setRenameInputToggled(true));
@@ -585,8 +583,8 @@ function Sidebar() {
         >
           <FloatingWindowsIcon />
         </button>
-        {userMenuToggled && <UserMenu setUserMenuToggled={setUserMenuToggled} />}
       </div>
+      {userMenuToggled && <UserMenu setUserMenuToggled={setUserMenuToggled} />}
       {sidebar.toggled && (
         <div
           className="sidebar-body"
