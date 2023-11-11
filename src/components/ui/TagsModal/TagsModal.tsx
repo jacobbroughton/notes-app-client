@@ -133,7 +133,6 @@ const TagsModal = () => {
         if (item.TAGS.includes(tag.ID)) {
           dispatch(removeTagFromFolder({ item, tag }));
 
-          console.log(allChildPages);
           if (allChildPages.length > 0) {
             allChildPages.forEach((page) => {
               dispatch(removeTagFromPage({ item: page, tag }));
@@ -181,7 +180,7 @@ const TagsModal = () => {
           />
         </form>
         {tagSearchValue && !tags.list.find((tag) => tag.NAME === tagSearchValue) && (
-          <button className="tag-button" onClick={(e) => console.log("new tag input")}>
+          <button className="tag-button" onClick={(e) => alert("nothing else happens")}>
             <span
               className="color-span"
               style={{ backgroundColor: tagColor?.COLOR_CODE }}

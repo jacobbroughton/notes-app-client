@@ -30,7 +30,6 @@ const TagsSidebarView = () => {
         (color) => color.ID === tag.COLOR_ID
       );
     } else {
-      console.log(tags.colorOptions.userCreated, tag);
       matchingDefaultColor = tags.colorOptions.userCreated.find(
         (color) => color.ID === tag.COLOR_ID
       );
@@ -149,7 +148,6 @@ const TagsSidebarView = () => {
 
       dispatch(addTag(justCreatedTag));
       dispatch(deselectTag());
-      console.log("new tag created");
       setNewTagColor(null);
       setNewTagName("");
       dispatch(setNewTagFormToggled(false));

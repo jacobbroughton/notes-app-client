@@ -9,7 +9,7 @@ const initialState: PagesState = {
   stagedToDelete: null,
   untitledPage: {
     NAME: "",
-    BODY: '' /*// TODO -  this was emptyEditor state */,
+    BODY: '',
     IS_UNTITLED: true,
     IS_INITIAL: true,
   },
@@ -365,7 +365,7 @@ const pagesSlice = createSlice({
         untitledPage: {
           ...state.untitledPage,
           NAME: "",
-          BODY: '', /* // TODO -  this was emptyEditor state */
+          BODY: '',
           IS_INITIAL: true,
         },
       };

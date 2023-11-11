@@ -45,24 +45,6 @@ const Home = () => {
   const pages = useSelector((state: RootState) => state.pages);
   const folders = useSelector((state: RootState) => state.folders);
   const modals = useSelector((state: RootState) => state.modals);
-  let activePageModified = false;
-  let unsavedPageModified = false;
-
-  if (pages.active) {
-    if (
-      pages.active.BODY !== pages.active.DRAFT_BODY ||
-      pages.active?.NAME !== pages.active.DRAFT_NAME
-    )
-      activePageModified = true;
-  }
-
-  if (
-    pages.untitledPage.NAME !== "" ||
-    pages.untitledPage.BODY !==
-      "" /*// TODO - was 'emptyEditorState', empty string probably isnt right*/
-  ) {
-    unsavedPageModified = true;
-  }
 
   async function testApi() {
     const response = await fetch(getApiUrl() + "/", {
@@ -186,7 +168,6 @@ const Home = () => {
       return;
     }
 
-    console.log("Submitting");
     editPage();
   }
 
@@ -281,9 +262,7 @@ const Home = () => {
         body: JSON.stringify({
           parentFolderId: null,
           newPageName: pages.untitledPage.NAME.trim(),
-          newPageBody:
-            pages.untitledPage.BODY.trim() ||
-            "" /* // TODO - was 'emptyEditorState', empty string probably isnt right*/,
+          newPageBody: pages.untitledPage.BODY.trim() || "",
         }),
       });
 
@@ -364,21 +343,9 @@ const Home = () => {
   function handleTabPress(e: React.KeyboardEvent<HTMLInputElement>) {
     // if (e.key === "Tab") {
     //   e.preventDefault();
-    //   console.log(e.key);
+    //   e.key);
     //   bodyFieldRef.current?.focus();
     // }
-  }
-
-  function determineSavedStatus() {
-    if (activePageModified && pages.active?.MODIFIED_DTTM) {
-      return `You have unsaved changes, last saved ${getElapsedTime(
-        pages.active?.MODIFIED_DTTM
-      )}`;
-    } else if (activePageModified && !pages.active?.MODIFIED_DTTM) {
-      return "You have unsaved changes";
-    }
-
-    return "Up to date";
   }
 
   function determinePath(page: PageState) {
@@ -452,6 +419,23 @@ const Home = () => {
     pages.untitledPage.NAME,
   ]);
 
+  let activePageModified =
+    pages.active?.BODY !== pages.active?.DRAFT_BODY ||
+    pages.active?.NAME !== pages.active?.DRAFT_NAME;
+  let unsavedPageModified =
+    pages.untitledPage.NAME !== "" ||
+    (pages.untitledPage.NAME !== "" && pages.untitledPage.BODY !== "");
+
+  let savedStatus = "Up to date";
+
+  if (activePageModified && pages.active?.MODIFIED_DTTM) {
+    savedStatus = `You have unsaved changes, last saved ${getElapsedTime(
+      pages.active?.MODIFIED_DTTM
+    )}`;
+  } else if (activePageModified && !pages.active?.MODIFIED_DTTM) {
+    savedStatus = "You have unsaved changes";
+  }
+
   // TODO - uncomment
   // if (loading && !user) {
   //   return (
@@ -512,11 +496,11 @@ const Home = () => {
             )}
             <div
               className={`status-indicator ${
-                pages.untitledPage.NAME !== "" || pages.untitledPage.BODY !== "" // TODO - was 'emptyEditorState', empty string probably isnt right
+                pages.untitledPage.NAME !== "" || pages.untitledPage.BODY !== ""
                   ? "unsaved"
                   : "saved"
               }`}
-              title={determineSavedStatus()}
+              title={savedStatus}
             ></div>
             <input
               type="text"
@@ -536,8 +520,6 @@ const Home = () => {
               Save
             </button>
           </div>
-
-          {/* <Editor page={pages.untitledPage} bodyFieldRef={bodyFieldRef} /> */}
 
           <textarea
             placeholder="Body"
@@ -563,7 +545,7 @@ const Home = () => {
             )}
             <div
               className={`status-indicator ${activePageModified ? "unsaved" : "saved"}`}
-              title={determineSavedStatus()}
+              title={savedStatus}
             ></div>
             <input
               type="text"
@@ -593,7 +575,6 @@ const Home = () => {
             data-enable-grammarly="false"
             className={bodyTooLong ? "error" : ""}
           />
-          {/* <Editor page={pages.active} bodyFieldRef={bodyFieldRef} /> */}
           <div className="page-path">
             /&nbsp;
             {determinePath(pages.active).map((folder: FolderState, i: number) => (

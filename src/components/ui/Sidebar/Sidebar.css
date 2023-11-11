@@ -110,7 +110,6 @@
 .sidebar .sidebar-nav > button.user-button:hover,
 .sidebar .sidebar-nav > button.floating-sidebar-button:hover {
   background-color: #444;
-  
 }
 
 .sidebar .sidebar-nav > button.floating-sidebar-button {
@@ -120,14 +119,20 @@
   bottom: 90px;
   cursor: pointer;
   width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar .sidebar-nav > button.floating-sidebar-button svg {
   opacity: 0.5;
+  transition: background-color 0.1s ease, opacity 0.1s ease;
 }
 
 .sidebar .sidebar-nav > button.floating-sidebar-button.toggled svg {
   opacity: 1;
+  fill: var(--color-matching-highlight);
+  filter: brightness(1.1);
 }
 
 .sidebar .sidebar-nav > button.theme-button {

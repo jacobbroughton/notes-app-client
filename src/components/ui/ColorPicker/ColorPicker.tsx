@@ -28,21 +28,15 @@ const ColorPicker = ({
   const menuRef = useRef<HTMLMenuElement>(null);
 
   function handleToggleClick() {
-    console.log("8");
-
     dispatch(setColorPickerMenu({ toggled: !colorPickerMenu.toggled }));
   }
 
   function handleNewColorChange(e: React.ChangeEvent) {
-    console.log("7");
-
     setNewCustomColor((e.target as HTMLInputElement).value);
     setColorConfirmationShowing(true);
   }
 
   async function addNewCustomColor() {
-    console.log("6");
-
     try {
       const payload = {
         colorCode: newCustomColor,
@@ -75,8 +69,6 @@ const ColorPicker = ({
   }
 
   async function deleteCustomColor(color: ColorState) {
-    console.log("5");
-
     try {
       const payload = {
         colorId: color.ID,
@@ -110,13 +102,10 @@ const ColorPicker = ({
   }
 
   function handleDeleteClick() {
-    console.log("delete button");
     setDeleteModeToggled(!deleteModeToggled);
   }
 
   function handleColorClick(color: ColorState) {
-    console.log("2");
-
     if (deleteModeToggled) {
       setColorToDelete(color);
     } else {
@@ -125,8 +114,6 @@ const ColorPicker = ({
   }
 
   function handleConfirmClick(): void {
-    console.log("3");
-
     if (colorConfirmationShowing) {
       addNewCustomColor();
     }
@@ -137,8 +124,6 @@ const ColorPicker = ({
   }
 
   function handleCancelClick() {
-    console.log("4");
-
     // e.stopPropagation();
     if (colorConfirmationShowing) {
       setNewCustomColor(null);
