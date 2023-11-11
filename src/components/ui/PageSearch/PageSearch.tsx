@@ -47,17 +47,11 @@ const PageSearch = () => {
             matchingCharacters: Array<MatchingCharacter>;
           }> = [];
 
-          const bodySeparatedBySpaces = body.split(" ");
-
-          console.log(bodySeparatedBySpaces);
-
           function findStartingMatchIndex(string: string, lastMatchingIndex: number) {
             const matchingStartingIndex = string.indexOf(
               sidebar.searchValue,
               lastMatchingIndex
             );
-
-            // console.log(matchingStartingIndex)
 
             if (matchingStartingIndex < 0) return;
 
@@ -123,22 +117,12 @@ const PageSearch = () => {
                       {slicedBody.map((char, charIndex) => {
                         const compedBodyIndex = bodyLength - slicedBodyLength + charIndex;
 
-                        // console.log({
-                        //   bodyLength,
-                        //   slicedBodyLength,
-                        //   charIndex,
-                        //   startingIndex,
-                        //   compedBodyIndex,
-                        // });
-
                         let matching = false;
 
                         if (compedBodyIndex === match.startingIndex) matching = true;
                         // if (compedBodyIndex === charIndex) matching = true;
 
                         // let matchingCharacter = match.matchingCharacters[charIndex];
-
-                        // console.log(match, match.matchingCharacters, compedBodyIndex)
 
                         // if (matchingCharacter?.index == compedBodyIndex) {
                         //   matching = true;

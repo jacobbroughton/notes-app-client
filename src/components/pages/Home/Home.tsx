@@ -29,18 +29,14 @@ import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
 import { FolderState, PageState } from "../../../types";
 import { RootState } from "../../../redux/store";
 import { getApiUrl } from "../../../utils/getUrl";
-import Editor from "../../ui/Editor/Editor";
-import { emptyEditorState } from "../../../utils/editorUtils";
 
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const titleFieldRef = useRef<HTMLInputElement>(null);
-  const bodyFieldRef = useRef<HTMLDivElement>(null);
+  const bodyFieldRef = useRef<HTMLTextAreaElement>(null);
   const [noTitleWarningToggled, setNoTitleWarningToggled] = useState<boolean>(false);
-  const [noTitleWarningTimeout, setNoTitleWarningTimeout] = useState<
-    number | undefined
-  >();
+  const [noTitleWarningTimeout, setNoTitleWarningTimeout] = useState<number>();
   const [titleTooLong, setTitleTooLong] = useState(false);
   const [bodyTooLong, setBodyTooLong] = useState(false);
   const [error, setError] = useState<null | string>(null);
@@ -49,20 +45,12 @@ const Home = () => {
   const pages = useSelector((state: RootState) => state.pages);
   const folders = useSelector((state: RootState) => state.folders);
   const modals = useSelector((state: RootState) => state.modals);
-  let pageModified = false;
-
-  if (pages.active) {
-    if (
-      pages.active.BODY !== pages.active.DRAFT_BODY ||
-      pages.active?.NAME !== pages.active.DRAFT_NAME
-    )
-      pageModified = true;
-  }
 
   async function testApi() {
     const response = await fetch(getApiUrl() + "/", {
       method: "GET",
       credentials: "include",
+      headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
     });
 
     const data = await response.json();
@@ -81,10 +69,12 @@ const Home = () => {
         fetch(`${getApiUrl()}/folders/`, {
           method: "GET",
           credentials: "include",
+          headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
         }),
         fetch(`${getApiUrl()}/pages/`, {
           method: "GET",
           credentials: "include",
+          headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
         }),
       ]);
 
@@ -109,8 +99,12 @@ const Home = () => {
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
       dispatch(setSidebarLoading(false));
-    } catch (error: unknown) {
-      setError(error as string);
+    } catch (e) {
+      if (typeof e === "string") {
+        setError(e);
+      } else if (e instanceof Error) {
+        setError(e.message);
+      }
     }
   }
 
@@ -119,14 +113,19 @@ const Home = () => {
       let response = await fetch(`${getApiUrl()}/tags/`, {
         method: "GET",
         credentials: "include",
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
       });
 
       if (response.status !== 200) throw response.statusText;
 
       let tagsData = await response.json();
       dispatch(setTags(tagsData.tags));
-    } catch (error: unknown) {
-      setError(error as string);
+    } catch (e) {
+      if (typeof e === "string") {
+        setError(e);
+      } else if (e instanceof Error) {
+        setError(e.message);
+      }
     }
   }
 
@@ -135,6 +134,7 @@ const Home = () => {
       let response = await fetch(`${getApiUrl()}/tags/color-options/`, {
         method: "GET",
         credentials: "include",
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
       });
 
       if (response.status !== 200) {
@@ -148,8 +148,12 @@ const Home = () => {
           userCreatedOptions: colorOptionsData.userCreatedOptions,
         })
       );
-    } catch (error: unknown) {
-      setError(error as string);
+    } catch (e) {
+      if (typeof e === "string") {
+        setError(e);
+      } else if (e instanceof Error) {
+        setError(e.message);
+      }
     }
   }
 
@@ -187,6 +191,7 @@ const Home = () => {
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify({
           pageId: pages.active?.PAGE_ID,
@@ -210,8 +215,12 @@ const Home = () => {
         dispatch(selectFolder(null));
         dispatch(toggleModal("unsavedWarning"));
       }
-    } catch (error: unknown) {
-      setError(error as string);
+    } catch (e) {
+      if (typeof e === "string") {
+        setError(e);
+      } else if (e instanceof Error) {
+        setError(e.message);
+      }
     }
   }
 
@@ -229,8 +238,6 @@ const Home = () => {
       }
       return;
     }
-
-    console.log(pages.untitledPage);
 
     if (!pages.untitledPage.NAME) {
       bodyFieldRef.current?.blur();
@@ -250,11 +257,12 @@ const Home = () => {
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify({
           parentFolderId: null,
           newPageName: pages.untitledPage.NAME.trim(),
-          newPageBody: pages.untitledPage.BODY.trim() || emptyEditorState,
+          newPageBody: pages.untitledPage.BODY.trim() || "",
         }),
       });
 
@@ -268,8 +276,12 @@ const Home = () => {
       setNoTitleWarningToggled(false);
       getData();
       dispatch(resetUntitledPage(null));
-    } catch (error: unknown) {
-      setError(error as string);
+    } catch (e) {
+      if (typeof e === "string") {
+        setError(e);
+      } else if (e instanceof Error) {
+        setError(e.message);
+      }
     }
   }
 
@@ -331,21 +343,9 @@ const Home = () => {
   function handleTabPress(e: React.KeyboardEvent<HTMLInputElement>) {
     // if (e.key === "Tab") {
     //   e.preventDefault();
-    //   console.log(e.key);
+    //   e.key);
     //   bodyFieldRef.current?.focus();
     // }
-  }
-
-  function determineSavedStatus() {
-    if (pageModified && pages.active?.MODIFIED_DTTM) {
-      return `You have unsaved changes, last saved ${getElapsedTime(
-        pages.active?.MODIFIED_DTTM
-      )}`;
-    } else if (pageModified && !pages.active?.MODIFIED_DTTM) {
-      return "You have unsaved changes";
-    }
-
-    return "Up to date";
   }
 
   function determinePath(page: PageState) {
@@ -419,21 +419,46 @@ const Home = () => {
     pages.untitledPage.NAME,
   ]);
 
-  if (loading && !user) {
-    return (
-      <div className="loading-view">
-        <p>Loading...</p>
-        <p>
-          The initial load may take longer than expected due to the server spinning down
-          after not being used for a while.
-        </p>
-      </div>
-    );
+  let activePageModified =
+    pages.active?.BODY !== pages.active?.DRAFT_BODY ||
+    pages.active?.NAME !== pages.active?.DRAFT_NAME;
+  let unsavedPageModified =
+    pages.untitledPage.NAME !== "" ||
+    (pages.untitledPage.NAME !== "" && pages.untitledPage.BODY !== "");
+
+  let savedStatus = "Up to date";
+
+  if (activePageModified && pages.active?.MODIFIED_DTTM) {
+    savedStatus = `You have unsaved changes, last saved ${getElapsedTime(
+      pages.active?.MODIFIED_DTTM
+    )}`;
+  } else if (activePageModified && !pages.active?.MODIFIED_DTTM) {
+    savedStatus = "You have unsaved changes";
   }
 
-  if (!loading && !user) {
-    return <Navigate to="/login" replace />;
-  }
+  // TODO - uncomment
+  // if (loading && !user) {
+  //   return (
+  //     <div className="loading-view">
+  //       <p>Loading...</p>
+  //       <p>
+  //         The initial load may take longer than expected due to the server spinning down
+  //         after not being used for a while.
+  //       </p>
+  //       {error && (
+  //         <div className="error">
+  //           <p>There was an error</p>
+  //           <code>{error}</code>
+  //         </div>
+  //       )}
+  //     </div>
+  //   );
+  // }
+
+  // todo - uncomment
+  // if (!loading && !user) {
+  //   return <Navigate to="/login" replace />;
+  // }
 
   return (
     <div className="home-view">
@@ -471,12 +496,11 @@ const Home = () => {
             )}
             <div
               className={`status-indicator ${
-                pages.untitledPage.NAME !== "" ||
-                pages.untitledPage.BODY !== emptyEditorState
+                pages.untitledPage.NAME !== "" || pages.untitledPage.BODY !== ""
                   ? "unsaved"
                   : "saved"
               }`}
-              title={determineSavedStatus()}
+              title={savedStatus}
             ></div>
             <input
               type="text"
@@ -492,11 +516,12 @@ const Home = () => {
               autoComplete="off"
               tabIndex={1}
             />
+            <button className="save-button" disabled={!unsavedPageModified}>
+              Save
+            </button>
           </div>
 
-          <Editor page={pages.untitledPage} bodyFieldRef={bodyFieldRef} />
-
-          {/* <textarea
+          <textarea
             placeholder="Body"
             value={pages.untitledPage.BODY}
             spellCheck="false"
@@ -507,8 +532,7 @@ const Home = () => {
             data-gramm_editor="false"
             data-enable-grammarly="false"
             className={bodyTooLong ? "error" : ""}
-            onMouseDown={(e) => console.log(e)}
-          /> */}
+          />
         </form>
       )}
       {pages.active && (
@@ -520,8 +544,8 @@ const Home = () => {
               </div>
             )}
             <div
-              className={`status-indicator ${pageModified ? "unsaved" : "saved"}`}
-              title={determineSavedStatus()}
+              className={`status-indicator ${activePageModified ? "unsaved" : "saved"}`}
+              title={savedStatus}
             ></div>
             <input
               type="text"
@@ -535,9 +559,12 @@ const Home = () => {
               autoComplete="off"
               tabIndex={1}
             />
+            <button className="save-button" disabled={!activePageModified}>
+              Save
+            </button>
           </div>
 
-          {/* <textarea
+          <textarea
             placeholder="Body"
             value={pages.active.DRAFT_BODY}
             spellCheck="false"
@@ -547,8 +574,7 @@ const Home = () => {
             data-gramm_editor="false"
             data-enable-grammarly="false"
             className={bodyTooLong ? "error" : ""}
-          /> */}
-          <Editor page={pages.active} bodyFieldRef={bodyFieldRef} />
+          />
           <div className="page-path">
             /&nbsp;
             {determinePath(pages.active).map((folder: FolderState, i: number) => (

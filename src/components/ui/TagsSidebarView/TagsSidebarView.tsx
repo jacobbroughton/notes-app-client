@@ -30,7 +30,6 @@ const TagsSidebarView = () => {
         (color) => color.ID === tag.COLOR_ID
       );
     } else {
-      console.log(tags.colorOptions.userCreated, tag);
       matchingDefaultColor = tags.colorOptions.userCreated.find(
         (color) => color.ID === tag.COLOR_ID
       );
@@ -95,6 +94,7 @@ const TagsSidebarView = () => {
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify(payload),
       });
@@ -107,11 +107,11 @@ const TagsSidebarView = () => {
 
       dispatch(editTag(payload));
       dispatch(deselectTag());
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error editing the tag");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -133,6 +133,7 @@ const TagsSidebarView = () => {
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify(payload),
       });
@@ -147,15 +148,14 @@ const TagsSidebarView = () => {
 
       dispatch(addTag(justCreatedTag));
       dispatch(deselectTag());
-      console.log("new tag created");
       setNewTagColor(null);
       setNewTagName("");
       dispatch(setNewTagFormToggled(false));
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an creating a new tag");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -171,6 +171,7 @@ const TagsSidebarView = () => {
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify(payload),
       });
@@ -184,11 +185,11 @@ const TagsSidebarView = () => {
       dispatch(deleteTag(payload));
       dispatch(deselectTag());
       setDeleteWarningToggled(false);
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an deleting the tag");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }

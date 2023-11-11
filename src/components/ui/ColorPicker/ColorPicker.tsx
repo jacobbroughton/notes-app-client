@@ -28,21 +28,15 @@ const ColorPicker = ({
   const menuRef = useRef<HTMLMenuElement>(null);
 
   function handleToggleClick() {
-    console.log("8");
-
     dispatch(setColorPickerMenu({ toggled: !colorPickerMenu.toggled }));
   }
 
   function handleNewColorChange(e: React.ChangeEvent) {
-    console.log("7");
-
     setNewCustomColor((e.target as HTMLInputElement).value);
     setColorConfirmationShowing(true);
   }
 
   async function addNewCustomColor() {
-    console.log("6");
-
     try {
       const payload = {
         colorCode: newCustomColor,
@@ -53,6 +47,7 @@ const ColorPicker = ({
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify(payload),
       });
@@ -64,18 +59,16 @@ const ColorPicker = ({
       dispatch(addCustomColorOption(data.justCreatedColor));
       setNewCustomColor(null);
       setColorConfirmationShowing(false);
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error adding a custom color");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
 
   async function deleteCustomColor(color: ColorState) {
-    console.log("5");
-
     try {
       const payload = {
         colorId: color.ID,
@@ -86,6 +79,7 @@ const ColorPicker = ({
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify(payload),
       });
@@ -98,23 +92,20 @@ const ColorPicker = ({
 
       setColorToDelete(null);
       setDeleteModeToggled(false);
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error deleting the custom color");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
 
   function handleDeleteClick() {
-    console.log("delete button");
     setDeleteModeToggled(!deleteModeToggled);
   }
 
   function handleColorClick(color: ColorState) {
-    console.log("2");
-
     if (deleteModeToggled) {
       setColorToDelete(color);
     } else {
@@ -123,8 +114,6 @@ const ColorPicker = ({
   }
 
   function handleConfirmClick(): void {
-    console.log("3");
-
     if (colorConfirmationShowing) {
       addNewCustomColor();
     }
@@ -135,8 +124,6 @@ const ColorPicker = ({
   }
 
   function handleCancelClick() {
-    console.log("4");
-
     // e.stopPropagation();
     if (colorConfirmationShowing) {
       setNewCustomColor(null);

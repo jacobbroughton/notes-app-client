@@ -20,11 +20,11 @@ const Login = () => {
 
     try {
       const response = await fetch(`${getApiUrl()}/login/`, {
-        mode: "cors",
-        method: "POST",
+        method: "post",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         credentials: "include",
         body: JSON.stringify({
@@ -52,11 +52,11 @@ const Login = () => {
       if (loginError) setLoginError("");
       dispatch(setUser(data.user));
       navigate("/");
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        setLoginError(error);
-      } else {
-        alert("There was an error logging in");
+    } catch (e) {
+      if (typeof e === "string") {
+        setLoginError(e);
+      } else if (e instanceof Error) {
+        setLoginError(e.message);
       }
     }
   }

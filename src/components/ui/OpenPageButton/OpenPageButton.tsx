@@ -1,4 +1,4 @@
-import {MouseEvent} from "react"
+import { MouseEvent } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import XIcon from "../Icons/XIcon";
 import {
@@ -11,7 +11,6 @@ import "./OpenPageButton.css";
 import { toggleModal } from "../../../redux/modals";
 import { RootState } from "../../../redux/store";
 import { PageState } from "../../../types";
-import { emptyEditorState } from "../../../utils/editorUtils";
 
 const OpenPageButton = ({ page }: { page: PageState | null }) => {
   const pages = useSelector((state: RootState) => state.pages);
@@ -21,7 +20,8 @@ const OpenPageButton = ({ page }: { page: PageState | null }) => {
     return (
       <button className={`page-button untitled active`}>
         <p>Untitled</p>
-        {(pages.untitledPage.NAME !== "" || pages.untitledPage.BODY !== emptyEditorState) && (
+        {(pages.untitledPage.NAME !== "" ||
+          pages.untitledPage.BODY !== "") /*// TODO -  this was emptyEditor state */ && (
           <span className="unsaved-circle">&nbsp;</span>
         )}
       </button>
@@ -30,7 +30,7 @@ const OpenPageButton = ({ page }: { page: PageState | null }) => {
   const unsaved = page.DRAFT_NAME !== page.NAME || page.DRAFT_BODY !== page.BODY;
 
   function handleXButtonClick(e: MouseEvent, unsaved: boolean) {
-    e.stopPropagation()
+    e.stopPropagation();
     if (unsaved) {
       if (!pages.stagedToSwitch) dispatch(setPageStagedForSwitch(page));
       dispatch(toggleModal("unsavedWarning"));

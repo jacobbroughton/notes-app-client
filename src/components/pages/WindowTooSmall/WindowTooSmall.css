@@ -1,0 +1,25 @@
+
+.wrong-browser-view {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrong-browser-view .wrong-browser-container {
+  box-shadow: var(--container-shadow);
+  border-radius: 5px;
+  max-width: 500px;
+  background-color: var(--secondary-bg);
+  color: var(--color-text-primary);
+  padding: 15px;
+  margin: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wrong-browser-view .wrong-browser-container p {
+  /* margin-bottom: 5px; */
+}

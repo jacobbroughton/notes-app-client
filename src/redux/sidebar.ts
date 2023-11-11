@@ -18,8 +18,9 @@ const viewOptionsForState = [
 ];
 
 const initialState: SidebarState = {
-  width: 275,
+  width: 225,
   view: viewOptionsForState[0],
+  toggled: window.innerWidth > 600,
   viewOptions: viewOptionsForState,
   searchValue: "",
   shiftClickItems: { start: null, end: null, list: [] },
@@ -37,6 +38,10 @@ const initialState: SidebarState = {
   newPageName: "",
   newFolderName: "",
   loading: false,
+  floating:
+    window.innerWidth > 600
+      ? false
+      : Boolean(localStorage.getItem("sidebar-floating-toggled")) || false,
 };
 
 const sidebarSlice = createSlice({
@@ -50,6 +55,17 @@ const sidebarSlice = createSlice({
       return {
         ...state,
         width: payload,
+        toggled: payload >= 52,
+      };
+    },
+    setSidebarToggled: (state, { payload }: PayloadAction<boolean>) => {
+      const lastSidebarWidth = parseInt(
+        localStorage.getItem("lastSidebarWidth") || "250"
+      );
+      return {
+        ...state,
+        toggled: payload,
+        width: lastSidebarWidth <= 50 ? 250 : lastSidebarWidth,
       };
     },
     setSidebarView: (state, { payload }) => {
@@ -99,7 +115,6 @@ const sidebarSlice = createSlice({
       };
     },
     setDraggedOverItem: (state, { payload }) => {
-      console.log(current(state));
       return {
         ...state,
         draggedOverItem: {
@@ -154,6 +169,13 @@ const sidebarSlice = createSlice({
         loading: payload,
       };
     },
+    setSidebarFloating: (state, { payload }) => {
+      localStorage.setItem("sidebar-floating-toggled", payload);
+      return {
+        ...state,
+        floating: payload,
+      };
+    },
   },
 });
 
@@ -173,6 +195,8 @@ export const {
   setNewPageName,
   setNewFolderName,
   setSidebarLoading,
+  setSidebarToggled,
+  setSidebarFloating,
 } = sidebarSlice.actions;
 
 export default sidebarSlice.reducer;

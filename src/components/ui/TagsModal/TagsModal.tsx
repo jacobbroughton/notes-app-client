@@ -51,6 +51,7 @@ const TagsModal = () => {
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify({
           name: tagSearchValue.trim(),
@@ -67,11 +68,11 @@ const TagsModal = () => {
       if (!data) throw "There was an issue parsing /tags/new response";
 
       setTagSearchValue("");
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error creating a new tag");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -87,6 +88,7 @@ const TagsModal = () => {
         credentials: "include",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify({
           tag,
@@ -131,7 +133,6 @@ const TagsModal = () => {
         if (item.TAGS.includes(tag.ID)) {
           dispatch(removeTagFromFolder({ item, tag }));
 
-          console.log(allChildPages);
           if (allChildPages.length > 0) {
             allChildPages.forEach((page) => {
               dispatch(removeTagFromPage({ item: page, tag }));
@@ -147,11 +148,11 @@ const TagsModal = () => {
           }
         }
       }
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error handling tag click");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -179,7 +180,7 @@ const TagsModal = () => {
           />
         </form>
         {tagSearchValue && !tags.list.find((tag) => tag.NAME === tagSearchValue) && (
-          <button className="tag-button" onClick={(e) => console.log("new tag input")}>
+          <button className="tag-button" onClick={(e) => alert("nothing else happens")}>
             <span
               className="color-span"
               style={{ backgroundColor: tagColor?.COLOR_CODE }}
