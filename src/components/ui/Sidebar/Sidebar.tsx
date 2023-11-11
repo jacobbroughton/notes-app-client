@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, Context, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  Context,
+  useCallback,
+  MutableRefObject,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setFolders,
@@ -18,6 +25,8 @@ import {
   setNewPageName,
   setNewFolderName,
   setSidebarLoading,
+  setSidebarToggled,
+  setSidebarFloating,
 } from "../../../redux/sidebar";
 import { formatFolders, formatPages } from "../../../utils/formatData";
 import { toggleModal } from "../../../redux/modals";
@@ -36,9 +45,12 @@ import { setInputPosition } from "../../../redux/sidebar";
 import { ItemState } from "../../../types";
 import { RootState } from "../../../redux/store";
 import { getApiUrl } from "../../../utils/getUrl";
+import DoubleArrowLeft from "../Icons/DoubleArrowLeft";
+import DoubleArrowRight from "../Icons/DoubleArrowRight";
+import FloatingWindowsIcon from "../Icons/FloatingWindowsIcon";
 
 function Sidebar() {
-  const sidebarRef = useRef<HTMLElement | null>(null);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
   const inputPositionRef = useRef<HTMLInputElement | null>(null);
   const contextMenuRef = useRef<HTMLMenuElement | null>(null);
   const draggableRef = useRef<HTMLMenuElement | null>(null);
@@ -71,23 +83,25 @@ function Sidebar() {
   }, []);
 
   const stopResizing = useCallback(() => {
+    localStorage.setItem("lastSidebarWidth", sidebar.width.toString());
     setIsResizingSidebar(false);
-  }, []);
+  }, [sidebar.width]);
 
   const resizeSidebar = useCallback(
     (mouseMoveEvent: MouseEvent) => {
       if (isResizingSidebar && sidebarRef.current) {
-        const newSidebarPositionX =
+        const unitsFromLeft =
           mouseMoveEvent.clientX - sidebarRef.current.getBoundingClientRect().left;
-        if (newSidebarPositionX >= 50) dispatch(setSidebarWidth(newSidebarPositionX));
+        if (unitsFromLeft >= 40) dispatch(setSidebarWidth(unitsFromLeft));
+        console.log("wassup", unitsFromLeft);
       }
     },
     [isResizingSidebar]
   );
 
   useEffect(() => {
-    window.addEventListener("mousemove", resizeSidebar);
-    window.addEventListener("mouseup", stopResizing);
+    window.addEventListener("mousemove", resizeSidebar, { passive: true });
+    window.addEventListener("mouseup", stopResizing, { passive: true });
     return () => {
       window.removeEventListener("mousemove", resizeSidebar);
       window.removeEventListener("mouseup", stopResizing);
@@ -101,6 +115,7 @@ function Sidebar() {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         credentials: "include",
         body: JSON.stringify({
@@ -128,11 +143,11 @@ function Sidebar() {
       dispatch(setNewFolderName(""));
       resetContextMenu();
       getData();
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error adding the new folder");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -145,6 +160,7 @@ function Sidebar() {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         credentials: "include",
         body: JSON.stringify({
@@ -172,11 +188,11 @@ function Sidebar() {
       dispatch(setNewPageName(""));
       resetContextMenu();
       getData();
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error creating the new page");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -288,10 +304,12 @@ function Sidebar() {
         fetch(`${getApiUrl()}/folders/`, {
           method: "GET",
           credentials: "include",
+          headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
         }),
         fetch(`${getApiUrl()}/pages/`, {
           method: "GET",
           credentials: "include",
+          headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
         }),
       ]);
 
@@ -316,11 +334,11 @@ function Sidebar() {
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
       dispatch(setSidebarLoading(false));
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error getting folders and pages");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -343,6 +361,7 @@ function Sidebar() {
         method: "POST",
         headers: {
           "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         credentials: "include",
         body: JSON.stringify({
@@ -362,11 +381,11 @@ function Sidebar() {
           setFavoriteStatus({ favoriteStatus: item.IS_FAVORITE ? 0 : 1, page: item })
         );
       resetContextMenu();
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error adding the item to your favorites");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
@@ -529,118 +548,122 @@ function Sidebar() {
   ];
 
   return (
-    <aside
-      ref={sidebarRef}
-      className="sidebar"
-      style={{ width: `${sidebar.width ? `${sidebar.width}px` : "275px"}` }}
-      // onMouseDown={(e) => e.preventDefault()}
-    >
+    <aside className="sidebar">
       <div className="sidebar-nav">
-        {sidebar.viewOptions.map((viewOption, index) => (
-          <button
-            onClick={() => {
-              dispatch(setSidebarView(viewOption));
-              if (sidebar.width <= 60) dispatch(setSidebarWidth(275));
-            }}
-            className={viewOption.id === sidebar.view.id ? "current" : ""}
-            key={index}
-            title={viewOption.name}
-          >
-            {viewOption.id === 1 && <PageIcon />}
-            {/* {viewOption.id === 2 && <SearchIcon />} */}
-            {/* {viewOption.id === 3 && <TagIcon />} */}
-          </button>
-        ))}
         <button
-          className="theme-button"
+          onClick={() => {
+            dispatch(setSidebarToggled(!sidebar.toggled));
+          }}
+          className="sidebar-toggle-button"
+          title={`Toggle Sidebar ${sidebar.toggled ? "Off" : "On"}`}
+        >
+          {sidebar.toggled ? <DoubleArrowLeft /> : <DoubleArrowRight />}
+        </button>
+
+        <button
+          className="sidebar-button theme-button"
           onClick={() => dispatch(setTheme(theme === "dark" ? "light" : "dark"))}
           title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
         >
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
         <button
-          className="user-button"
-          onClick={() => setUserMenuToggled(!userMenuToggled)}
+          className="sidebar-button user-button"
+          onClick={() => {
+            setUserMenuToggled(!userMenuToggled);
+          }}
           title="User options"
         >
           <UserIcon />
         </button>
+        <button
+          className={`floating-sidebar-button ${sidebar.floating ? "toggled" : ""}`}
+          onClick={() => {
+            dispatch(setSidebarFloating(!sidebar.floating));
+          }}
+          title="Set Sidebar to 'Floating' Mode"
+        >
+          <FloatingWindowsIcon />
+        </button>
         {userMenuToggled && <UserMenu setUserMenuToggled={setUserMenuToggled} />}
       </div>
-      <div className="sidebar-body">
-        <div className="current-view">
-          <p>{sidebar.view.name}</p>
-        </div>
-        {(sidebar.view.name === "Notes" || sidebar.view.name === "Tags") &&
-          tags.selected === null &&
-          !sidebar.newTagFormToggled && (
-            <div className="header">
-              <div className="sidebar-header-buttons">
-                {sidebarHeaderButtons.map((button, i) => {
-                  if (button.visible) {
-                    return (
-                      <button
-                        className={button.className}
-                        disabled={button.disabled}
-                        onClick={button.onClick}
-                        title={button.title}
-                        key={i}
-                      >
-                        {button.symbol}
-                      </button>
-                    );
-                  }
-                })}
-              </div>
-              {sidebar.inputPosition.referenceId === 0 &&
-                sidebar.inputPosition.toggled && (
-                  <form
-                    className="new-folder-form"
-                    onSubmit={
-                      sidebar.inputPosition.forFolder
-                        ? handleNewFolderSubmit
-                        : handleNewPageSubmit
+      {sidebar.toggled && (
+        <div
+          className="sidebar-body"
+          style={{ width: `${sidebar.width ? `${sidebar.width}px` : "225px"}` }}
+          ref={sidebarRef}
+        >
+          <div className="current-view">
+            <p>{sidebar.view.name}</p>
+          </div>
+          {(sidebar.view.name === "Notes" || sidebar.view.name === "Tags") &&
+            tags.selected === null &&
+            !sidebar.newTagFormToggled && (
+              <div className="header">
+                <div className="sidebar-header-buttons">
+                  {sidebarHeaderButtons.map((button, i) => {
+                    if (button.visible) {
+                      return (
+                        <button
+                          className={button.className}
+                          disabled={button.disabled}
+                          onClick={button.onClick}
+                          title={button.title}
+                          key={i}
+                        >
+                          {button.symbol}
+                        </button>
+                      );
                     }
-                  >
-                    <input
-                      ref={inputPositionRef}
-                      spellCheck="false"
-                      onChange={(e) => {
-                        if (sidebar.inputPosition.forFolder) {
-                          dispatch(setNewFolderName(e.target.value));
-                        } else {
-                          dispatch(setNewPageName(e.target.value));
-                        }
-                      }}
-                      value={
+                  })}
+                </div>
+                {sidebar.inputPosition.referenceId === 0 &&
+                  sidebar.inputPosition.toggled && (
+                    <form
+                      className="new-folder-form"
+                      onSubmit={
                         sidebar.inputPosition.forFolder
-                          ? sidebar.newFolderName
-                          : sidebar.newPageName
+                          ? handleNewFolderSubmit
+                          : handleNewPageSubmit
                       }
-                      autoComplete="off"
-                    />
-                  </form>
-                )}
-            </div>
+                    >
+                      <input
+                        ref={inputPositionRef}
+                        spellCheck="false"
+                        onChange={(e) => {
+                          if (sidebar.inputPosition.forFolder) {
+                            dispatch(setNewFolderName(e.target.value));
+                          } else {
+                            dispatch(setNewPageName(e.target.value));
+                          }
+                        }}
+                        value={
+                          sidebar.inputPosition.forFolder
+                            ? sidebar.newFolderName
+                            : sidebar.newPageName
+                        }
+                        autoComplete="off"
+                      />
+                    </form>
+                  )}
+              </div>
+            )}
+          {sidebar.view.name === "Notes" && (
+            <ItemList
+              setContextMenu={setContextMenu}
+              handleNewFolderSubmit={handleNewFolderSubmit}
+              handleNewPageSubmit={handleNewPageSubmit}
+              inputPositionRef={inputPositionRef}
+              resetContextMenu={resetContextMenu}
+              handleRename={handleRename}
+              renameInputRef={renameInputRef}
+            />
           )}
-        {sidebar.view.name === "Notes" && (
-          <ItemList
-            setContextMenu={setContextMenu}
-            handleNewFolderSubmit={handleNewFolderSubmit}
-            handleNewPageSubmit={handleNewPageSubmit}
-            inputPositionRef={inputPositionRef}
-            resetContextMenu={resetContextMenu}
-            handleRename={handleRename}
-            renameInputRef={renameInputRef}
-          />
-        )}
-        {sidebar.view.name === "Search" && <PageSearch />}
-        {sidebar.view.name === "Tags" && <TagsSidebarView />}
-      </div>
-      <div
-        className={`drag-sidebar-button ${sidebar.dragToggled ? "active" : ""}`}
-        onMouseDown={startResizing}
-      ></div>
+          {sidebar.view.name === "Search" && <PageSearch />}
+          {sidebar.view.name === "Tags" && <TagsSidebarView />}
+        </div>
+      )}
+
       <ContextMenu
         item={pages.active || folders.selected} // TODO - figure out how to determine which
         toggled={contextMenu.toggled}
@@ -731,6 +754,12 @@ function Sidebar() {
           },
         ]}
       />
+      <div
+        className={`drag-sidebar-button ${sidebar.dragToggled ? "active" : ""} ${
+          sidebar.toggled ? "" : "disabled"
+        }`}
+        onMouseDown={startResizing}
+      ></div>
     </aside>
   );
 }

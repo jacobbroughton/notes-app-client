@@ -188,6 +188,7 @@ export type SidebarState = {
     id: number;
     name: string;
   }>;
+  toggled: boolean,
   searchValue: string;
   shiftClickItems: {
     start: number | null;
@@ -210,5 +211,6 @@ export type SidebarState = {
   newNameForRename: string;
   newPageName: string;
   newFolderName: string;
-  loading: boolean
+  loading: boolean,
+  floating: boolean
 };

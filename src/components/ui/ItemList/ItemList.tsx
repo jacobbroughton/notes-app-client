@@ -129,6 +129,7 @@ const ItemList = ({
           credentials: "include",
           headers: {
             "content-type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "http://localhost:3000",
           },
           body: JSON.stringify({
             affectedPage: grabbedItem,
@@ -150,11 +151,11 @@ const ItemList = ({
           PAGE_ID: null,
         })
       );
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error moving item");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }

@@ -65,6 +65,7 @@ const ItemListItem = ({
           credentials: "include",
           headers: {
             "content-type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "http://localhost:3000"
           },
           body: JSON.stringify(pageInfo),
         });
@@ -87,6 +88,7 @@ const ItemListItem = ({
           credentials: "include",
           headers: {
             "content-type": "application/json;charset=UTF-8",
+            "Access-Control-Allow-Origin": "http://localhost:3000" 
           },
           body: JSON.stringify(folderInfo),
         });
@@ -102,11 +104,11 @@ const ItemListItem = ({
       dispatch(setRenameInputToggled(false));
       dispatch(setNewNameForRename(""));
       renameInputRef.current?.blur();
-    } catch (error: unknown) {
-      if (typeof error === "string") {
-        alert(error);
-      } else {
-        alert("There was an error renaming the item");
+    } catch (e) {
+      if (typeof e === "string") {
+        alert(e);
+      } else if (e instanceof Error) {
+        alert("ERROR: " + e.message);
       }
     }
   }
