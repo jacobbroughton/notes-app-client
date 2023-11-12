@@ -46,21 +46,22 @@ const Home = () => {
   const folders = useSelector((state: RootState) => state.folders);
   const modals = useSelector((state: RootState) => state.modals);
 
-  async function testApi() {
-    const response = await fetch(getApiUrl() + "/", {
-      method: "GET",
-      credentials: "include",
-      headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
-    });
+  // async function getUser() {
+  //   setLoading(true)
+  //   const response = await fetch(`${getApiUrl()}/`, {
+  //     method: "GET",
+  //     credentials: "include",
+  //     headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+  //   });
 
-    const data = await response.json();
+  //   const data = await response.json();
 
-    if (data.user && !user) {
-      dispatch(setUser(data.user));
-      setLoading(false);
-    }
-    if (!data.user) navigate("/login");
-  }
+  //   if (!data.user) navigate("/login");
+  //   if (data.user && !user) {
+  //     dispatch(setUser(data.user));
+  //     setLoading(false);
+  //   }
+  // }
 
   async function getData() {
     try {
@@ -365,7 +366,6 @@ const Home = () => {
   }
 
   useEffect(() => {
-    testApi();
     getTags();
     getColorOptions();
   }, []);
@@ -437,28 +437,28 @@ const Home = () => {
   }
 
   // TODO - uncomment
-  // if (loading && !user) {
-  //   return (
-  //     <div className="loading-view">
-  //       <p>Loading...</p>
-  //       <p>
-  //         The initial load may take longer than expected due to the server spinning down
-  //         after not being used for a while.
-  //       </p>
-  //       {error && (
-  //         <div className="error">
-  //           <p>There was an error</p>
-  //           <code>{error}</code>
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // }
+  if (loading && !user) {
+    return (
+      <div className="loading-view">
+        <p>Loading...</p>
+        <p>
+          The initial load may take longer than expected due to the server spinning down
+          after not being used for a while.
+        </p>
+        {error && (
+          <div className="error">
+            <p>There was an error</p>
+            <code>{error}</code>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   // todo - uncomment
-  // if (!loading && !user) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!loading && !user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="home-view">
