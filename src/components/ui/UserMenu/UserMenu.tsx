@@ -39,19 +39,17 @@ const UserMenu = ({
 
       if (response.status !== 200) throw response.statusText;
 
-      setTimeout(() => {
-        dispatch(resetUserState());
-        dispatch(resetThemeState());
-        dispatch(resetTagsState());
-        dispatch(resetSidebarState());
-        dispatch(resetPagesState());
-        dispatch(resetFoldersState());
-        dispatch(resetModalsState());
-        dispatch(resetCombinedState());
-        dispatch(resetColorPickerMenuState());
-        setUserMenuToggled(false);
-        navigate("/login");
-      }, 1000);
+      dispatch(resetUserState());
+      dispatch(resetThemeState());
+      dispatch(resetTagsState());
+      dispatch(resetSidebarState());
+      dispatch(resetPagesState());
+      dispatch(resetFoldersState());
+      dispatch(resetModalsState());
+      dispatch(resetCombinedState());
+      dispatch(resetColorPickerMenuState());
+      setUserMenuToggled(false);
+      navigate("/login");
     } catch (e) {
       if (typeof e === "string") {
         alert(e);

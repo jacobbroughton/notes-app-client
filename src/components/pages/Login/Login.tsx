@@ -54,12 +54,9 @@ const Login = () => {
         return;
       }
 
-      setTimeout(() => {
-        if (loginError) setLoginError("");
-        dispatch(setUser(data.user));
-        setLoading(false);
-        navigate("/");
-      }, 1000);
+      if (loginError) setLoginError("");
+      dispatch(setUser(data.user));
+      navigate("/");
     } catch (e) {
       if (typeof e === "string") {
         setLoginError(e);

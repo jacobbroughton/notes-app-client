@@ -40,21 +40,19 @@ const Login = () => {
 
       if (registerError) setRegisterError("");
 
-      setTimeout(() => {
-        setLoading(false);
+      setLoading(false);
 
-        navigate({
-          pathname: "/login",
-          search: `?redirectedFrom=register&message=Account '${username}' has been created&status=success`,
-        });
-      }, 1000);
+      navigate({
+        pathname: "/login",
+        search: `?redirectedFrom=register&message=Account '${username}' has been created&status=success`,
+      });
     } catch (e) {
       if (typeof e === "string") {
         setRegisterError(e);
       } else if (e instanceof Error) {
         setRegisterError(e.message);
       }
-      setLoading(false)
+      setLoading(false);
     }
   }
 
