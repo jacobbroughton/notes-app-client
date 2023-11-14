@@ -4,7 +4,7 @@ export const getApiUrl = () => {
   if (import.meta.env.PROD) {
     API_URL = "https://api.notesjb.com";
   } else {
-    API_URL = "http://localhost:3001/api";
+    API_URL = "http://localhost:3001";
   }
 
   return API_URL;

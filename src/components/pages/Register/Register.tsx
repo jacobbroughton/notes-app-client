@@ -3,11 +3,13 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { getApiUrl } from "../../../utils/getUrl";
 
 import "./Register.css";
+import LoadingOverlay from "../../ui/LoadingOverlay/LoadingOverlay";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [registerError, setRegisterError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -15,6 +17,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      setLoading(true);
+
       const response = await fetch(`${getApiUrl()}/register/`, {
         method: "POST",
         headers: {
@@ -36,16 +40,21 @@ const Login = () => {
 
       if (registerError) setRegisterError("");
 
-      navigate({
-        pathname: "/login",
-        search: `?redirectedFrom=register&message=Account '${username}' has been created&status=success`,
-      });
+      setTimeout(() => {
+        setLoading(false);
+
+        navigate({
+          pathname: "/login",
+          search: `?redirectedFrom=register&message=Account '${username}' has been created&status=success`,
+        });
+      }, 1000);
     } catch (e) {
       if (typeof e === "string") {
         setRegisterError(e);
       } else if (e instanceof Error) {
         setRegisterError(e.message);
       }
+      setLoading(false)
     }
   }
 
@@ -83,6 +92,7 @@ const Login = () => {
       <p>
         Already have an account? <Link to="/login">Sign in</Link>
       </p>
+      {loading && <LoadingOverlay message="Creating your account..." />}
     </div>
   );
 };
