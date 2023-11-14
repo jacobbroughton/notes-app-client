@@ -12,7 +12,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--secondary-bg-opposite);
+  background: var( --loading-dot-color);
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .loader div:nth-child(1) {
