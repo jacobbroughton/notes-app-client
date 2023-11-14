@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useEffect, MouseEvent } from "react";
+import { FormEvent, useRef, useEffect, MouseEvent, useState } from "react";
 import { useDispatch } from "react-redux";
 import { resetUserState, setUser } from "../../../redux/user";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import { resetFoldersState } from "../../../redux/folders";
 import { resetModalsState } from "../../../redux/modals";
 import { resetCombinedState } from "../../../redux/combined";
 import { resetColorPickerMenuState } from "../../../redux/colorPickerMenu";
+import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
 
 const UserMenu = ({
   setUserMenuToggled,
@@ -21,11 +22,14 @@ const UserMenu = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(false);
 
   async function handleLogout(e: FormEvent) {
     e.preventDefault();
 
     try {
+      setLoading(true);
+
       const response = await fetch(`${getApiUrl()}/logout/`, {
         credentials: "include",
         headers: {
@@ -35,7 +39,6 @@ const UserMenu = ({
 
       if (response.status !== 200) throw response.statusText;
 
-      // dispatch(setUser(null));
       dispatch(resetUserState());
       dispatch(resetThemeState());
       dispatch(resetTagsState());
@@ -53,6 +56,7 @@ const UserMenu = ({
       } else if (e instanceof Error) {
         alert("ERROR: " + e.message);
       }
+      setLoading(false);
     }
   }
 
@@ -78,6 +82,7 @@ const UserMenu = ({
       <button className="logout-btn" onClick={handleLogout}>
         Logout
       </button>
+      {loading && <LoadingOverlay message="Logging you out..." />}
     </div>
   );
 };

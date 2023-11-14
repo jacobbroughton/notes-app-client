@@ -22,7 +22,7 @@
 body[data-theme="dark"] {
   --container-shadow: 0 1px 2px #000000;
   --primary-bg: #242424;
-  --secondary-bg-opposite: #fff;
+  --loading-dot-color: #fff;
   --secondary-bg: #333;
   --tertiary-bg: #444;
   --tertiary-bg-hover: #3d3d3d;
@@ -48,7 +48,7 @@ body[data-theme="dark"] {
 body[data-theme="light"] {
   --container-shadow: 0 1px 2px #00000033;
   --primary-bg: #f0f2f6;
-  --secondary-bg-opposite: #515151;
+  --loading-dot-color: #515151;
   --secondary-bg: #fff;
   --tertiary-bg: #dadce0;
   --color-text-primary: #181818;

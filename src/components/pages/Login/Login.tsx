@@ -4,6 +4,8 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import "./Login.css";
 import { getApiUrl } from "../../../utils/getUrl";
+import LoadingSpinner from "../../ui/LoadingSpinner/LoadingSpinner";
+import LoadingOverlay from "../../ui/LoadingOverlay/LoadingOverlay";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -12,6 +14,7 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [searchParams] = useSearchParams();
 
@@ -19,6 +22,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      setLoading(true);
+
       const response = await fetch(`${getApiUrl()}/login/`, {
         method: "post",
         headers: {
@@ -58,6 +63,7 @@ const Login = () => {
       } else if (e instanceof Error) {
         setLoginError(e.message);
       }
+      setLoading(false);
     }
   }
 
@@ -98,6 +104,7 @@ const Login = () => {
       <p>
         New here? <Link to="/register">Create an account</Link>
       </p>
+      {loading && <LoadingOverlay message="Logging you in..." />}
     </div>
   );
 };

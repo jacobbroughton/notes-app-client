@@ -8,7 +8,7 @@
   margin-right: auto;
   height: 100vh;
   max-width: 300px;
-
+z-index: 1000;
   color: var(--color-text-primary);
 }
 

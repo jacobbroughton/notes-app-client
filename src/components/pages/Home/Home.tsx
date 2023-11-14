@@ -436,7 +436,6 @@ const Home = () => {
     savedStatus = "You have unsaved changes";
   }
 
-  // TODO - uncomment
   if (loading && !user) {
     return (
       <div className="loading-view">
@@ -455,7 +454,6 @@ const Home = () => {
     );
   }
 
-  // todo - uncomment
   if (!loading && !user) {
     return <Navigate to="/login" replace />;
   }
