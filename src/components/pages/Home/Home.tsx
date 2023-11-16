@@ -29,6 +29,7 @@ import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
 import { FolderState, PageState } from "../../../types";
 import { RootState } from "../../../redux/store";
 import { getApiUrl } from "../../../utils/getUrl";
+import LoadingSpinner from "../../ui/LoadingSpinner/LoadingSpinner";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -349,7 +350,9 @@ const Home = () => {
     // }
   }
 
-  function determinePath(page: PageState) {
+  function determinePath(page: PageState | null) {
+    if (!page) return [];
+
     let parentFolders: Array<FolderState> = [];
 
     function getParentFolder(folderId: number | null) {
@@ -439,7 +442,8 @@ const Home = () => {
   if (loading && !user) {
     return (
       <div className="loading-view">
-        <p>Loading...</p>
+        <LoadingSpinner />
+        <h3>Loading...</h3>
         <p>
           The initial load may take longer than expected due to the server spinning down
           after not being used for a while.
@@ -548,7 +552,7 @@ const Home = () => {
             <input
               type="text"
               placeholder="Title / Topic"
-              value={pages.active.DRAFT_NAME}
+              value={pages.active?.DRAFT_NAME}
               spellCheck="false"
               required
               onChange={(e) => handleTitleChange(e, false)}
@@ -564,7 +568,7 @@ const Home = () => {
 
           <textarea
             placeholder="Body"
-            value={pages.active.DRAFT_BODY}
+            value={pages.active?.DRAFT_BODY}
             spellCheck="false"
             onChange={(e) => handleBodyChange(e, false)}
             ref={bodyFieldRef}
@@ -588,7 +592,7 @@ const Home = () => {
             )}
             <div className="current-page">
               <PageIcon />
-              <p>{pages.active.NAME}</p>
+              <p>{pages.active?.NAME}</p>
             </div>
           </div>
         </form>
