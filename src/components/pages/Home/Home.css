@@ -13,6 +13,7 @@
 
 .loading-view .loader {
   margin-bottom: 5px;
+  align-self: flex-start;
 }
 
 .loading-view .error {
