@@ -8,8 +8,8 @@ const initialState: PagesState = {
   stagedToSwitch: null,
   stagedToDelete: null,
   untitledPage: {
-    NAME: "",
-    BODY: '',
+    name: "",
+    body: '',
     IS_UNTITLED: true,
     IS_INITIAL: true,
   },
@@ -25,16 +25,16 @@ const pagesSlice = createSlice({
     setPages: (state, { payload }) => {
       const pages: Array<PageState> = payload.map((page: PageState) => {
         const existingPage = state.list?.find(
-          (innerPage) => innerPage.PAGE_ID === page.PAGE_ID
+          (innerPage) => innerPage.page_id === page.page_id
         );
 
         return {
           ...page,
-          IS_PAGE: true,
+          is_page: true,
           SELECTED: page.SELECTED,
           DRAFT_TITLE: existingPage?.DRAFT_TITLE || page.TITLE,
-          DRAFT_NAME: existingPage?.DRAFT_NAME || page.NAME,
-          DRAFT_BODY: existingPage?.DRAFT_BODY || page.BODY,
+          draft_name: existingPage?.draft_name || page.name,
+          draft_body: existingPage?.draft_body || page.body,
           OPEN: page.OPEN || false,
           ACTIVE: page.ACTIVE || false,
           IS_FAVORITE: page.IS_FAVORITE || false,
@@ -53,8 +53,8 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === pageId && {
-              EFF_STATUS: 0,
+            ...(page.page_id === pageId && {
+              eff_status: 0,
               SELECTED: false,
               OPEN: false,
             }),
@@ -67,7 +67,7 @@ const pagesSlice = createSlice({
     selectPage: (state, { payload }: PayloadAction<PageState | null>) => {
       let selectedPage: PageState | null = null;
 
-      const matchingPage = state.list.find((page) => page.PAGE_ID === payload?.PAGE_ID);
+      const matchingPage = state.list.find((page) => page.page_id === payload?.page_id);
 
       if (matchingPage) selectedPage = matchingPage;
 
@@ -76,10 +76,10 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...((payload === null || page.PAGE_ID !== payload?.PAGE_ID) &&
+            ...((payload === null || page.page_id !== payload?.page_id) &&
               page.SELECTED && { SELECTED: false }),
-            ...(page.PAGE_ID === selectedPage?.PAGE_ID && { SELECTED: true }),
-            ...(page.PAGE_ID === selectedPage?.PAGE_ID
+            ...(page.page_id === selectedPage?.page_id && { SELECTED: true }),
+            ...(page.page_id === selectedPage?.page_id
               ? { ACTIVE: true, OPEN: true }
               : { ACTIVE: false }),
           };
@@ -94,7 +94,7 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === payload.PAGE_ID && { ACTIVE: false, SELECTED: false }),
+            ...(page.page_id === payload.page_id && { ACTIVE: false, SELECTED: false }),
           };
         }),
         selected: null,
@@ -108,7 +108,7 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(payload.PAGE_ID === page.PAGE_ID && {
+            ...(payload.page_id === page.page_id && {
               ...payload,
             }),
           };
@@ -124,7 +124,7 @@ const pagesSlice = createSlice({
         ...state,
         active: {
           ...state.active,
-          IS_MODIFIED: payload,
+          is_modified: payload,
         } as PageState | null,
       };
     },
@@ -139,35 +139,35 @@ const pagesSlice = createSlice({
 
       let folderOfDroppedOnItem = null;
 
-      if (droppedOntoItem.IS_PAGE) {
+      if (droppedOntoItem.is_page) {
         folderOfDroppedOnItem = folders.find(
-          (folder: FolderState) => folder.ID === droppedOntoItem.FOLDER_ID
+          (folder: FolderState) => folder.id === droppedOntoItem.folder_id
         );
       }
 
       return {
         ...state,
         list: state.list.map((page) => {
-          let FOLDER_ID;
+          let folder_id;
           let TIER;
           let VISIBLE;
 
-          if (droppedOntoItem.IS_PAGE) {
-            FOLDER_ID = droppedOntoItem.FOLDER_ID;
+          if (droppedOntoItem.is_page) {
+            folder_id = droppedOntoItem.folder_id;
             TIER = droppedOntoItem.TIER;
             VISIBLE = droppedOntoItem.VISIBLE;
           }
 
-          if (!droppedOntoItem.IS_PAGE) {
-            FOLDER_ID = droppedOntoItem.ID;
+          if (!droppedOntoItem.is_page) {
+            folder_id = droppedOntoItem.id;
             TIER = droppedOntoItem.TIER + 1;
             VISIBLE = droppedOntoItem.EXPANDED_STATUS;
           }
 
           return {
             ...page,
-            ...(page.PAGE_ID === affectedPage.PAGE_ID && {
-              FOLDER_ID,
+            ...(page.page_id === affectedPage.page_id && {
+              folder_id,
               TIER,
               VISIBLE,
             }),
@@ -190,28 +190,28 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === payload.pageId && {
-              NAME: payload.newName,
-              DRAFT_NAME: payload.newName,
+            ...(page.page_id === payload.pageId && {
+              name: payload.newName,
+              draft_name: payload.newName,
             }),
           };
         }),
         active: {
           ...state.active,
-          NAME: payload.newName,
-          DRAFT_NAME: payload.newName,
+          name: payload.newName,
+          draft_name: payload.newName,
         },
         selected: {
           ...state.active,
-          NAME: payload.newName,
-          DRAFT_NAME: payload.newName,
+          name: payload.newName,
+          draft_name: payload.newName,
         },
       } as PagesState;
     },
     addTagToPage: (state, { payload }): PagesState => {
       const { item, tag } = payload;
 
-      let updatedTags = [...item.TAGS, tag.ID];
+      let updatedTags = [...item.TAGS, tag.id];
       updatedTags.sort((a, b) => (a > b ? 1 : -1));
 
       return {
@@ -219,8 +219,8 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === item.PAGE_ID &&
-              !page.TAGS.includes(tag.ID) && {
+            ...(page.page_id === item.page_id &&
+              !page.TAGS.includes(tag.id) && {
                 TAGS: updatedTags,
               }),
           };
@@ -228,7 +228,7 @@ const pagesSlice = createSlice({
         ...(state.selected && {
           selected: {
             ...state.selected,
-            ...(!state.selected.TAGS.includes(tag.ID) && {
+            ...(!state.selected.TAGS.includes(tag.id) && {
               TAGS: updatedTags,
             }),
           },
@@ -236,7 +236,7 @@ const pagesSlice = createSlice({
         ...(state.selected && {
           active: {
             ...state.selected,
-            ...(!state.selected.TAGS.includes(tag.ID) && {
+            ...(!state.selected.TAGS.includes(tag.id) && {
               TAGS: updatedTags,
             }),
           },
@@ -247,14 +247,14 @@ const pagesSlice = createSlice({
       const { item, tag } = payload;
 
       const removeTag = (page: PageState, tag: TagState) =>
-        page.TAGS.filter((innerTag) => innerTag !== tag.ID);
+        page.TAGS.filter((innerTag) => innerTag !== tag.id);
 
       return {
         ...state,
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === item.PAGE_ID && {
+            ...(page.page_id === item.page_id && {
               TAGS: removeTag(page, tag),
             }),
           };
@@ -262,7 +262,7 @@ const pagesSlice = createSlice({
         ...(state.active && {
           active: {
             ...state.active,
-            ...(state.active.PAGE_ID === item.PAGE_ID && {
+            ...(state.active.page_id === item.page_id && {
               TAGS: removeTag(state.active, tag),
             }),
           },
@@ -270,7 +270,7 @@ const pagesSlice = createSlice({
         ...(state.selected && {
           selected: {
             ...state.selected,
-            ...(state.selected.PAGE_ID === item.PAGE_ID && {
+            ...(state.selected.page_id === item.page_id && {
               TAGS: removeTag(state.selected, tag),
             }),
           },
@@ -281,7 +281,7 @@ const pagesSlice = createSlice({
       const updatedPages = state.list.map((page) => {
         return {
           ...page,
-          ...(page.PAGE_ID === payload?.PAGE_ID && { OPEN: false, SELECTED: false }),
+          ...(page.page_id === payload?.page_id && { OPEN: false, SELECTED: false }),
         };
       });
 
@@ -292,7 +292,7 @@ const pagesSlice = createSlice({
         list: updatedPages.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === openPages[0]?.PAGE_ID && {
+            ...(page.page_id === openPages[0]?.page_id && {
               SELECTED: true,
               ACTIVE: true,
             }),
@@ -313,12 +313,12 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === affectedPage.PAGE_ID && { DRAFT_NAME: draftTitle }),
+            ...(page.page_id === affectedPage.page_id && { draft_name: draftTitle }),
           };
         }),
         active: {
           ...state.active,
-          DRAFT_NAME: draftTitle,
+          draft_name: draftTitle,
         },
       } as PagesState;
     },
@@ -330,12 +330,12 @@ const pagesSlice = createSlice({
         list: state.list.map((page) => {
           return {
             ...page,
-            ...(page.PAGE_ID === affectedPage.PAGE_ID && { DRAFT_BODY: draftBody }),
+            ...(page.page_id === affectedPage.page_id && { draft_body: draftBody }),
           };
         }),
         active: {
           ...state.active,
-          DRAFT_BODY: draftBody,
+          draft_body: draftBody,
         },
       } as PagesState;
     },
@@ -344,7 +344,7 @@ const pagesSlice = createSlice({
         ...state,
         untitledPage: {
           ...state.untitledPage,
-          BODY: payload,
+          body: payload,
           IS_INITIAL: false,
         },
       };
@@ -354,7 +354,7 @@ const pagesSlice = createSlice({
         ...state,
         untitledPage: {
           ...state.untitledPage,
-          NAME: payload,
+          name: payload,
           // IS_INITIAL: false,
         },
       };
@@ -364,8 +364,8 @@ const pagesSlice = createSlice({
         ...state,
         untitledPage: {
           ...state.untitledPage,
-          NAME: "",
-          BODY: '',
+          name: "",
+          body: '',
           IS_INITIAL: true,
         },
       };
@@ -378,7 +378,7 @@ const pagesSlice = createSlice({
         list: state.list.map((innerPage) => {
           return {
             ...innerPage,
-            ...(innerPage.PAGE_ID === page.PAGE_ID && { IS_FAVORITE: favoriteStatus }),
+            ...(innerPage.page_id === page.page_id && { IS_FAVORITE: favoriteStatus }),
           };
         }),
       };

@@ -176,15 +176,15 @@ const Home = () => {
   async function editPage() {
     try {
       if (titleTooLong && bodyTooLong) {
-        alert(
+        console.error(
           "Your title and body are too long (Title Max: 1000 characters, Body Max: 10000 characters)"
         );
         return;
       } else if (titleTooLong) {
-        alert("Your title is too long (Max 1000 characters)");
+        console.error("Your title is too long (Max 1000 characters)");
         return;
       } else if (bodyTooLong) {
-        alert("Your text body is too long (Max 10000 characters)");
+        console.error("Your text body is too long (Max 10000 characters)");
         return;
       }
 
@@ -196,9 +196,9 @@ const Home = () => {
           "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify({
-          pageId: pages.active?.PAGE_ID,
-          name: pages.active?.DRAFT_NAME,
-          body: pages.active?.DRAFT_BODY,
+          pageId: pages.active?.page_id,
+          name: pages.active?.draft_name,
+          body: pages.active?.draft_body,
         }),
       });
 
@@ -230,18 +230,18 @@ const Home = () => {
     e?.preventDefault();
     if (bodyTooLong || titleTooLong) {
       if (titleTooLong) {
-        alert("Your title is too long (Max 1000 characters)");
+        console.error("Your title is too long (Max 1000 characters)");
       } else if (bodyTooLong) {
-        alert("Your text body is too long (Max 10000 characters)");
+        console.error("Your text body is too long (Max 10000 characters)");
       } else {
-        alert(
+        console.error(
           "Your title and body are too long (Title Max: 1000 characters, Body Max: 10000 characters)"
         );
       }
       return;
     }
 
-    if (!pages.untitledPage.NAME) {
+    if (!pages.untitledPage.name) {
       bodyFieldRef.current?.blur();
       titleFieldRef.current?.focus();
       clearTimeout(noTitleWarningTimeout);
@@ -263,8 +263,8 @@ const Home = () => {
         },
         body: JSON.stringify({
           parentFolderId: null,
-          newPageName: pages.untitledPage.NAME.trim(),
-          newPageBody: pages.untitledPage.BODY.trim() || "",
+          newPageName: pages.untitledPage.name.trim(),
+          newPageBody: pages.untitledPage.body.trim() || "",
         }),
       });
 
@@ -357,13 +357,13 @@ const Home = () => {
 
     function getParentFolder(folderId: number | null) {
       if (!folderId) return;
-      let parent = folders.list?.find((folder: FolderState) => folder.ID === folderId);
+      let parent = folders.list?.find((folder: FolderState) => folder.id === folderId);
       if (!parent) return;
       parentFolders.unshift(parent);
-      getParentFolder(parent.PARENT_FOLDER_ID);
+      getParentFolder(parent.parent_folder_id);
     }
 
-    getParentFolder(page.FOLDER_ID);
+    getParentFolder(page.folder_id);
 
     return parentFolders;
   }
@@ -385,16 +385,16 @@ const Home = () => {
 
   useEffect(() => {
     let newName = "";
-    if (pages.active?.NAME) {
-      newName = pages.active?.NAME;
-    } else if (pages.active?.NAME) {
-      newName = pages.active?.NAME;
+    if (pages.active?.name) {
+      newName = pages.active?.name;
+    } else if (pages.active?.name) {
+      newName = pages.active?.name;
     }
 
     return () => {
-      if (pages.active?.IS_MODIFIED) dispatch(toggleModal("unsavedWarning"));
+      if (pages.active?.is_modified) dispatch(toggleModal("unsavedWarning"));
     };
-  }, [pages.active?.PAGE_ID]);
+  }, [pages.active?.page_id]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -406,8 +406,8 @@ const Home = () => {
       }
 
       const isModified =
-        pages.active.DRAFT_BODY !== pages.active?.BODY ||
-        pages.active.DRAFT_NAME !== pages.active?.NAME;
+        pages.active.draft_body !== pages.active?.body ||
+        pages.active.draft_name !== pages.active?.name;
 
       dispatch(setPageModified(isModified));
     }
@@ -416,26 +416,26 @@ const Home = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [
-    pages.active?.DRAFT_NAME,
-    pages.active?.DRAFT_BODY,
-    pages.untitledPage.BODY,
-    pages.untitledPage.NAME,
+    pages.active?.draft_name,
+    pages.active?.draft_body,
+    pages.untitledPage.body,
+    pages.untitledPage.name,
   ]);
 
   let activePageModified =
-    pages.active?.BODY !== pages.active?.DRAFT_BODY ||
-    pages.active?.NAME !== pages.active?.DRAFT_NAME;
+    pages.active?.body !== pages.active?.draft_body ||
+    pages.active?.name !== pages.active?.draft_name;
   let unsavedPageModified =
-    pages.untitledPage.NAME !== "" ||
-    (pages.untitledPage.NAME !== "" && pages.untitledPage.BODY !== "");
+    pages.untitledPage.name !== "" ||
+    (pages.untitledPage.name !== "" && pages.untitledPage.body !== "");
 
   let savedStatus = "Up to date";
 
-  if (activePageModified && pages.active?.MODIFIED_DTTM) {
+  if (activePageModified && pages.active?.modified_dttm) {
     savedStatus = `You have unsaved changes, last saved ${getElapsedTime(
-      pages.active?.MODIFIED_DTTM
+      pages.active?.modified_dttm
     )}`;
-  } else if (activePageModified && !pages.active?.MODIFIED_DTTM) {
+  } else if (activePageModified && !pages.active?.modified_dttm) {
     savedStatus = "You have unsaved changes";
   }
 
@@ -498,7 +498,7 @@ const Home = () => {
             )}
             <div
               className={`status-indicator ${
-                pages.untitledPage.NAME !== "" || pages.untitledPage.BODY !== ""
+                pages.untitledPage.name !== "" || pages.untitledPage.body !== ""
                   ? "unsaved"
                   : "saved"
               }`}
@@ -507,7 +507,7 @@ const Home = () => {
             <input
               type="text"
               placeholder="Title / Topic"
-              value={pages.untitledPage.NAME}
+              value={pages.untitledPage.name}
               spellCheck="false"
               required
               maxLength={1000}
@@ -525,7 +525,7 @@ const Home = () => {
 
           <textarea
             placeholder="Body"
-            value={pages.untitledPage.BODY}
+            value={pages.untitledPage.body}
             spellCheck="false"
             maxLength={10000}
             onChange={(e) => handleBodyChange(e, true)}
@@ -552,7 +552,7 @@ const Home = () => {
             <input
               type="text"
               placeholder="Title / Topic"
-              value={pages.active?.DRAFT_NAME}
+              value={pages.active?.draft_name}
               spellCheck="false"
               required
               onChange={(e) => handleTitleChange(e, false)}
@@ -568,7 +568,7 @@ const Home = () => {
 
           <textarea
             placeholder="Body"
-            value={pages.active?.DRAFT_BODY}
+            value={pages.active?.draft_body}
             spellCheck="false"
             onChange={(e) => handleBodyChange(e, false)}
             ref={bodyFieldRef}
@@ -581,7 +581,7 @@ const Home = () => {
             /&nbsp;
             {determinePath(pages.active).map((folder: FolderState, i: number) => (
               <div className="folder-name-and-divider" key={i}>
-                <p>{folder.NAME}</p>
+                <p>{folder.name}</p>
                 <span className="path-divider">&nbsp;/&nbsp;</span>
               </div>
             ))}
@@ -592,7 +592,7 @@ const Home = () => {
             )}
             <div className="current-page">
               <PageIcon />
-              <p>{pages.active?.NAME}</p>
+              <p>{pages.active?.name}</p>
             </div>
           </div>
         </form>

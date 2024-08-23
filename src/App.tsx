@@ -28,7 +28,7 @@ function App() {
     document.body.dataset.theme = theme;
   }, [theme]);
 
-  // alert(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
+  // console.error(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
 
   // if (
   //   browser?.name === "safari" ||

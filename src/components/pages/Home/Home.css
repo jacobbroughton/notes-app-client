@@ -13,7 +13,7 @@
 
 .loading-view .loader {
   margin-bottom: 5px;
-  align-self: flex-start;
+  align-self: flex-start !important;
 }
 
 .loading-view .error {
@@ -260,19 +260,19 @@
   border-radius: 3px;
   appearance: none;
   color: white;
-  transition: 0.1s ease background-color, 0.1s ease color;
+  transition: 0.1s ease background-color, 0.1s ease color, 0.1s ease border-color;
 }
 
 .home-view .save-button:not(:disabled) {
   background-color: #03c04a;
+  cursor: pointer;
 }
 
 .home-view .save-button:disabled {
   color: var(--tertiary-bg);
-  background-color: transparent;
-  border: 1px solid var(--tertiary-bg);
+  background-color: white;
+  border-color: var(--tertiary-bg);
   text-shadow: none;
-  box-shadow: none;
   cursor: not-allowed;
 }
 

@@ -54,10 +54,10 @@ const ItemListItem = ({
   async function handleRenameSubmit(e: React.FormEvent, item: ItemState) {
     e.preventDefault();
     try {
-      if (item.IS_PAGE) {
+      if (item.is_page) {
         const pageInfo = {
           newName: (e.target as HTMLFormElement).newName.value,
-          pageId: item.PAGE_ID,
+          pageId: item.page_id,
         };
 
         const response = await fetch(`${getApiUrl()}/pages/rename/`, {
@@ -80,7 +80,7 @@ const ItemListItem = ({
       } else {
         const folderInfo = {
           newName: (e.target as HTMLFormElement).newName.value,
-          folderId: item.ID,
+          folderId: item.id,
         };
 
         const response = await fetch(`${getApiUrl()}/folders/rename/`, {
@@ -106,9 +106,9 @@ const ItemListItem = ({
       renameInputRef.current?.blur();
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -130,7 +130,7 @@ const ItemListItem = ({
   function determineFolderContainerClass(itemFromList: ItemState) {
     let className = "folder-container";
 
-    if (!sidebar.dragToggled || sidebar.inputPosition.referenceId !== itemFromList.ID) {
+    if (!sidebar.dragToggled || sidebar.inputPosition.referenceId !== itemFromList.id) {
       className += " hoverable";
     }
 
@@ -148,18 +148,18 @@ const ItemListItem = ({
 
     if (
       sidebar.draggedOverItem &&
-      (sidebar.draggedOverItem?.ID === itemFromList?.ID ||
-        (sidebar.draggedOverItem?.ID === itemFromList?.FOLDER_ID &&
-          itemFromList.FOLDER_ID !== null))
+      (sidebar.draggedOverItem?.id === itemFromList?.id ||
+        (sidebar.draggedOverItem?.id === itemFromList?.folder_id &&
+          itemFromList.folder_id !== null))
     ) {
       if (
-        itemFromList.IS_PAGE &&
-        itemFromList.FOLDER_ID !== sidebar.grabbedItem?.FOLDER_ID
+        itemFromList.is_page &&
+        itemFromList.folder_id !== sidebar.grabbedItem?.folder_id
       ) {
         className += " under-drag";
       }
 
-      if (!itemFromList.IS_PAGE && itemFromList.ID !== sidebar.grabbedItem?.FOLDER_ID) {
+      if (!itemFromList.is_page && itemFromList.id !== sidebar.grabbedItem?.folder_id) {
         className += " under-drag";
       }
     }
@@ -186,23 +186,23 @@ const ItemListItem = ({
           list: combined,
         })
       );
-      if (!item.IS_PAGE) handleFolderClick(item, true);
-      if (item.IS_PAGE) handlePageClick(item);
+      if (!item.is_page) handleFolderClick(item, true);
+      if (item.is_page) handlePageClick(item);
     }
   }
 
   return (
     <div
-      draggable={item.IS_PAGE}
-      title={`${item.IS_PAGE ? "Page: " : "Folder: "} ${item.NAME}`}
+      draggable={item.is_page}
+      title={`${item.is_page ? "Page: " : "Folder: "} ${item.name}`}
       onDragStart={() => handleDragStart(item)}
       onDragEnter={(e) => handleDragEnter(e, item)}
       onDrop={(e) => handleDrop(e, sidebar.grabbedItem, item)}
       onDragOver={(e) => e.preventDefault()}
-      onDoubleClick={(e) => (item.IS_PAGE ? handleRename(e, item) : null)}
+      onDoubleClick={(e) => (item.is_page ? handleRename(e, item) : null)}
       className={determineFolderContainerClass(item)}
       style={{
-        ...(sidebar.inputPosition.referenceId === item.ID &&
+        ...(sidebar.inputPosition.referenceId === item.id &&
           sidebar.inputPosition.toggled && { overflow: "visible" }),
       }}
       key={index}
@@ -222,13 +222,13 @@ const ItemListItem = ({
       >
         <div className="name-and-caret">
           <div className="caret-container">
-            {!item.IS_PAGE && (
+            {!item.is_page && (
               <Caret direction={item.EXPANDED_STATUS ? "down" : "right"} />
             )}
-            {item.IS_PAGE && <PageIcon />}
+            {item.is_page && <PageIcon />}
           </div>
           {sidebar.renameInputToggled &&
-          sidebar.inputPosition.referenceId === (item.PAGE_ID || item.ID) ? (
+          sidebar.inputPosition.referenceId === (item.page_id || item.id) ? (
             <form onSubmit={(e) => handleRenameSubmit(e, item)}>
               <input
                 value={sidebar.newNameForRename}
@@ -241,13 +241,13 @@ const ItemListItem = ({
               />
             </form>
           ) : (
-            <p>{item.NAME}</p>
+            <p>{item.name}</p>
           )}
         </div>
         {item.TAGS && tags.list && (
           <div className="tags">
             {item.TAGS.map((tagId, index) => {
-              const tag = tags.list?.find((tag) => tag.ID === tagId);
+              const tag = tags.list?.find((tag) => tag.id === tagId);
 
               if (!tag)
                 return (
@@ -266,7 +266,7 @@ const ItemListItem = ({
                   className="tag-color"
                   style={{ backgroundColor: tag.COLOR_CODE }}
                   key={index}
-                  title={tag.NAME}
+                  title={tag.name}
                 >
                   &nbsp;
                 </span>
@@ -275,7 +275,7 @@ const ItemListItem = ({
           </div>
         )}
       </div>
-      {sidebar.inputPosition.referenceId === item.ID && sidebar.inputPosition.toggled && (
+      {sidebar.inputPosition.referenceId === item.id && sidebar.inputPosition.toggled && (
         <form
           onSubmit={(e) => {
             if (sidebar.inputPosition.forFolder) {

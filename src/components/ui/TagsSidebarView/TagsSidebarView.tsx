@@ -19,7 +19,7 @@ const TagsSidebarView = () => {
   const [newTagColor, setNewTagColor] = useState<ColorState | null>(null);
   const [newTagName, setNewTagName] = useState<string>("");
   const [updatedTagColor, setUpdatedTagColor] = useState<ColorState | null>(null);
-  const [updatedTagName, setUpdatedTagName] = useState<string>(tags.selected?.NAME || "");
+  const [updatedTagName, setUpdatedTagName] = useState<string>(tags.selected?.name || "");
   const [deleteWarningToggled, setDeleteWarningToggled] = useState<boolean>(false);
 
   function determineDefaultColor(tag: TagState): ColorState {
@@ -27,28 +27,28 @@ const TagsSidebarView = () => {
 
     if (tag.HAS_DEFAULT_COLOR) {
       matchingDefaultColor = tags.colorOptions.default.find(
-        (color) => color.ID === tag.COLOR_ID
+        (color) => color.id === tag.color_id
       );
     } else {
       matchingDefaultColor = tags.colorOptions.userCreated.find(
-        (color) => color.ID === tag.COLOR_ID
+        (color) => color.id === tag.color_id
       );
     }
 
     if (matchingDefaultColor) return matchingDefaultColor;
     return {
-      ID: -1,
+      id: -1,
       COLOR_CODE: "#000000",
-      EFF_STATUS: 1,
-      CREATED_DTTM: `${new Date()}`,
-      MODIFIED_DTTM: "",
+      eff_status: 1,
+      created_dttm: `${new Date()}`,
+      modified_dttm: "",
       IS_DEFAULT_COLOR: 1,
     };
   }
 
   function handleTagClick(tag: TagState) {
     dispatch(selectTag(tag));
-    setUpdatedTagName(tag.NAME);
+    setUpdatedTagName(tag.name);
     setUpdatedTagColor(determineDefaultColor(tag));
   }
 
@@ -109,9 +109,9 @@ const TagsSidebarView = () => {
       dispatch(deselectTag());
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -153,9 +153,9 @@ const TagsSidebarView = () => {
       dispatch(setNewTagFormToggled(false));
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -187,9 +187,9 @@ const TagsSidebarView = () => {
       setDeleteWarningToggled(false);
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -212,14 +212,14 @@ const TagsSidebarView = () => {
           </form>
           {tags.list.length === 0 && <p className="no-tags-found">No tags found</p>}
           {tags.list
-            ?.filter((tag) => tag.NAME.includes(tagSearchValue))
+            ?.filter((tag) => tag.name.includes(tagSearchValue))
             .map((tag, i) => {
               return (
                 <button
                   onClick={() => handleTagClick(tag)}
                   className={`tag-button ${tag.SELECTED ? "selected" : ""}`}
                   key={i}
-                  title={`Tag: ${tag.NAME}`}
+                  title={`Tag: ${tag.name}`}
                 >
                   <span
                     className="color-span"
@@ -228,7 +228,7 @@ const TagsSidebarView = () => {
                   >
                     &nbsp;
                   </span>
-                  <p>{tag.NAME}</p>
+                  <p>{tag.name}</p>
                 </button>
               );
             })}
@@ -307,10 +307,10 @@ const TagsSidebarView = () => {
             </button>
             <button
               onClick={() =>
-                handleTagEdit(updatedTagName, updatedTagColor, tags.selected?.ID!)
+                handleTagEdit(updatedTagName, updatedTagColor, tags.selected?.id!)
               }
               disabled={
-                (updatedTagName === tags.selected?.NAME &&
+                (updatedTagName === tags.selected?.name &&
                   updatedTagColor?.COLOR_CODE === tags.selected?.COLOR_CODE) ||
                 !isValidTagName(updatedTagName, false) ||
                 !isValidColor(updatedTagColor?.COLOR_CODE)
@@ -348,10 +348,10 @@ const TagsSidebarView = () => {
               )}
             </div>
           </form>
-          <Tag name={tags.selected.NAME} color={determineDefaultColor(tags.selected)} />
+          <Tag name={tags.selected.name} color={determineDefaultColor(tags.selected)} />
 
           <DownArrow />
-          {updatedTagName !== tags.selected.NAME ||
+          {updatedTagName !== tags.selected.name ||
           updatedTagColor?.COLOR_CODE !==
             determineDefaultColor(tags.selected)?.COLOR_CODE ? (
             <Tag
@@ -383,7 +383,7 @@ const TagsSidebarView = () => {
             <div className="are-you-sure-container">
               <p>Are you sure?</p>
               <button
-                onClick={() => handleTagDelete(tags.selected!.ID)}
+                onClick={() => handleTagDelete(tags.selected!.id)}
                 className="confirm"
               >
                 Yes

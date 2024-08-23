@@ -118,8 +118,8 @@ const sidebarSlice = createSlice({
       return {
         ...state,
         draggedOverItem: {
-          ID: payload.ID,
-          PAGE_ID: payload.PAGE_ID,
+          id: payload.id,
+          page_id: payload.page_id,
         },
       };
     },

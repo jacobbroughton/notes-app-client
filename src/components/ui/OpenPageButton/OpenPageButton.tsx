@@ -20,14 +20,14 @@ const OpenPageButton = ({ page }: { page: PageState | null }) => {
     return (
       <button className={`page-button untitled active`}>
         <p>Untitled</p>
-        {(pages.untitledPage.NAME !== "" ||
-          pages.untitledPage.BODY !== "") /*// TODO -  this was emptyEditor state */ && (
+        {(pages.untitledPage.name !== "" ||
+          pages.untitledPage.body !== "") /*// TODO -  this was emptyEditor state */ && (
           <span className="unsaved-circle">&nbsp;</span>
         )}
       </button>
     );
 
-  const unsaved = page.DRAFT_NAME !== page.NAME || page.DRAFT_BODY !== page.BODY;
+  const unsaved = page.draft_name !== page.name || page.draft_body !== page.body;
 
   function handleXButtonClick(e: MouseEvent, unsaved: boolean) {
     e.stopPropagation();
@@ -42,11 +42,11 @@ const OpenPageButton = ({ page }: { page: PageState | null }) => {
   return (
     <div
       className={`page-button ${
-        pages.active?.PAGE_ID === page?.PAGE_ID ? "active" : ""
+        pages.active?.page_id === page?.page_id ? "active" : ""
       } ${unsaved ? "unsaved" : ""}`}
       onClick={() => dispatch(selectPage(page))}
     >
-      <p>{page.NAME}</p>
+      <p>{page.name}</p>
       <button className="x-button" onClick={(e) => handleXButtonClick(e, unsaved)}>
         <XIcon />
         {unsaved && <span className="unsaved-circle">&nbsp;</span>}

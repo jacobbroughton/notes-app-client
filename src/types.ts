@@ -1,66 +1,66 @@
 export type FolderState = {
-  ID: number;
-  PARENT_FOLDER_ID: number | null;
-  NAME: string;
-  EFF_STATUS: number;
+  id: number;
+  parent_folder_id: number | null;
+  name: string;
+  eff_status: number;
   TAGS: Array<number>;
   TIER: number;
   ORDER: number;
   VISIBLE: boolean;
   SELECTED: boolean;
-  IS_PAGE: boolean;
+  is_page: boolean;
   EXPANDED_STATUS: boolean;
-  CREATED_DTTM: string;
-  MODIFIED_DTTM: string | null;
-  CREATED_BY_ID: number;
-  MODIFIED_BY_ID: number | null;
+  created_dttm: string;
+  modified_dttm: string | null;
+  created_by_id: number;
+  modified_by_id: number | null;
 };
 
 export type TagState = {
-  ID: number;
-  NAME: string;
-  COLOR_ID: number;
+  id: number;
+  name: string;
+  color_id: number;
   HAS_DEFAULT_COLOR: boolean;
-  EFF_STATUS: number;
-  CREATED_DTTM: string;
-  MODIFIED_DTTM: string | null;
-  CREATED_BY_ID: number;
-  MODIFIED_BY_ID: number | null;
+  eff_status: number;
+  created_dttm: string;
+  modified_dttm: string | null;
+  created_by_id: number;
+  modified_by_id: number | null;
   COLOR_CODE: string;
   SELECTED: boolean;
 };
 
 export type UntitledPageState = {
-  NAME: string;
-  BODY: string;
+  name: string;
+  body: string;
   IS_UNTITLED: boolean;
   IS_INITIAL: boolean;
 };
 
 export type PageState = {
-  ID: number | null;
-  PAGE_ID: number;
-  FOLDER_ID: number | null;
-  NAME: string;
+  id: number | null;
+  page_id: number;
+  folder_id: number | null;
+  name: string;
   TITLE: string;
-  BODY: string;
+  body: string;
   IS_FAVORITE: boolean;
-  EFF_STATUS: number;
-  CREATED_DTTM: string;
-  MODIFIED_DTTM: string | null;
-  CREATED_BY_ID: number;
-  MODIFIED_BY_ID: number | null;
+  eff_status: number;
+  created_dttm: string;
+  modified_dttm: string | null;
+  created_by_id: number;
+  modified_by_id: number | null;
   TAGS: Array<number>;
-  IS_PAGE: boolean;
+  is_page: boolean;
   TIER: number;
   VISIBLE: boolean;
   SELECTED: boolean;
   DRAFT_TITLE: string;
-  DRAFT_NAME: string;
-  DRAFT_BODY: string;
+  draft_name: string;
+  draft_body: string;
   OPEN: boolean;
   ACTIVE: boolean;
-  IS_MODIFIED: boolean;
+  is_modified: boolean;
   IS_UNTITLED: boolean;
 };
 
@@ -78,8 +78,8 @@ export type PagesState = {
   stagedToSwitch: PageState | null;
   stagedToDelete: PageState | null;
   untitledPage: {
-    NAME: string;
-    BODY: string;
+    name: string;
+    body: string;
     IS_UNTITLED: boolean;
     IS_INITIAL: boolean;
   };
@@ -95,21 +95,21 @@ export type TagsState = {
 };
 
 export type SidebarItemState = {
-  ID: number | null;
-  PAGE_ID: number | null;
-  PARENT_FOLDER_ID: number | null;
-  NAME: string;
-  EFF_STATUS: number;
-  CREATED_DTTM: string;
-  MODIFIED_DTTM: string | null;
-  CREATED_BY_ID: number;
-  MODIFIED_BY_ID: number | null;
+  id: number | null;
+  page_id: number | null;
+  parent_folder_id: number | null;
+  name: string;
+  eff_status: number;
+  created_dttm: string;
+  modified_dttm: string | null;
+  created_by_id: number;
+  modified_by_id: number | null;
   TAGS: Array<number>;
   TIER: number;
   ORDER: number;
   VISIBLE: boolean;
   SELECTED: boolean;
-  IS_PAGE: boolean;
+  is_page: boolean;
 };
 
 export type ModalsState = {
@@ -119,21 +119,21 @@ export type ModalsState = {
 };
 
 export type UserState = {
-  ID: number;
+  id: number;
   USERNAME: string;
   ADMIN: boolean;
   HASH: string;
   SALT: string;
-  CREATED_DTTM: string;
-  MODIFIED_DTTM: string | null;
+  created_dttm: string;
+  modified_dttm: string | null;
 };
 
 export type ColorState = {
-  ID: number;
+  id: number;
   COLOR_CODE: string;
-  EFF_STATUS: number;
-  CREATED_DTTM: string;
-  MODIFIED_DTTM: string;
+  eff_status: number;
+  created_dttm: string;
+  modified_dttm: string;
   IS_DEFAULT_COLOR: number;
 };
 
@@ -150,32 +150,32 @@ export type ContextMenuButton = {
 };
 
 export type ItemState = {
-  ID: number | null;
-  PAGE_ID: number | null;
-  FOLDER_ID: number | null;
-  NAME: string;
+  id: number | null;
+  page_id: number | null;
+  folder_id: number | null;
+  name: string;
   TITLE: string | null;
-  BODY: string | null;
+  body: string | null;
   IS_FAVORITE: boolean;
-  EFF_STATUS: number;
-  CREATED_DTTM: string;
-  MODIFIED_DTTM: string | null;
-  CREATED_BY_ID: number;
-  MODIFIED_BY_ID: number | null;
-  IS_MODIFIED: boolean | null;
+  eff_status: number;
+  created_dttm: string;
+  modified_dttm: string | null;
+  created_by_id: number;
+  modified_by_id: number | null;
+  is_modified: boolean | null;
   EXPANDED_STATUS: boolean;
   TAGS: Array<number>;
-  IS_PAGE: boolean;
+  is_page: boolean;
   TIER: number;
   VISIBLE: boolean;
   SELECTED: boolean;
   DRAFT_TITLE: string | null;
-  DRAFT_NAME: string | null;
-  DRAFT_BODY: string;
+  draft_name: string | null;
+  draft_body: string;
   OPEN: boolean;
   ACTIVE: boolean;
   ORDER: number;
-  PARENT_FOLDER_ID: number | null;
+  parent_folder_id: number | null;
 };
 
 export type SidebarState = {
@@ -198,8 +198,8 @@ export type SidebarState = {
   newTagFormToggled: boolean;
   dragToggled: boolean;
   draggedOverItem: {
-    ID: number;
-    PAGE_ID: number | undefined;
+    id: number;
+    page_id: number | undefined;
   } | null;
   grabbedItem: ItemState | null;
   inputPosition: {

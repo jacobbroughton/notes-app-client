@@ -35,8 +35,8 @@ const tagsSlice = createSlice({
         list: state.list.map((tag) => {
           return {
             ...tag,
-            ...(tag.ID === payload.ID && { SELECTED: true }),
-            ...(tag.ID !== payload.ID && tag.SELECTED && { SELECTED: false }),
+            ...(tag.id === payload.id && { SELECTED: true }),
+            ...(tag.id !== payload.id && tag.SELECTED && { SELECTED: false }),
           };
         }),
         selected: payload,
@@ -60,10 +60,10 @@ const tagsSlice = createSlice({
         list: state.list.map((tag) => {
           return {
             ...tag,
-            ...(tag.ID === payload.id && {
+            ...(tag.id === payload.id && {
               COLOR_CODE: payload.color.COLOR_CODE,
-              COLOR_ID: payload.color.ID,
-              NAME: payload.name,
+              color_id: payload.color.id,
+              name: payload.name,
             }),
           };
         }),
@@ -73,7 +73,7 @@ const tagsSlice = createSlice({
       return {
         ...state,
         list: state.list.filter((tag) => {
-          return tag.ID !== payload.id;
+          return tag.id !== payload.id;
         }),
       };
     },

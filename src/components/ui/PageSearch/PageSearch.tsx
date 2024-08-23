@@ -16,7 +16,7 @@ const PageSearch = () => {
     dispatch(selectPage(page));
   }
   let searchResults = pages.list.filter(
-    (page: PageState) => page.EFF_STATUS && page.BODY.includes(sidebar.searchValue)
+    (page: PageState) => page.eff_status && page.body.includes(sidebar.searchValue)
   );
 
   return (
@@ -34,7 +34,7 @@ const PageSearch = () => {
       )}
       {sidebar.searchValue !== "" &&
         searchResults.map((page, i) => {
-          let body = page.BODY;
+          let body = page.body;
 
           type MatchingCharacter = {
             startingIndex: number;
@@ -101,7 +101,7 @@ const PageSearch = () => {
                   <div className="caret-container">
                     &nbsp; <PageIcon />
                   </div>
-                  <p>{page.NAME}</p>
+                  <p>{page.name}</p>
                 </div>
               </div>
               <div className="matching-body-examples">
