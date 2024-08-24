@@ -20,8 +20,8 @@ function App() {
   const user = useSelector((state: RootState) => state.user);
   const theme = useSelector((state: RootState) => state.theme);
   const windowSize = useWindowSize();
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
@@ -50,24 +50,28 @@ function App() {
 
   async function getUser() {
     // setLoading(true)
-    const response = await fetch(`${getApiUrl()}/`, {
-      method: "GET",
-      credentials: "include",
-      headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
-    });
+    try {
+      const response = await fetch(`${getApiUrl()}/`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!data.user) navigate("/login");
-    if (data.user && !user) {
-      dispatch(setUser(data.user));
-      // setLoading(false);
+      if (!data.user) navigate("/login");
+      if (data.user && !user) {
+        dispatch(setUser(data.user));
+        // setLoading(false);
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
   useEffect(() => {
-    getUser()
-  }, [])
+    getUser();
+  }, []);
 
   return (
     <div className="App">
@@ -78,7 +82,6 @@ function App() {
           marginLeft: `${determineMarginLeft(user)}px`,
         }}
       >
-
         <Routes>
           <Route element={<Home />} path="/" />
           <Route element={<AuthenticatedRoutes />}>
