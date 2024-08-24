@@ -47,15 +47,15 @@ export function DeleteModal() {
       data.deletedFolders.forEach((folderId: number) => {
         dispatch(setFolderEffStatus(folderId));
         pages.list.forEach((page: PageState) => {
-          if (page.FOLDER_ID === folderId) dispatch(setPageEffStatus(page.PAGE_ID));
+          if (page.folder_id === folderId) dispatch(setPageEffStatus(page.PAGE_ID));
         });
       });
       dispatch(toggleModal("deleteModal"));
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -81,9 +81,9 @@ export function DeleteModal() {
       dispatch(toggleModal("deleteModal"));
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -91,9 +91,9 @@ export function DeleteModal() {
   async function deleteMultiple(items: Array<SidebarItemState>) {
     try {
       const selectionIncludesFolders =
-        items.filter((item: SidebarItemState) => !item.IS_PAGE).length !== 0;
+        items.filter((item: SidebarItemState) => !item.is_page).length !== 0;
       const selectionIncludesPages =
-        items.filter((item: SidebarItemState) => item.IS_PAGE).length !== 0;
+        items.filter((item: SidebarItemState) => item.is_page).length !== 0;
 
       if (selectionIncludesFolders) {
         let response = await fetch(`${getApiUrl()}/folders/delete-multiple/`, {
@@ -104,7 +104,7 @@ export function DeleteModal() {
           },
           credentials: "include",
           body: JSON.stringify({
-            folders: items.filter((item: SidebarItemState) => !item.IS_PAGE),
+            folders: items.filter((item: SidebarItemState) => !item.is_page),
           }),
         });
 
@@ -124,7 +124,7 @@ export function DeleteModal() {
             "Access-Control-Allow-Origin": "http://localhost:3000",
           },
           credentials: "include",
-          body: JSON.stringify({ pages: items.filter((item) => item.IS_PAGE) }),
+          body: JSON.stringify({ pages: items.filter((item) => item.is_page) }),
         });
 
         if (response.status !== 200) throw response.statusText;
@@ -139,9 +139,9 @@ export function DeleteModal() {
       dispatch(toggleModal("deleteModal"));
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -152,7 +152,7 @@ export function DeleteModal() {
     } else if (pages.stagedToDelete) {
       deletePage(pages.stagedToDelete.PAGE_ID);
     } else if (folders.stagedToDelete) {
-      deleteFolder(folders.stagedToDelete.ID);
+      deleteFolder(folders.stagedToDelete.id);
     }
     dispatch(setShiftClickItems({ start: null, end: null, list: [] }));
   }
@@ -171,7 +171,7 @@ export function DeleteModal() {
     if (!itemsToDelete)
       return "There was an error but are you sure you'd like to delete this? If its a folder, you'll also be deleting it's contents.";
 
-    if (itemsToDelete.IS_PAGE) {
+    if (itemsToDelete.is_page) {
       return `Are you sure you want to delete '${itemsToDelete?.NAME}'`;
     } else {
       return `Are you sure you want to delete '${itemsToDelete?.NAME}' and it's contents?`;
@@ -186,7 +186,7 @@ export function DeleteModal() {
           <ul className="items-to-delete-list">
             {sidebar.shiftClickItems.list.map((item, index) => (
               <li key={index}>
-                {item.IS_PAGE ? <PageIcon /> : ""} {item.NAME}
+                {item.is_page ? <PageIcon /> : ""} {item.NAME}
               </li>
             ))}
           </ul>

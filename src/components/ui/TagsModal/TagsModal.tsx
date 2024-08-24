@@ -70,9 +70,9 @@ const TagsModal = () => {
       setTagSearchValue("");
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -93,7 +93,7 @@ const TagsModal = () => {
         body: JSON.stringify({
           tag,
           item,
-          toggleState: item.TAGS.includes(tag.ID) ? 0 : 1,
+          toggleState: item.TAGS.includes(tag.id) ? 0 : 1,
         }),
       });
 
@@ -103,8 +103,8 @@ const TagsModal = () => {
 
       if (!data) throw "There was an issue parsing /tags/tag-item response";
 
-      if (item.IS_PAGE) {
-        if (item.TAGS.includes(tag.ID)) {
+      if (item.is_page) {
+        if (item.TAGS.includes(tag.id)) {
           dispatch(removeTagFromPage({ item, tag }));
         } else {
           dispatch(addTagToPage({ item, tag }));
@@ -114,23 +114,23 @@ const TagsModal = () => {
 
         function getChildren(folderIdToCheck: number | null) {
           const childPages = pages.list.filter(
-            (page: PageState) => page.FOLDER_ID === folderIdToCheck
+            (page: PageState) => page.folder_id === folderIdToCheck
           );
 
           allChildPages.push(...childPages);
 
           const childrenFolders = folders.list
-            .filter((folder: FolderState) => folder.PARENT_FOLDER_ID === folderIdToCheck)
-            .map((folder: FolderState) => folder.ID);
+            .filter((folder: FolderState) => folder.parent_folder_id === folderIdToCheck)
+            .map((folder: FolderState) => folder.id);
 
           if (childrenFolders.length === 0) return;
 
           childrenFolders.forEach((folderId: number) => getChildren(folderId));
         }
 
-        getChildren(item.ID);
+        getChildren(item.id);
 
-        if (item.TAGS.includes(tag.ID)) {
+        if (item.TAGS.includes(tag.id)) {
           dispatch(removeTagFromFolder({ item, tag }));
 
           if (allChildPages.length > 0) {
@@ -150,9 +150,9 @@ const TagsModal = () => {
       }
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -163,8 +163,8 @@ const TagsModal = () => {
     <>
       <div className="tags-modal" ref={tagsModalRef}>
         <p className="heading">
-          Add tag(s) to {selectedItem.IS_PAGE && "page"} '{selectedItem.NAME}'
-          {!selectedItem.IS_PAGE && " and it's contents"}.
+          Add tag(s) to {selectedItem.is_page && "page"} '{selectedItem.name}'
+          {!selectedItem.is_page && " and it's contents"}.
         </p>
         <form onSubmit={handleTagInputSubmit}>
           <input
@@ -179,8 +179,8 @@ const TagsModal = () => {
             showColorCode={false}
           />
         </form>
-        {tagSearchValue && !tags.list.find((tag) => tag.NAME === tagSearchValue) && (
-          <button className="tag-button" onClick={(e) => alert("nothing else happens")}>
+        {tagSearchValue && !tags.list.find((tag) => tag.name === tagSearchValue) && (
+          <button className="tag-button" onClick={(e) => console.error("nothing else happens")}>
             <span
               className="color-span"
               style={{ backgroundColor: tagColor?.COLOR_CODE }}
@@ -191,12 +191,12 @@ const TagsModal = () => {
           </button>
         )}
         {tags.list
-          ?.filter((tag: TagState) => tag.NAME.includes(tagSearchValue))
+          ?.filter((tag: TagState) => tag.name.includes(tagSearchValue))
           .map((tag: TagState, index: number) => {
             return (
               <button
                 className={`tag-button ${
-                  selectedItem?.TAGS?.includes(tag.ID) ? "added" : ""
+                  selectedItem?.TAGS?.includes(tag.id) ? "added" : ""
                 }`}
                 onClick={(e) => handleTagClick(selectedItem, tag)}
                 key={index}
@@ -205,7 +205,7 @@ const TagsModal = () => {
                 <span className="color-span" style={{ backgroundColor: tag.COLOR_CODE }}>
                   &nbsp;
                 </span>{" "}
-                <p>{tag.NAME}</p>
+                <p>{tag.name}</p>
               </button>
             );
           })}

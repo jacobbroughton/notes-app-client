@@ -60,7 +60,7 @@ const ItemList = ({
     dispatch(selectPage(null));
     dispatch(
       setInputPosition({
-        referenceId: folder.ID,
+        referenceId: folder.id,
         toggled: false,
         forFolder: true,
       })
@@ -72,7 +72,7 @@ const ItemList = ({
     dispatch(selectFolder(null));
     dispatch(
       setInputPosition({
-        referenceId: page.PAGE_ID,
+        referenceId: page.page_id,
         toggled: false,
         forFolder: false,
       })
@@ -83,8 +83,8 @@ const ItemList = ({
     e.preventDefault();
     if (!sidebar.shiftClickItems.end) {
       if (item) {
-        if (!item.IS_PAGE) handleFolderClick(item, false);
-        if (item.IS_PAGE) handlePageClick(item);
+        if (!item.is_page) handleFolderClick(item, false);
+        if (item.is_page) handlePageClick(item);
       } else {
         handleRootClick();
       }
@@ -115,7 +115,7 @@ const ItemList = ({
     droppedOntoItem: SidebarItemState | null
   ) {
     try {
-      if (grabbedItem?.IS_PAGE) {
+      if (grabbedItem?.is_page) {
         dispatch(
           updateParentFolderId({
             folders: folders.list,
@@ -147,35 +147,35 @@ const ItemList = ({
       dispatch(setGrabbedItem(null));
       dispatch(
         setDraggedOverItem({
-          ID: null,
-          PAGE_ID: null,
+          id: null,
+          page_id: null,
         })
       );
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
 
   function handleDragEnter(e: MouseEvent, hoveredOverItem: ItemState | null) {
-    let ID = null;
+    let id = null;
     if (hoveredOverItem) {
-      if (hoveredOverItem.IS_PAGE) {
-        ID = hoveredOverItem.FOLDER_ID;
+      if (hoveredOverItem.is_page) {
+        id = hoveredOverItem.folder_id;
       } else {
-        ID = hoveredOverItem.ID;
+        id = hoveredOverItem.id;
       }
     } else {
-      ID = null;
+      id = null;
     }
 
     dispatch(
       setDraggedOverItem({
-        ID,
-        ...(hoveredOverItem && { PAGE_ID: hoveredOverItem.PAGE_ID }),
+        id,
+        ...(hoveredOverItem && { page_id: hoveredOverItem.page_id }),
       })
     );
   }
@@ -186,19 +186,19 @@ const ItemList = ({
 
   useEffect(() => {
     let pagesAndFolders: Array<FolderState | PageState> = [...folders?.list].filter(
-      (folder) => folder.EFF_STATUS
+      (folder) => folder.eff_status
     );
-    let effFolders = [...folders?.list].filter((folder) => folder.EFF_STATUS);
+    let effFolders = [...folders?.list].filter((folder) => folder.eff_status);
 
     const pagesInRoot = pages.list.filter(
-      (page) => page.FOLDER_ID === null && page.EFF_STATUS
+      (page) => page.folder_id === null && page.eff_status
     );
 
     let indexAfterAddingPages = 1;
 
     effFolders?.forEach((folder, index) => {
       const pagesInFolder = pages.list.filter(
-        (page) => page.FOLDER_ID === folder.ID && page.EFF_STATUS
+        (page) => page.folder_id === folder.id && page.eff_status
       );
 
       if (pagesInFolder.length > 0) {
@@ -220,7 +220,7 @@ const ItemList = ({
     dispatch(setCombined(pagesAndFolders));
   }, [folders.list, pages.list]);
 
-  const favoritesList = pages.list.filter((page) => page.IS_FAVORITE && page.EFF_STATUS);
+  const favoritesList = pages.list.filter((page) => page.IS_FAVORITE && page.eff_status);
 
   const allList = combined?.filter((folder) => folder?.VISIBLE && !folder.IS_FAVORITE);
 
@@ -240,7 +240,7 @@ const ItemList = ({
             TIER: 1,
             EXPANDED_STATUS: false,
             ORDER: favoritesList.length + 1,
-            PARENT_FOLDER_ID: item.FOLDER_ID,
+            parent_folder_id: item.folder_id,
           }}
           handleFolderClick={handleFolderClick}
           handlePageClick={handlePageClick}
@@ -266,11 +266,11 @@ const ItemList = ({
 
       {allList.map((item, index) => {
         let hasChildren =
-          folders.list.filter((innerFolder) => innerFolder.PARENT_FOLDER_ID === item.ID)
+          folders.list.filter((innerFolder) => innerFolder.parent_folder_id === item.id)
             .length !== 0;
 
-        if (!hasChildren && !item.IS_PAGE) {
-          if (pages.list?.find((page) => page.FOLDER_ID === item.ID)) {
+        if (!hasChildren && !item.is_page) {
+          if (pages.list?.find((page) => page.folder_id === item.id)) {
             hasChildren = true;
           }
         }

@@ -11,7 +11,7 @@ export const formatFolders = (
 ) => {
   return updatedFolders?.map((folder: FolderState) => {
     let existingFolderThatMatches = existingFolders?.find(
-      (innerFolder) => innerFolder.ID === folder.ID
+      (innerFolder) => innerFolder.id === folder.id
     );
 
     let existingIdArray: Array<number> = [];
@@ -19,12 +19,12 @@ export const formatFolders = (
     let parentOfNewFolder = null;
 
     if (existingFolders.length !== 0) {
-      existingIdArray = existingFolders.map((innerFolder) => innerFolder.ID);
+      existingIdArray = existingFolders.map((innerFolder) => innerFolder.id);
       newFolder = updatedFolders.find(
-        (innerFolder) => !existingIdArray.includes(innerFolder.ID)
+        (innerFolder) => !existingIdArray.includes(innerFolder.id)
       );
       parentOfNewFolder = existingFolders.find(
-        (innerFolder) => innerFolder.ID === newFolder?.PARENT_FOLDER_ID
+        (innerFolder) => innerFolder.id === newFolder?.parent_folder_id
       );
     }
 
@@ -34,15 +34,15 @@ export const formatFolders = (
 
     const TAGS = folder.TAGS.sort((a: number, b: number) => (a > b ? 1 : -1));
 
-    if (folder.EFF_STATUS) {
+    if (folder.eff_status) {
       if (existingFolders.length === 0) {
-        if (existingFolderThatMatches?.VISIBLE || !folder.PARENT_FOLDER_ID) {
+        if (existingFolderThatMatches?.VISIBLE || !folder.parent_folder_id) {
           VISIBLE = true;
         }
       } else if (
-        (newFolder?.PARENT_FOLDER_ID === null && folder.ID === newFolder.ID) ||
+        (newFolder?.parent_folder_id === null && folder.id === newFolder.id) ||
         (parentOfNewFolder?.EXPANDED_STATUS &&
-          folder.PARENT_FOLDER_ID === parentOfNewFolder.ID)
+          folder.parent_folder_id === parentOfNewFolder.id)
       ) {
         VISIBLE = true;
       }
@@ -63,7 +63,7 @@ export const formatPages = (
   existingPages: Array<PageState> = []
 ) => {
   return pages?.map((page: PageState) => {
-    let pageFolder = formattedFolders.find((folder) => folder.ID === page.FOLDER_ID);
+    let pageFolder = formattedFolders.find((folder) => folder.id === page.folder_id);
 
     let VISIBLE = false;
 
@@ -73,22 +73,22 @@ export const formatPages = (
       }
     }
 
-    if (page.FOLDER_ID === null) VISIBLE = true;
+    if (page.folder_id === null) VISIBLE = true;
 
     const existingPage = existingPages.find(
-      (existingPage) => existingPage.PAGE_ID === page.PAGE_ID
+      (existingPage) => existingPage.page_id === page.page_id
     );
 
     return {
       ...page,
-      IS_PAGE: true,
+      is_page: true,
       TIER: pageFolder ? pageFolder.TIER + 1 : 1,
       VISIBLE,
       SELECTED: page.SELECTED ? page.SELECTED : false,
       DRAFT_TITLE:
         existingPage?.DRAFT_TITLE !== page.TITLE ? page.DRAFT_TITLE : page.TITLE,
-      DRAFT_NAME: existingPage?.DRAFT_NAME !== page.NAME ? page.DRAFT_NAME : page.NAME,
-      DRAFT_BODY: existingPage?.DRAFT_BODY !== page.BODY ? page.DRAFT_BODY : page.BODY,
+      draft_name: existingPage?.draft_name !== page.name ? page.draft_name : page.name,
+      draft_body: existingPage?.draft_body !== page.body ? page.draft_body : page.body,
       OPEN: existingPage?.OPEN ? true : false,
     };
   });

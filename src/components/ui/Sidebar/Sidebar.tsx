@@ -144,9 +144,9 @@ function Sidebar() {
       getData();
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -189,9 +189,9 @@ function Sidebar() {
       getData();
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -199,7 +199,7 @@ function Sidebar() {
   function handleDeleteSingle(e: MouseEvent, item: any) {
     e.stopPropagation();
     dispatch(toggleModal("deleteModal"));
-    if (item.IS_PAGE) {
+    if (item.is_page) {
       dispatch(setStagedPageToDelete(item));
     } else {
       dispatch(setStagedFolderToDelete(item));
@@ -233,7 +233,7 @@ function Sidebar() {
 
     new Promise((resolve) => {
       dispatch(setRenameInputToggled(true));
-      dispatch(setNewNameForRename(item.NAME));
+      dispatch(setNewNameForRename(item.name));
       resetContextMenu();
       resolve("success");
     }).then(() => {
@@ -259,9 +259,9 @@ function Sidebar() {
     let referenceId = 0;
 
     if (folders.selected) {
-      referenceId = folders.selected.ID;
-    } else if (pages.active && pages.active.FOLDER_ID) {
-      referenceId = pages.active.FOLDER_ID;
+      referenceId = folders.selected.id;
+    } else if (pages.active && pages.active.folder_id) {
+      referenceId = pages.active.folder_id;
     }
 
     dispatch(
@@ -280,9 +280,9 @@ function Sidebar() {
     let referenceId = 0;
 
     if (folders.selected) {
-      referenceId = folders.selected.ID;
-    } else if (pages.active && pages.active.FOLDER_ID) {
-      referenceId = pages.active.FOLDER_ID;
+      referenceId = folders.selected.id;
+    } else if (pages.active && pages.active.folder_id) {
+      referenceId = pages.active.folder_id;
     }
 
     dispatch(
@@ -334,9 +334,9 @@ function Sidebar() {
       dispatch(setSidebarLoading(false));
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -364,7 +364,7 @@ function Sidebar() {
         credentials: "include",
         body: JSON.stringify({
           favoriteStatus: item.IS_FAVORITE ? 0 : 1,
-          pageId: item.PAGE_ID,
+          pageId: item.page_id,
         }),
       });
 
@@ -374,16 +374,16 @@ function Sidebar() {
 
       if (!data) throw "There was an issue parsing /pages/new response";
 
-      if (item.IS_PAGE)
+      if (item.is_page)
         dispatch(
           setFavoriteStatus({ favoriteStatus: item.IS_FAVORITE ? 0 : 1, page: item })
         );
       resetContextMenu();
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -454,7 +454,7 @@ function Sidebar() {
       disabled: sidebar.dragToggled,
       visible:
         sidebar.view.name === "Notes" &&
-        combined.filter((item) => !item.IS_PAGE).length !== 0,
+        combined.filter((item) => !item.is_page).length !== 0,
       onClick: () => dispatch(expandFolders(null)),
     },
     {
@@ -463,7 +463,7 @@ function Sidebar() {
       disabled: sidebar.dragToggled,
       visible:
         sidebar.view.name === "Notes" &&
-        combined.filter((item) => !item.IS_PAGE).length !== 0,
+        combined.filter((item) => !item.is_page).length !== 0,
       onClick: () => dispatch(collapseFolders(null)),
     },
     {
@@ -485,9 +485,9 @@ function Sidebar() {
           );
         } else {
           if (folders.selected) {
-            referenceId = folders.selected.ID;
-          } else if (pages.active && pages.active.FOLDER_ID) {
-            referenceId = pages.active.FOLDER_ID;
+            referenceId = folders.selected.id;
+          } else if (pages.active && pages.active.folder_id) {
+            referenceId = pages.active.folder_id;
           }
 
           dispatch(
@@ -519,9 +519,9 @@ function Sidebar() {
           );
         } else {
           if (folders.selected) {
-            referenceId = folders.selected.ID;
-          } else if (pages.active && pages.active.FOLDER_ID) {
-            referenceId = pages.active.FOLDER_ID;
+            referenceId = folders.selected.id;
+          } else if (pages.active && pages.active.folder_id) {
+            referenceId = pages.active.folder_id;
           }
 
           dispatch(

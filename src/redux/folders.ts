@@ -20,7 +20,7 @@ const foldersSlice = createSlice({
       const folders = payload.map((folder: FolderState) => {
         return {
           ...folder,
-          IS_PAGE: false,
+          is_page: false,
         };
       });
 
@@ -38,11 +38,11 @@ const foldersSlice = createSlice({
 
       function checkForChildren(folderToCheck: FolderState) {
         for (let i = 0; i < folders.length; i++) {
-          if (folders[i].PARENT_FOLDER_ID === folderToCheck.ID) {
-            idsToUpdateVisibility.push(folders[i].ID);
+          if (folders[i].parent_folder_id === folderToCheck.id) {
+            idsToUpdateVisibility.push(folders[i].id);
 
             let hasChildren = folders.filter(
-              (folder: FolderState) => folder.PARENT_FOLDER_ID === folders[i].ID
+              (folder: FolderState) => folder.parent_folder_id === folders[i].id
             );
 
             if (hasChildren && folders[i].EXPANDED_STATUS) checkForChildren(folders[i]);
@@ -57,11 +57,11 @@ const foldersSlice = createSlice({
         list: folders.map((folder: FolderState) => {
           return {
             ...folder,
-            SELECTED: folder.ID === expandedFolder.ID,
-            ...(folder.ID === expandedFolder.ID && {
+            SELECTED: folder.id === expandedFolder.id,
+            ...(folder.id === expandedFolder.id && {
               EXPANDED_STATUS: !folder.EXPANDED_STATUS,
             }),
-            ...(idsToUpdateVisibility.includes(folder.ID) && {
+            ...(idsToUpdateVisibility.includes(folder.id) && {
               VISIBLE: !expandedFolder.EXPANDED_STATUS,
             }),
           };
@@ -74,7 +74,7 @@ const foldersSlice = createSlice({
         list: state.list?.map((folder: FolderState) => ({
           ...folder,
           EXPANDED_STATUS: false,
-          VISIBLE: folder.PARENT_FOLDER_ID ? false : true,
+          VISIBLE: folder.parent_folder_id ? false : true,
         })),
       };
     },
@@ -92,7 +92,7 @@ const foldersSlice = createSlice({
       const selectedFolder =
         payload === null
           ? null
-          : state.list.find((folder: FolderState) => folder.ID === payload.ID);
+          : state.list.find((folder: FolderState) => folder.id === payload.id);
 
       return {
         ...state,
@@ -101,12 +101,12 @@ const foldersSlice = createSlice({
 
           if (
             (payload === null && folder?.SELECTED) ||
-            payload?.ID == selectedFolder?.ID
+            payload?.id == selectedFolder?.id
           ) {
             SELECTED = false;
           }
 
-          if (folder?.ID === selectedFolder?.ID) {
+          if (folder?.id === selectedFolder?.id) {
             SELECTED = true;
           }
 
@@ -135,7 +135,7 @@ const foldersSlice = createSlice({
         list: state.list.map((folder: FolderState) => {
           return {
             ...folder,
-            ...(folder.ID === folderId && { EFF_STATUS: 0, SELECTED: false }),
+            ...(folder.id === folderId && { eff_status: 0, SELECTED: false }),
           };
         }),
         selected: null,
@@ -153,8 +153,8 @@ const foldersSlice = createSlice({
         list: state.list.map((folder: FolderState) => {
           return {
             ...folder,
-            ...(folder.ID === payload.folderId && {
-              NAME: payload.newName,
+            ...(folder.id === payload.folderId && {
+              name: payload.newName,
             }),
           };
         }),
@@ -170,23 +170,23 @@ const foldersSlice = createSlice({
 
         const children = current(state)
           .list.filter(
-            (folder: FolderState) => folder.PARENT_FOLDER_ID === folderIdToCheck
+            (folder: FolderState) => folder.parent_folder_id === folderIdToCheck
           )
-          .map((folder: FolderState) => folder.ID);
+          .map((folder: FolderState) => folder.id);
 
         if (children.length === 0) return;
 
         children.forEach((folderId) => getChildren(folderId));
       }
 
-      getChildren(item.ID);
+      getChildren(item.id);
 
       let selectedFolderTags: Array<number> = [];
 
       if (state.selected) {
         selectedFolderTags = [...state.selected.TAGS];
-        if (state.selected.ID === item.ID && !state.selected.TAGS.includes(tag.ID)) {
-          selectedFolderTags = [...selectedFolderTags, tag.ID];
+        if (state.selected.id === item.id && !state.selected.TAGS.includes(tag.id)) {
+          selectedFolderTags = [...selectedFolderTags, tag.id];
           selectedFolderTags.sort((a, b) => (a > b ? 1 : -1));
         }
       }
@@ -194,15 +194,15 @@ const foldersSlice = createSlice({
       return {
         ...state,
         list: state.list.map((folder: FolderState) => {
-          const isSameFolder = folder.ID === item.ID;
+          const isSameFolder = folder.id === item.id;
 
-          let TAGS = [...folder.TAGS, tag.ID];
+          let TAGS = [...folder.TAGS, tag.id];
           TAGS.sort((a, b) => (a > b ? 1 : -1));
 
           return {
             ...folder,
-            ...((isSameFolder || childFolderIds.includes(folder.ID)) &&
-              !folder.TAGS.includes(tag.ID) && {
+            ...((isSameFolder || childFolderIds.includes(folder.id)) &&
+              !folder.TAGS.includes(tag.id) && {
                 TAGS,
               }),
           };
@@ -228,40 +228,40 @@ const foldersSlice = createSlice({
 
         const children = current(state)
           .list.filter(
-            (folder: FolderState) => folder.PARENT_FOLDER_ID === folderIdToCheck
+            (folder: FolderState) => folder.parent_folder_id === folderIdToCheck
           )
-          .map((folder: FolderState) => folder.ID);
+          .map((folder: FolderState) => folder.id);
 
         if (children.length === 0) return;
 
         children.forEach((folderId) => getChildren(folderId));
       }
 
-      getChildren(item.ID);
+      getChildren(item.id);
 
       return {
         ...state,
         list: state.list.map((folder: FolderState) => {
           return {
             ...folder,
-            ...(folder.ID === item.ID && {
-              TAGS: removeTag(folder, tag.ID),
+            ...(folder.id === item.id && {
+              TAGS: removeTag(folder, tag.id),
             }),
-            ...(childFolderIds.includes(folder.ID) && {
-              TAGS: removeTag(folder, tag.ID),
+            ...(childFolderIds.includes(folder.id) && {
+              TAGS: removeTag(folder, tag.id),
             }),
           };
         }),
         active: {
           ...state.active,
-          ...(state.active?.ID === item.ID && {
-            TAGS: removeTag(state.active, tag.ID),
+          ...(state.active?.id === item.id && {
+            TAGS: removeTag(state.active, tag.id),
           }),
         } as FolderState | null,
         selected: {
           ...state.selected,
-          ...(state.selected?.ID === item.ID && {
-            TAGS: removeTag(state.selected, tag.ID),
+          ...(state.selected?.id === item.id && {
+            TAGS: removeTag(state.selected, tag.id),
           }),
         } as FolderState | null,
       };

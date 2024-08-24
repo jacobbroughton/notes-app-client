@@ -61,9 +61,9 @@ const ColorPicker = ({
       setColorConfirmationShowing(false);
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }
@@ -71,7 +71,7 @@ const ColorPicker = ({
   async function deleteCustomColor(color: ColorState) {
     try {
       const payload = {
-        colorId: color.ID,
+        colorId: color.id,
       };
 
       const response = await fetch(`${getApiUrl()}/tags/color-options/delete/`, {
@@ -94,9 +94,9 @@ const ColorPicker = ({
       setDeleteModeToggled(false);
     } catch (e) {
       if (typeof e === "string") {
-        alert(e);
+        console.error(e);
       } else if (e instanceof Error) {
-        alert("ERROR: " + e.message);
+        console.error("ERROR: " + e.message);
       }
     }
   }

@@ -20,15 +20,15 @@ function App() {
   const user = useSelector((state: RootState) => state.user);
   const theme = useSelector((state: RootState) => state.theme);
   const windowSize = useWindowSize();
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
     document.body.dataset.theme = theme;
   }, [theme]);
 
-  // alert(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
+  // console.error(`${browser?.name} ${browser?.os} ${browser?.version} ${browser?.type}`);
 
   // if (
   //   browser?.name === "safari" ||
@@ -50,24 +50,34 @@ function App() {
 
   async function getUser() {
     // setLoading(true)
-    const response = await fetch(`${getApiUrl()}/`, {
-      method: "GET",
-      credentials: "include",
-      headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
-    });
+    try {
+      console.log("Makes it here")
+      const response = await fetch(`${getApiUrl()}/`, {
+        method: "GET",
+        credentials: "include",
+      });
 
-    const data = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP Error. Status: ${response.status}`)
+      }
 
-    if (!data.user) navigate("/login");
-    if (data.user && !user) {
-      dispatch(setUser(data.user));
-      // setLoading(false);
+      console.log("Makes it after")
+
+      const data = await response.json();
+
+      if (!data.user) navigate("/login");
+      if (data.user && !user) {
+        dispatch(setUser(data.user));
+        // setLoading(false);
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
   useEffect(() => {
-    getUser()
-  }, [])
+    getUser();
+  }, []);
 
   return (
     <div className="App">
@@ -78,7 +88,6 @@ function App() {
           marginLeft: `${determineMarginLeft(user)}px`,
         }}
       >
-
         <Routes>
           <Route element={<Home />} path="/" />
           <Route element={<AuthenticatedRoutes />}>
