@@ -54,7 +54,7 @@ function App() {
       const response = await fetch(`${getApiUrl()}/`, {
         method: "GET",
         credentials: "include",
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        // headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
       });
 
       const data = await response.json();
