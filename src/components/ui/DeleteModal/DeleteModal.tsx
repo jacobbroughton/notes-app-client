@@ -47,7 +47,7 @@ export function DeleteModal() {
       data.deletedFolders.forEach((folderId: number) => {
         dispatch(setFolderEffStatus(folderId));
         pages.list.forEach((page: PageState) => {
-          if (page.folder_id === folderId) dispatch(setPageEffStatus(page.PAGE_ID));
+          if (page.folder_id === folderId) dispatch(setPageEffStatus(page.page_id));
         });
       });
       dispatch(toggleModal("deleteModal"));
@@ -150,7 +150,7 @@ export function DeleteModal() {
     if (sidebar.shiftClickItems.list.length > 1) {
       deleteMultiple(sidebar.shiftClickItems.list);
     } else if (pages.stagedToDelete) {
-      deletePage(pages.stagedToDelete.PAGE_ID);
+      deletePage(pages.stagedToDelete.page_id);
     } else if (folders.stagedToDelete) {
       deleteFolder(folders.stagedToDelete.id);
     }
