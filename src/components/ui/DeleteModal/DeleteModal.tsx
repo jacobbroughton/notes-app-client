@@ -172,9 +172,9 @@ export function DeleteModal() {
       return "There was an error but are you sure you'd like to delete this? If its a folder, you'll also be deleting it's contents.";
 
     if (itemsToDelete.is_page) {
-      return `Are you sure you want to delete '${itemsToDelete?.NAME}'`;
+      return `Are you sure you want to delete '${itemsToDelete?.name}'`;
     } else {
-      return `Are you sure you want to delete '${itemsToDelete?.NAME}' and it's contents?`;
+      return `Are you sure you want to delete '${itemsToDelete?.name}' and it's contents?`;
     }
   }
 
@@ -186,7 +186,7 @@ export function DeleteModal() {
           <ul className="items-to-delete-list">
             {sidebar.shiftClickItems.list.map((item, index) => (
               <li key={index}>
-                {item.is_page ? <PageIcon /> : ""} {item.NAME}
+                {item.is_page ? <PageIcon /> : ""} {item.name}
               </li>
             ))}
           </ul>
