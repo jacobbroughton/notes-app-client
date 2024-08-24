@@ -47,22 +47,7 @@ const Home = () => {
   const folders = useSelector((state: RootState) => state.folders);
   const modals = useSelector((state: RootState) => state.modals);
 
-  // async function getUser() {
-  //   setLoading(true)
-  //   const response = await fetch(`${getApiUrl()}/`, {
-  //     method: "GET",
-  //     credentials: "include",
-  //     headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
-  //   });
 
-  //   const data = await response.json();
-
-  //   if (!data.user) navigate("/login");
-  //   if (data.user && !user) {
-  //     dispatch(setUser(data.user));
-  //     setLoading(false);
-  //   }
-  // }
 
   async function getData() {
     try {

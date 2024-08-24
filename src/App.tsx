@@ -51,11 +51,17 @@ function App() {
   async function getUser() {
     // setLoading(true)
     try {
+      console.log("Makes it here")
       const response = await fetch(`${getApiUrl()}/`, {
         method: "GET",
         credentials: "include",
-        // headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP Error. Status: ${response.status}`)
+      }
+
+      console.log("Makes it after")
 
       const data = await response.json();
 
