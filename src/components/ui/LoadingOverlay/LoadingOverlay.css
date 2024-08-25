@@ -3,8 +3,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 15px;
+  gap: 10px;
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.4);
+  padding: 10px;
+}
+
+.loading-overlay .loader {
+  margin-bottom: 5px;
+}
+
+.loading-overlay .text {
+  max-width: 300px;
+}
+
+.loading-overlay .text .long-time-text {
+  font-size: 0.875rem;
 }
