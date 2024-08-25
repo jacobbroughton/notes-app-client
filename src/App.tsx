@@ -58,7 +58,7 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP Error. Status: ${response.status}`)
+        console.error(`HTTP Error. Status: ${response.status}`)
       }
 
       console.log("Makes it after")
