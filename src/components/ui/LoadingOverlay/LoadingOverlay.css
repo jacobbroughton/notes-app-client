@@ -16,6 +16,10 @@
 
 .loading-overlay .text {
   max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
 }
 
 .loading-overlay .text .long-time-text {
