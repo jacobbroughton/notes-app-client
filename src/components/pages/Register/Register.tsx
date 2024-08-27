@@ -1,9 +1,9 @@
 import { FormEvent, useState } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getApiUrl } from "../../../utils/getUrl";
 
-import "./Register.css";
 import LoadingOverlay from "../../ui/LoadingOverlay/LoadingOverlay";
+import "./Register.css";
 
 const Login = () => {
   const [username, setUsername] = useState("");

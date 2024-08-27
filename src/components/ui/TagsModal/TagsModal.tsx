@@ -1,16 +1,13 @@
-import React, { useState } from "react";
-import { useRef } from "react";
-import { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { addTagToFolder, removeTagFromFolder } from "../../../redux/folders";
 import { toggleModal } from "../../../redux/modals";
 import { addTagToPage, removeTagFromPage } from "../../../redux/pages";
-import { addTagToFolder, removeTagFromFolder } from "../../../redux/folders";
-import Overlay from "../Overlay/Overlay";
-import ColorPicker from "../ColorPicker/ColorPicker";
-import { ItemState, ColorState, TagState, PageState, FolderState } from "../../../types";
 import { RootState } from "../../../redux/store";
-import "./TagsModal.css";
+import { ColorState, FolderState, PageState, TagState } from "../../../types";
 import { getApiUrl } from "../../../utils/getUrl";
+import Overlay from "../Overlay/Overlay";
+import "./TagsModal.css";
 
 const TagsModal = () => {
   const tagsModalRef = useRef<HTMLDivElement>(null);
@@ -173,17 +170,13 @@ const TagsModal = () => {
             placeholder="Type to search or add a tag"
             autoComplete="off"
           />
-          <ColorPicker
-            onColorSelect={handleColorChange}
-            selectedColor={tagColor}
-            showColorCode={false}
-          />
+      
         </form>
         {tagSearchValue && !tags.list.find((tag) => tag.name === tagSearchValue) && (
           <button className="tag-button" onClick={(e) => console.error("nothing else happens")}>
             <span
               className="color-span"
-              style={{ backgroundColor: tagColor?.COLOR_CODE }}
+              style={{ backgroundColor: tagColor?.color_code }}
             >
               &nbsp;
             </span>
@@ -202,7 +195,7 @@ const TagsModal = () => {
                 key={index}
               >
                 {" "}
-                <span className="color-span" style={{ backgroundColor: tag.COLOR_CODE }}>
+                <span className="color-span" style={{ backgroundColor: tag.color_code }}>
                   &nbsp;
                 </span>{" "}
                 <p>{tag.name}</p>

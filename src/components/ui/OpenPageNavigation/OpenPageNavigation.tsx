@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
-import OpenPageButton from "../OpenPageButton/OpenPageButton";
-import "./OpenPageNavigation.css";
 import { RootState } from "../../../redux/store";
 import { PageState } from "../../../types";
+import OpenPageButton from "../OpenPageButton/OpenPageButton";
+import "./OpenPageNavigation.css";
 
 const OpenPageNavigation = () => {
   const pages = useSelector((state: RootState) => state.pages);

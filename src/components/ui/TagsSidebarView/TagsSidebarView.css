@@ -8,25 +8,34 @@
 
 .tags-sidebar-view .no-tags-found {
   margin-left: 10px;
-/* font-size: 0.875rem; */
+  font-size: 0.875rem;
 }
 
 .tags-sidebar-view .tag-controls {
-  padding: 10px;
-  border-top: 1px solid var(--tertiary-bg);
-  margin-top: 10px;
+  /* padding: 10px; */
 }
 
 .tags-sidebar-view .tag-controls .trash-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-text-primary);
   background-color: transparent;
   border: 0;
   transition: 0.1s ease background-color;
   cursor: pointer;
   fill: var(--color-text-primary);
+  font-size: 0.875rem;
+  width: 100%;
+  padding: 10px;
 }
 
 .tags-sidebar-view .tag-controls .trash-button svg {
-  width: 15px;
+  width: 12px;
+}
+
+.tags-sidebar-view .tag-controls .trash-button:hover {
+  background-color: var(--secondary-bg);
 }
 
 .tags-sidebar-view .tag-search-form {
@@ -102,7 +111,7 @@
 
 .tags-sidebar-view .cancel-and-done-btns button {
   padding: 2px 5px;
-/* font-size: 0.875rem; */
+  /* font-size: 0.875rem; */
   cursor: pointer;
   background-color: var(--secondary-bg);
   color: var(--color-text-primary);
@@ -126,7 +135,6 @@
   gap: 10px;
   padding: 5px;
   border-bottom: 1px solid var(--tertiary-bg);
-  margin-bottom: 7px;
   padding-bottom: 10px;
 }
 
@@ -143,8 +151,51 @@
 
 .tags-sidebar-view form .tag-color label,
 .tags-sidebar-view form .tag-name label {
-/* font-size: 0.875rem; */
+  font-size: 0.875rem;
   font-weight: 500;
+}
+
+.tags-sidebar-view form .tag-color .tag-color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tags-sidebar-view form .tag-color .tag-color-options .color-button {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 3px;
+  position: relative;
+}
+
+.tags-sidebar-view form .tag-color .tag-color-options .color-button.selected {
+  border: 1px solid var(--color-accent-primary);
+}
+
+.tags-sidebar-view form .tag-color .tag-color-options .color-button.current::before {
+  content: '*';
+  font-size: 1.15rem;
+  color: yellow;
+  position: absolute;
+  left: -3px;
+  top: -3px;
+}
+
+.tags-sidebar-view form .tag-color .tag-color-options .color-button:hover {
+  background-color: var(--secondary-bg);
+}
+
+.tags-sidebar-view form .tag-color .tag-color-options .color-button span {
+  display: flex;
+  height: 12px;
+  width: 12px;
 }
 
 .tags-sidebar-view form .inputs {
@@ -183,7 +234,7 @@
 }
 
 .tags-sidebar-view form .invalid-text {
-/* font-size: 0.875rem; */
+  /* font-size: 0.875rem; */
   color: crimson;
 }
 
@@ -193,9 +244,19 @@
 
 .tags-sidebar-view .tag-controls .are-you-sure-container {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 10px;
+}
+
+.tags-sidebar-view .tag-controls .are-you-sure-container .label {
+  font-size: 0.875rem;
+}
+
+.tags-sidebar-view .tag-controls .are-you-sure-container .buttons {
+  display: flex;
   gap: 10px;
-/* font-size: 0.875rem; */
 }
 
 .tags-sidebar-view .tag-controls .are-you-sure-container button {
@@ -203,23 +264,23 @@
   color: var(--color-text-primary);
   border: 0;
   padding: 0;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-}
-
-.tags-sidebar-view .tag-controls .are-you-sure-container button:hover {
-  text-decoration: underline;
+  font-size: 0.875rem;
+  padding: 2px 5px;
+  border-radius: 3px;
+  transition: background-color 0.15s ease;
 }
 
 .tags-sidebar-view .tag-controls .are-you-sure-container button.confirm {
-  color: green;
+  border: 1px solid crimson;
 }
 
-.tags-sidebar-view .tag-controls .are-you-sure-container button.cancel {
-  color: crimson;
+.tags-sidebar-view .tag-controls .are-you-sure-container button.confirm:hover {
+  background-color: crimson;
 }
 
 .tags-sidebar-view .new-tag-header {
   font-weight: 600;
-  text-decoration: underline;
+  /* text-decoration: underline; */
 }

@@ -1,6 +1,8 @@
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { setExpandedStatus, selectFolder, renameFolder } from "../../../redux/folders";
+import React, { MouseEvent, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setCombined } from "../../../redux/combined";
+import { selectFolder, setExpandedStatus } from "../../../redux/folders";
+import { selectPage, updateParentFolderId } from "../../../redux/pages";
 import {
   setDraggedOverItem,
   setGrabbedItem,
@@ -9,13 +11,11 @@ import {
   setNewPageName,
   setShiftClickItems,
 } from "../../../redux/sidebar";
-import { selectPage, updateParentFolderId } from "../../../redux/pages";
-import { setCombined } from "../../../redux/combined";
-import ItemListItem from "../ItemListItem/ItemListItem";
 import { RootState } from "../../../redux/store";
-import { SidebarItemState, ItemState, FolderState, PageState } from "../../../types";
-import "./ItemList.css";
+import { FolderState, ItemState, PageState, SidebarItemState } from "../../../types";
 import { getApiUrl } from "../../../utils/getUrl";
+import ItemListItem from "../ItemListItem/ItemListItem";
+import "./ItemList.css";
 
 const ItemList = ({
   setContextMenu,
@@ -230,7 +230,7 @@ const ItemList = ({
         sidebar.inputPosition.referenceId === 0 ? "selected" : ""
       }`}
     >
-      {favoritesList.length !== 0 && (
+      {favoritesList?.length !== 0 && (
         <p className="item-list-heading favorites">Favorites</p>
       )}
       {favoritesList.map((item, index) => (
@@ -257,11 +257,15 @@ const ItemList = ({
           key={index}
         />
       ))}
-      {favoritesList.length !== 0 && <div className="spacer"></div>}
-      <div className="item-list-heading-and-spinner">
-        <p className="item-list-heading all">All </p>
-        {/* {sidebar.loading && <LoadingSpinner />} */}
-      </div>
+      {favoritesList.length !== 0 && (
+        <>
+          <div className="spacer"></div>
+          <div className="item-list-heading-and-spinner">
+            <p className="item-list-heading all">All </p>
+            {/* {sidebar.loading && <LoadingSpinner />} */}
+          </div>
+        </>
+      )}
       {allList.length === 0 && <p className="no-items-found">No items found</p>}
 
       {allList.map((item, index) => {

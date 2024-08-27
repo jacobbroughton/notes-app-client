@@ -1,5 +1,7 @@
+import { ChangeEvent, MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "./ItemListItem.css";
+import { renameFolder } from "../../../redux/folders";
+import { renamePage } from "../../../redux/pages";
 import {
   setGrabbedItem,
   setNewFolderName,
@@ -8,14 +10,12 @@ import {
   setRenameInputToggled,
   setShiftClickItems,
 } from "../../../redux/sidebar";
-import Caret from "../Icons/Caret";
-import PageIcon from "../Icons/PageIcon";
-import { renameFolder } from "../../../redux/folders";
-import { renamePage } from "../../../redux/pages";
 import { RootState } from "../../../redux/store";
 import { ItemState } from "../../../types";
-import { ChangeEvent, MouseEvent } from "react";
 import { getApiUrl } from "../../../utils/getUrl";
+import Caret from "../Icons/Caret";
+import PageIcon from "../Icons/PageIcon";
+import "./ItemListItem.css";
 
 const ItemListItem = ({
   item,
@@ -264,7 +264,7 @@ const ItemListItem = ({
               return (
                 <span
                   className="tag-color"
-                  style={{ backgroundColor: tag.COLOR_CODE }}
+                  style={{ backgroundColor: tag.color_code }}
                   key={index}
                   title={tag.name}
                 >

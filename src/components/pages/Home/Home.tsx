@@ -1,35 +1,33 @@
-import React, { useEffect, useState, useRef, ChangeEvent } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../../redux/user";
+import { Navigate, useNavigate } from "react-router-dom";
+import { selectFolder, setFolders } from "../../../redux/folders";
+import { toggleModal } from "../../../redux/modals";
 import {
-  updatePage,
+  resetUntitledPage,
+  setPageClosed,
+  setPageDraftBody,
+  setPageDraftTitle,
   setPageModified,
   setPages,
   setPageStagedForSwitch,
-  setPageDraftBody,
-  setPageDraftTitle,
   setUntitledPageBody,
   setUntitledPageTitle,
-  setPageClosed,
-  resetUntitledPage,
+  updatePage,
 } from "../../../redux/pages";
-import { selectFolder, setFolders } from "../../../redux/folders";
 import { setSidebarLoading } from "../../../redux/sidebar";
-import { toggleModal } from "../../../redux/modals";
-import { getElapsedTime } from "../../../utils/getElapsedTime";
-import { formatFolders, formatPages } from "../../../utils/formatData";
-import Overlay from "../../ui/Overlay/Overlay";
-import PageIcon from "../../ui/Icons/PageIcon";
-import { DeleteModal } from "../../ui/DeleteModal/DeleteModal";
-import "./Home.css";
-import TagsModal from "../../ui/TagsModal/TagsModal";
-import { setTags, setColorOptions } from "../../../redux/tags";
-import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
-import { FolderState, PageState } from "../../../types";
 import { RootState } from "../../../redux/store";
+import { FolderState, PageState } from "../../../types";
+import { formatFolders, formatPages } from "../../../utils/formatData";
+import { getElapsedTime } from "../../../utils/getElapsedTime";
 import { getApiUrl } from "../../../utils/getUrl";
+import { DeleteModal } from "../../ui/DeleteModal/DeleteModal";
+import PageIcon from "../../ui/Icons/PageIcon";
 import LoadingSpinner from "../../ui/LoadingSpinner/LoadingSpinner";
+import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
+import Overlay from "../../ui/Overlay/Overlay";
+import TagsModal from "../../ui/TagsModal/TagsModal";
+import "./Home.css";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -95,54 +93,7 @@ const Home = () => {
     }
   }
 
-  async function getTags() {
-    try {
-      let response = await fetch(`${getApiUrl()}/tags/`, {
-        method: "GET",
-        credentials: "include",
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
-      });
-
-      if (response.status !== 200) throw response.statusText;
-
-      let tagsData = await response.json();
-      dispatch(setTags(tagsData.tags));
-    } catch (e) {
-      if (typeof e === "string") {
-        setError(e);
-      } else if (e instanceof Error) {
-        setError(e.message);
-      }
-    }
-  }
-
-  async function getColorOptions() {
-    try {
-      let response = await fetch(`${getApiUrl()}/tags/color-options/`, {
-        method: "GET",
-        credentials: "include",
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
-      });
-
-      if (response.status !== 200) {
-        throw response.statusText;
-      }
-
-      let colorOptionsData = await response.json();
-      dispatch(
-        setColorOptions({
-          defaultOptions: colorOptionsData.defaultOptions,
-          userCreatedOptions: colorOptionsData.userCreatedOptions,
-        })
-      );
-    } catch (e) {
-      if (typeof e === "string") {
-        setError(e);
-      } else if (e instanceof Error) {
-        setError(e.message);
-      }
-    }
-  }
+  
 
   function handleSubmit(e: React.FormEvent | null) {
     e?.preventDefault();
@@ -352,11 +303,6 @@ const Home = () => {
 
     return parentFolders;
   }
-
-  useEffect(() => {
-    getTags();
-    getColorOptions();
-  }, []);
 
   useEffect(() => {
     if (noTitleWarningToggled) {

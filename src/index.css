@@ -25,6 +25,7 @@ body[data-theme="dark"] {
   --loading-dot-color: #fff;
   --secondary-bg: #333;
   --tertiary-bg: #444;
+  --tertiary-bg-disabled: #44444474;
   --tertiary-bg-hover: #3d3d3d;
   --color-text-primary: white;
   --color-text-secondary: #181818;
@@ -43,6 +44,7 @@ body[data-theme="dark"] {
   --large-shadow: 0px 0px 20px 2px #1818183c;
   --color-input-placeholder: white;
   --color-sidebar-nav: #333;
+  --color-border: #555;
 }
 
 body[data-theme="light"] {
@@ -51,6 +53,7 @@ body[data-theme="light"] {
   --loading-dot-color: #515151;
   --secondary-bg: #fff;
   --tertiary-bg: #dadce0;
+  --tertiary-bg-disabled: rgba(250, 251, 255, 0.754);
   --color-text-primary: #181818;
   --color-text-secondary: #fff;
   --color-accent-secondary: #333;
@@ -67,6 +70,7 @@ body[data-theme="light"] {
   --large-shadow: 0px 0px 20px 2px #1818183c;
   --color-input-placeholder: black;
   --color-sidebar-nav: #333;
+  --color-border: #ccc;
 }
 
 body {
@@ -86,6 +90,11 @@ a:hover {
 button {
   appearance: none;
   font-size: 1rem;
+}
+
+p.error-text {
+  color: crimson;
+  font-size: 0.875rem;
 }
 
 #root,

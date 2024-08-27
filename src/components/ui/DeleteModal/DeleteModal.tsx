@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
+import { setFolderEffStatus, setStagedFolderToDelete } from "../../../redux/folders";
 import { toggleModal } from "../../../redux/modals";
-import { setStagedFolderToDelete, setFolderEffStatus } from "../../../redux/folders";
-import { setStagedPageToDelete, setPageEffStatus } from "../../../redux/pages";
-import Overlay from "../Overlay/Overlay";
-import "./DeleteModal.css";
-import PageIcon from "../Icons/PageIcon";
+import { setPageEffStatus, setStagedPageToDelete } from "../../../redux/pages";
 import { setShiftClickItems } from "../../../redux/sidebar";
 import { RootState } from "../../../redux/store";
-import { PageState, FolderState, SidebarItemState } from "../../../types";
+import { FolderState, PageState, SidebarItemState } from "../../../types";
 import { getApiUrl } from "../../../utils/getUrl";
+import PageIcon from "../Icons/PageIcon";
+import Overlay from "../Overlay/Overlay";
+import "./DeleteModal.css";
 
 export function DeleteModal() {
   const dispatch = useDispatch();

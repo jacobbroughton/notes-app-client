@@ -1,6 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { FolderState, FoldersState, TagState } from "../types";
+import { FolderState, FoldersState } from "../types";
 
 const initialState: FoldersState = {
   list: [],

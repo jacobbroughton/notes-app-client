@@ -1,18 +1,17 @@
-import { FormEvent, useRef, useEffect, MouseEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { resetUserState, setUser } from "../../../redux/user";
-import { Link, useNavigate } from "react-router-dom";
-import "./UserMenu.css";
-import { getApiUrl } from "../../../utils/getUrl";
-import { resetThemeState } from "../../../redux/theme";
-import { resetTagsState } from "../../../redux/tags";
-import { resetSidebarState } from "../../../redux/sidebar";
-import { resetPagesState } from "../../../redux/pages";
+import { useNavigate } from "react-router-dom";
+import { resetCombinedState } from "../../../redux/combined";
 import { resetFoldersState } from "../../../redux/folders";
 import { resetModalsState } from "../../../redux/modals";
-import { resetCombinedState } from "../../../redux/combined";
-import { resetColorPickerMenuState } from "../../../redux/colorPickerMenu";
+import { resetPagesState } from "../../../redux/pages";
+import { resetSidebarState } from "../../../redux/sidebar";
+import { resetTagsState } from "../../../redux/tags";
+import { resetThemeState } from "../../../redux/theme";
+import { resetUserState } from "../../../redux/user";
+import { getApiUrl } from "../../../utils/getUrl";
 import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
+import "./UserMenu.css";
 
 const UserMenu = ({
   setUserMenuToggled,
@@ -47,7 +46,6 @@ const UserMenu = ({
       dispatch(resetFoldersState());
       dispatch(resetModalsState());
       dispatch(resetCombinedState());
-      dispatch(resetColorPickerMenuState());
       setUserMenuToggled(false);
       navigate("/login");
     } catch (e) {

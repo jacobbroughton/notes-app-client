@@ -20,13 +20,12 @@ export type TagState = {
   id: number;
   name: string;
   color_id: number;
-  HAS_DEFAULT_COLOR: boolean;
   eff_status: number;
   created_dttm: string;
   modified_dttm: string | null;
   created_by_id: number;
   modified_by_id: number | null;
-  COLOR_CODE: string;
+  color_code: string;
   SELECTED: boolean;
 };
 
@@ -88,10 +87,7 @@ export type PagesState = {
 export type TagsState = {
   list: Array<TagState>;
   selected: TagState | null;
-  colorOptions: {
-    default: Array<ColorState>;
-    userCreated: Array<ColorState>;
-  };
+  colorOptions: Array<ColorState>;
 };
 
 export type SidebarItemState = {
@@ -120,25 +116,20 @@ export type ModalsState = {
 
 export type UserState = {
   id: number;
-  USERNAME: string;
-  ADMIN: boolean;
-  HASH: string;
-  SALT: string;
+  username: string;
+  admin: boolean;
+  hash: string;
+  salt: string;
   created_dttm: string;
   modified_dttm: string | null;
 };
 
 export type ColorState = {
   id: number;
-  COLOR_CODE: string;
+  color_code: string;
   eff_status: number;
   created_dttm: string;
   modified_dttm: string;
-  IS_DEFAULT_COLOR: number;
-};
-
-export type ColorPickerState = {
-  toggled: boolean;
 };
 
 export type ContextMenuButton = {
@@ -188,7 +179,7 @@ export type SidebarState = {
     id: number;
     name: string;
   }>;
-  toggled: boolean,
+  toggled: boolean;
   searchValue: string;
   shiftClickItems: {
     start: number | null;
@@ -211,6 +202,6 @@ export type SidebarState = {
   newNameForRename: string;
   newPageName: string;
   newFolderName: string;
-  loading: boolean,
-  floating: boolean
+  loading: boolean;
+  floating: boolean;
 };

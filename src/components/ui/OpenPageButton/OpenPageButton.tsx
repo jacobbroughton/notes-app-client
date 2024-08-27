@@ -1,16 +1,15 @@
 import { MouseEvent } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import XIcon from "../Icons/XIcon";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleModal } from "../../../redux/modals";
 import {
-  deselectPage,
   selectPage,
   setPageClosed,
-  setPageStagedForSwitch,
+  setPageStagedForSwitch
 } from "../../../redux/pages";
-import "./OpenPageButton.css";
-import { toggleModal } from "../../../redux/modals";
 import { RootState } from "../../../redux/store";
 import { PageState } from "../../../types";
+import XIcon from "../Icons/XIcon";
+import "./OpenPageButton.css";
 
 const OpenPageButton = ({ page }: { page: PageState | null }) => {
   const pages = useSelector((state: RootState) => state.pages);

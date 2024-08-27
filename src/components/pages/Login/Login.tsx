@@ -1,11 +1,10 @@
 import { FormEvent, useState } from "react";
-import { setUser } from "../../../redux/user";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import "./Login.css";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { setUser } from "../../../redux/user";
 import { getApiUrl } from "../../../utils/getUrl";
-import LoadingSpinner from "../../ui/LoadingSpinner/LoadingSpinner";
 import LoadingOverlay from "../../ui/LoadingOverlay/LoadingOverlay";
+import "./Login.css";
 
 const Login = () => {
   const dispatch = useDispatch();

@@ -8,8 +8,8 @@ const Tag = ({ name, color }: { name: string; color: ColorState | null }) => {
     <div className="tag">
       <span
         className="color-span"
-        style={{ backgroundColor: color ? color.COLOR_CODE : '#000000' }}
-        title={`Color: ${color ? color.COLOR_CODE : 'There was an error, no color found'}`}
+        style={{ backgroundColor: color ? color.color_code : '#000000' }}
+        title={`Color: ${color ? color.color_code : 'There was an error, no color found'}`}
       >
         &nbsp;
       </span>

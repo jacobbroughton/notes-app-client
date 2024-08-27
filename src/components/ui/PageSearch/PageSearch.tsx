@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectPage } from "../../../redux/pages";
 import { setSearchValue } from "../../../redux/sidebar";

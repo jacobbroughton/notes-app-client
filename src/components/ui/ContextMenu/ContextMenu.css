@@ -2,7 +2,7 @@
   display: none;
   background-color: var(--secondary-bg);
   position: fixed;
-  z-index: 5;
+  z-index: 6;
   color: var(--color-text-primary);
   padding: 5px;
   border-radius: 3px;

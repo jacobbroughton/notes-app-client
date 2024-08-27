@@ -270,7 +270,7 @@
 
 .home-view .save-button:disabled {
   color: var(--tertiary-bg);
-  background-color: white;
+  background-color: var(--tertiary-bg-disabled);
   border-color: var(--tertiary-bg);
   text-shadow: none;
   cursor: not-allowed;

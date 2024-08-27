@@ -1,53 +1,48 @@
 import React, {
-  useState,
+  useCallback,
   useEffect,
   useRef,
-  Context,
-  useCallback,
-  MutableRefObject,
+  useState
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setFolders,
   collapseFolders,
-  expandFolders,
   deselectFolder,
+  expandFolders,
+  setFolders,
   setStagedFolderToDelete,
 } from "../../../redux/folders";
+import { toggleModal } from "../../../redux/modals";
 import { setFavoriteStatus, setPages, setStagedPageToDelete } from "../../../redux/pages";
 import {
-  setSidebarWidth,
-  setSidebarView,
-  setNewTagFormToggled,
-  setDragToggled,
-  setRenameInputToggled,
+  setInputPosition,
+  setNewFolderName,
   setNewNameForRename,
   setNewPageName,
-  setNewFolderName,
+  setNewTagFormToggled,
+  setRenameInputToggled,
   setSidebarLoading,
   setSidebarToggled,
-  setSidebarFloating,
+  setSidebarView,
+  setSidebarWidth
 } from "../../../redux/sidebar";
-import { formatFolders, formatPages } from "../../../utils/formatData";
-import { toggleModal } from "../../../redux/modals";
+import { RootState } from "../../../redux/store";
 import { setTheme } from "../../../redux/theme";
+import { ItemState } from "../../../types";
+import { formatFolders, formatPages } from "../../../utils/formatData";
+import { getApiUrl } from "../../../utils/getUrl";
 import ContextMenu from "../ContextMenu/ContextMenu";
-import UserMenu from "../UserMenu/UserMenu";
-import ItemList from "../ItemList/ItemList";
-import PageSearch from "../PageSearch/PageSearch";
+import DoubleArrowLeft from "../Icons/DoubleArrowLeft";
+import DoubleArrowRight from "../Icons/DoubleArrowRight";
+import PageIcon from "../Icons/PageIcon";
 import SearchIcon from "../Icons/SearchIcon";
 import TagIcon from "../Icons/TagIcon";
 import UserIcon from "../Icons/UserIcon";
-import PageIcon from "../Icons/PageIcon";
-import "./Sidebar.css";
+import ItemList from "../ItemList/ItemList";
+import PageSearch from "../PageSearch/PageSearch";
 import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
-import { setInputPosition } from "../../../redux/sidebar";
-import { ItemState } from "../../../types";
-import { RootState } from "../../../redux/store";
-import { getApiUrl } from "../../../utils/getUrl";
-import DoubleArrowLeft from "../Icons/DoubleArrowLeft";
-import DoubleArrowRight from "../Icons/DoubleArrowRight";
-import FloatingWindowsIcon from "../Icons/FloatingWindowsIcon";
+import UserMenu from "../UserMenu/UserMenu";
+import "./Sidebar.css";
 
 function Sidebar() {
   const sidebarRef = useRef<HTMLDivElement | null>(null);
@@ -450,6 +445,7 @@ function Sidebar() {
   const sidebarHeaderButtons = [
     {
       symbol: "< >",
+      label: "Expand All",
       title: "Expand folders",
       disabled: sidebar.dragToggled,
       visible:
@@ -459,6 +455,7 @@ function Sidebar() {
     },
     {
       symbol: "> <",
+      label: "Collapse All",
       title: "Collapse folders",
       disabled: sidebar.dragToggled,
       visible:
@@ -468,6 +465,7 @@ function Sidebar() {
     },
     {
       symbol: "+P",
+      label: "+ Page",
       title: "Create a new page",
       disabled: false,
       visible: sidebar.view.name === "Notes",
@@ -502,6 +500,7 @@ function Sidebar() {
     },
     {
       symbol: "+F",
+      label: "+ Folder",
       title: "Create a new folder",
       disabled: false,
       visible: sidebar.view.name === "Notes",
@@ -538,6 +537,7 @@ function Sidebar() {
     },
     {
       symbol: "+",
+      label: "+ Tag",
       title: "Create a new tag",
       disabled: sidebar.dragToggled,
       visible: sidebar.view.name === "Tags",
@@ -558,6 +558,24 @@ function Sidebar() {
           {sidebar.toggled ? <DoubleArrowLeft /> : <DoubleArrowRight />}
         </button>
 
+
+        {sidebar.viewOptions.map((viewOption, index) => (
+          <button
+            onClick={() => {
+              dispatch(setSidebarView(viewOption));
+              if (!sidebar.toggled) dispatch(setSidebarToggled(true))
+              if (sidebar.width <= 60) dispatch(setSidebarWidth(275));
+            }}
+            className={viewOption.id === sidebar.view.id ? "current" : ""}
+            key={index}
+            title={viewOption.name}
+          >
+            {viewOption.id === 1 && <PageIcon />}
+            {viewOption.id === 2 && <SearchIcon />}
+            {viewOption.id === 3 && <TagIcon />}
+          </button>
+        ))}
+
         <button
           className="sidebar-button theme-button"
           onClick={() => dispatch(setTheme(theme === "dark" ? "light" : "dark"))}
@@ -574,7 +592,7 @@ function Sidebar() {
         >
           <UserIcon />
         </button>
-        <button
+        {/* <button
           className={`floating-sidebar-button ${sidebar.floating ? "toggled" : ""}`}
           onClick={() => {
             dispatch(setSidebarFloating(!sidebar.floating));
@@ -582,7 +600,7 @@ function Sidebar() {
           title="Set Sidebar to 'Floating' Mode"
         >
           <FloatingWindowsIcon />
-        </button>
+        </button> */}
       </div>
       {userMenuToggled && <UserMenu setUserMenuToggled={setUserMenuToggled} />}
       {sidebar.toggled && (
@@ -609,7 +627,8 @@ function Sidebar() {
                           title={button.title}
                           key={i}
                         >
-                          {button.symbol}
+                          {/* {button.symbol} */}
+                          {button.label}
                         </button>
                       );
                     }
