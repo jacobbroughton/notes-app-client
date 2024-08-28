@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   collapseFolders,
@@ -24,7 +19,7 @@ import {
   setSidebarLoading,
   setSidebarToggled,
   setSidebarView,
-  setSidebarWidth
+  setSidebarWidth,
 } from "../../../redux/sidebar";
 import { RootState } from "../../../redux/store";
 import { setTheme } from "../../../redux/theme";
@@ -43,6 +38,7 @@ import PageSearch from "../PageSearch/PageSearch";
 import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
 import UserMenu from "../UserMenu/UserMenu";
 import "./Sidebar.css";
+import { deselectTag } from "../../../redux/tags";
 
 function Sidebar() {
   const sidebarRef = useRef<HTMLDivElement | null>(null);
@@ -558,13 +554,16 @@ function Sidebar() {
           {sidebar.toggled ? <DoubleArrowLeft /> : <DoubleArrowRight />}
         </button>
 
-
         {sidebar.viewOptions.map((viewOption, index) => (
           <button
             onClick={() => {
               dispatch(setSidebarView(viewOption));
-              if (!sidebar.toggled) dispatch(setSidebarToggled(true))
+              if (!sidebar.toggled) dispatch(setSidebarToggled(true));
               if (sidebar.width <= 60) dispatch(setSidebarWidth(275));
+              if (viewOption.id === 3 && tags.selected) {
+                dispatch(setNewTagFormToggled(false));
+                dispatch(deselectTag());
+              }
             }}
             className={viewOption.id === sidebar.view.id ? "current" : ""}
             key={index}
@@ -627,8 +626,8 @@ function Sidebar() {
                           title={button.title}
                           key={i}
                         >
-                          {/* {button.symbol} */}
-                          {button.label}
+                          {button.symbol}
+                          {/* {button.label} */}
                         </button>
                       );
                     }
@@ -712,15 +711,15 @@ function Sidebar() {
               sidebar.inputPosition.referenceId !== 0,
             isSpacer: true,
           },
-          // {
-          //   text: "Add Tags",
-          //   icon: "#️⃣",
-          //   active:
-          //     sidebar.shiftClickItems.end === null &&
-          //     sidebar.inputPosition.referenceId !== 0,
-          //   onClick: handleTag,
-          //   isSpacer: false,
-          // },
+          {
+            text: "Add Tags",
+            icon: "#️⃣",
+            active:
+              sidebar.shiftClickItems.end === null &&
+              sidebar.inputPosition.referenceId !== 0,
+            onClick: handleTag,
+            isSpacer: false,
+          },
           {
             text: "Add To Favorites",
             icon: "⭐️",

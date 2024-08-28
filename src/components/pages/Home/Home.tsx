@@ -28,6 +28,7 @@ import OpenPageNavigation from "../../ui/OpenPageNavigation/OpenPageNavigation";
 import Overlay from "../../ui/Overlay/Overlay";
 import TagsModal from "../../ui/TagsModal/TagsModal";
 import "./Home.css";
+import { setColorOptions, setTags } from "../../../redux/tags";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -277,6 +278,59 @@ const Home = () => {
       );
     }
   }
+
+
+  async function getTags() {
+    try {
+      let response = await fetch(`${getApiUrl()}/tags/`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      });
+
+      if (response.status !== 200) throw response.statusText;
+
+      let result = await response.json();
+      console.log(result);
+      dispatch(setTags(result));
+    } catch (e) {
+      console.log(e);
+      if (typeof e === "string") {
+        setError(e);
+      } else if (e instanceof Error) {
+        setError(e.message);
+      }
+    }
+  }
+
+  async function getColorOptions() {
+    try {
+      let response = await fetch(`${getApiUrl()}/tags/color-options/`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      });
+
+      if (response.status !== 200) {
+        throw response.statusText;
+      }
+
+      let colorOptionsData = await response.json();
+
+      dispatch(setColorOptions(colorOptionsData.result));
+    } catch (e) {
+      if (typeof e === "string") {
+        setError(e);
+      } else if (e instanceof Error) {
+        setError(e.message);
+      }
+    }
+  }
+
+  useEffect(() => {
+    getTags();
+    getColorOptions();
+  }, []);
 
   function handleTabPress(e: React.KeyboardEvent<HTMLInputElement>) {
     // if (e.key === "Tab") {

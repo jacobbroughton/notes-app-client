@@ -3,14 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import {
   deleteTag,
-  deselectTag, selectTag, setColorOptions,
-  setTags
+  deselectTag,
+  selectTag,
+  setColorOptions,
+  setTags,
 } from "../../../redux/tags";
 import { getApiUrl } from "../../../utils/getUrl";
 import CreateTagView from "../CreateTagView/CreateTagView";
 import EditTagView from "../EditTagView/EditTagView";
 import TrashIcon from "../Icons/TrashIcon";
 import "./TagsSidebarView.css";
+import { setNewTagFormToggled } from "../../../redux/sidebar";
 
 const TagsSidebarView = () => {
   const dispatch = useDispatch();
@@ -54,56 +57,11 @@ const TagsSidebarView = () => {
     }
   }
 
-  async function getTags() {
-    try {
-      let response = await fetch(`${getApiUrl()}/tags/`, {
-        method: "GET",
-        credentials: "include",
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
-      });
-
-      if (response.status !== 200) throw response.statusText;
-
-      let result = await response.json();
-      console.log(result);
-      dispatch(setTags(result));
-    } catch (e) {
-      console.log(e);
-      if (typeof e === "string") {
-        setError(e);
-      } else if (e instanceof Error) {
-        setError(e.message);
-      }
-    }
-  }
-
-  async function getColorOptions() {
-    try {
-      let response = await fetch(`${getApiUrl()}/tags/color-options/`, {
-        method: "GET",
-        credentials: "include",
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
-      });
-
-      if (response.status !== 200) {
-        throw response.statusText;
-      }
-
-      let colorOptionsData = await response.json();
-
-      dispatch(setColorOptions(colorOptionsData.result));
-    } catch (e) {
-      if (typeof e === "string") {
-        setError(e);
-      } else if (e instanceof Error) {
-        setError(e.message);
-      }
-    }
-  }
-
   useEffect(() => {
-    getTags();
-    getColorOptions();
+    return () => {
+      dispatch(setNewTagFormToggled(false));
+      dispatch(deselectTag());
+    };
   }, []);
 
   return (
@@ -121,7 +79,9 @@ const TagsSidebarView = () => {
           </form>
           {tags.list.length === 0 && <p className="no-tags-found">No tags found...</p>}
           {tags.list
-            ?.filter((tag) => tag.name.includes(tagSearchValue))
+            ?.filter((tag) =>
+              tag.name.toLowerCase().includes(tagSearchValue.toLowerCase())
+            )
             .map((tag, i) => {
               return (
                 <button
@@ -143,8 +103,8 @@ const TagsSidebarView = () => {
             })}
         </>
       )}
-      {sidebar.newTagFormToggled && <CreateTagView />}
-      {tags.selected && <EditTagView />}
+      {sidebar.newTagFormToggled && <CreateTagView setError={setError} />}
+      {tags.selected && <EditTagView setError={setError} />}
 
       {tags.selected && (
         <div className="tag-controls">

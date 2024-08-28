@@ -211,7 +211,7 @@
 .sidebar .header .sidebar-header-buttons {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   height: 100%;
   width: auto;
   gap: 3px;
@@ -236,8 +236,8 @@
   font-size: 0.875rem;
 }
 
-.sidebar .header .sidebar-header-buttons button:first-child {
-  padding: 0px 5px 0px 15px;
+.sidebar .header .sidebar-header-buttons button:last-child {
+  padding: 0px 15px 0px 5px;
 }
 
 .sidebar .header .sidebar-header-buttons button:not(:disabled):hover {

@@ -182,10 +182,10 @@
 .tags-sidebar-view form .tag-color .tag-color-options .color-button.current::before {
   content: '*';
   font-size: 1.15rem;
-  color: yellow;
+  color: var(--current-tag-star-color);
   position: absolute;
   left: -3px;
-  top: -3px;
+  top: -5px;
 }
 
 .tags-sidebar-view form .tag-color .tag-color-options .color-button:hover {

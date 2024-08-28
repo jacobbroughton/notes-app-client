@@ -231,35 +231,32 @@ const ItemList = ({
       }`}
     >
       {favoritesList?.length !== 0 && (
-        <p className="item-list-heading favorites">Favorites</p>
-      )}
-      {favoritesList.map((item, index) => (
-        <ItemListItem
-          item={{
-            ...item,
-            TIER: 1,
-            EXPANDED_STATUS: false,
-            ORDER: favoritesList.length + 1,
-            parent_folder_id: item.folder_id,
-          }}
-          handleFolderClick={handleFolderClick}
-          handlePageClick={handlePageClick}
-          handleOnContextMenu={handleOnContextMenu}
-          handleRename={handleRename}
-          handleDragEnter={handleDragEnter}
-          handleDragStart={handleDragStart}
-          handleDrop={handleDrop}
-          handleNewPageSubmit={handleNewPageSubmit}
-          handleNewFolderSubmit={handleNewFolderSubmit}
-          renameInputRef={renameInputRef}
-          inputPositionRef={inputPositionRef}
-          index={index}
-          key={index}
-        />
-      ))}
-      {favoritesList.length !== 0 && (
         <>
-          <div className="spacer"></div>
+          <p className="item-list-heading favorites">Favorites</p>
+          {favoritesList.map((item, index) => (
+            <ItemListItem
+              item={{
+                ...item,
+                TIER: 1,
+                EXPANDED_STATUS: false,
+                ORDER: favoritesList.length + 1,
+                parent_folder_id: item.folder_id,
+              }}
+              handleFolderClick={handleFolderClick}
+              handlePageClick={handlePageClick}
+              handleOnContextMenu={handleOnContextMenu}
+              handleRename={handleRename}
+              handleDragEnter={handleDragEnter}
+              handleDragStart={handleDragStart}
+              handleDrop={handleDrop}
+              handleNewPageSubmit={handleNewPageSubmit}
+              handleNewFolderSubmit={handleNewFolderSubmit}
+              renameInputRef={renameInputRef}
+              inputPositionRef={inputPositionRef}
+              index={index}
+              key={index}
+            />
+          ))}
           <div className="item-list-heading-and-spinner">
             <p className="item-list-heading all">All </p>
             {/* {sidebar.loading && <LoadingSpinner />} */}
@@ -267,7 +264,6 @@ const ItemList = ({
         </>
       )}
       {allList.length === 0 && <p className="no-items-found">No items found</p>}
-
       {allList.map((item, index) => {
         let hasChildren =
           folders.list.filter((innerFolder) => innerFolder.parent_folder_id === item.id)

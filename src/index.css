@@ -45,6 +45,7 @@ body[data-theme="dark"] {
   --color-input-placeholder: white;
   --color-sidebar-nav: #333;
   --color-border: #555;
+  --current-tag-star-color: yellow;
 }
 
 body[data-theme="light"] {
@@ -71,6 +72,7 @@ body[data-theme="light"] {
   --color-input-placeholder: black;
   --color-sidebar-nav: #333;
   --color-border: #ccc;
+  --current-tag-star-color: #646cff;
 }
 
 body {

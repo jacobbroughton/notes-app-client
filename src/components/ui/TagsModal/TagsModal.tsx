@@ -20,7 +20,7 @@ const TagsModal = () => {
   const [tagSearchValue, setTagSearchValue] = useState("");
   const [tagColor, setTagColor] = useState<ColorState | null>(null);
 
-  const selectedItem = pages.selected || folders.selected;
+  const selectedItem = pages.selected! || folders.selected!;
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -154,26 +154,26 @@ const TagsModal = () => {
     }
   }
 
-  if (!selectedItem) return <p>No selected item found</p>;
-
   return (
     <>
       <div className="tags-modal" ref={tagsModalRef}>
-        <p className="heading">
-          Add tag(s) to {selectedItem.is_page && "page"} '{selectedItem.name}'
-          {!selectedItem.is_page && " and it's contents"}.
-        </p>
-        <form onSubmit={handleTagInputSubmit}>
-          <input
-            value={tagSearchValue}
-            onChange={(e) => setTagSearchValue(e.target.value)}
-            placeholder="Type to search or add a tag"
-            autoComplete="off"
-          />
-      
-        </form>
-        {tagSearchValue && !tags.list.find((tag) => tag.name === tagSearchValue) && (
-          <button className="tag-button" onClick={(e) => console.error("nothing else happens")}>
+        <div className='heading'>
+          <p>
+            Select tag for {selectedItem.is_page && "page"} '{selectedItem.name}'
+            {!selectedItem.is_page && " and it's contents"}
+          </p>
+          <form onSubmit={handleTagInputSubmit}>
+            <input
+              value={tagSearchValue}
+              onChange={(e) => setTagSearchValue(e.target.value)}
+              placeholder="Type to search or add a tag"
+              autoComplete="off"
+            />
+          </form>
+        </div>
+
+        {/* {tagSearchValue && !tags.list.find((tag) => tag.name === tagSearchValue) && (
+          <button className="tag-button" type="button">
             <span
               className="color-span"
               style={{ backgroundColor: tagColor?.color_code }}
@@ -182,26 +182,31 @@ const TagsModal = () => {
             </span>
             {tagSearchValue}
           </button>
-        )}
-        {tags.list
-          ?.filter((tag: TagState) => tag.name.includes(tagSearchValue))
-          .map((tag: TagState, index: number) => {
-            return (
-              <button
-                className={`tag-button ${
-                  selectedItem?.TAGS?.includes(tag.id) ? "added" : ""
-                }`}
-                onClick={(e) => handleTagClick(selectedItem, tag)}
-                key={index}
-              >
-                {" "}
-                <span className="color-span" style={{ backgroundColor: tag.color_code }}>
-                  &nbsp;
-                </span>{" "}
-                <p>{tag.name}</p>
-              </button>
-            );
-          })}
+        )} */}
+        <div className="tag-buttons">
+          {tags.list
+            ?.filter((tag: TagState) => tag.name.toLowerCase().includes(tagSearchValue.toLowerCase()))
+            .map((tag: TagState, index: number) => {
+              return (
+                <button
+                  className={`tag-button ${
+                    selectedItem?.TAGS?.includes(tag.id) ? "added" : ""
+                  }`}
+                  onClick={(e) => handleTagClick(selectedItem, tag)}
+                  key={index}
+                >
+                  {" "}
+                  <span
+                    className="color-span"
+                    style={{ backgroundColor: tag.color_code }}
+                  >
+                    &nbsp;
+                  </span>{" "}
+                  <p>{tag.name}</p>
+                </button>
+              );
+            })}
+        </div>
       </div>
       <Overlay />
     </>

@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setNewTagFormToggled } from "../../../redux/sidebar";
 import { deselectTag, editTag } from "../../../redux/tags";
@@ -7,13 +7,13 @@ import { getApiUrl } from "../../../utils/getUrl";
 import { isValidTagName } from "../../../utils/usefulFunctions";
 import { RootState } from "../../../redux/store";
 
-const EditTagView = () => {
+const EditTagView = ({ setError }) => {
   const dispatch = useDispatch();
   const tags = useSelector((state: RootState) => state.tags);
 
-  const currentTagColor = tags.colorOptions.find(
-    (colorOption) => colorOption.id === tags.selected?.color_id
-  ) || null;
+  const currentTagColor =
+    tags.colorOptions.find((colorOption) => colorOption.id === tags.selected?.color_id) ||
+    null;
 
   const [updatedTagColor, setUpdatedTagColor] = useState<ColorState | null>(
     currentTagColor
@@ -28,7 +28,7 @@ const EditTagView = () => {
     tagId: number | null
   ) {
     try {
-      if (!updatedTagColor) throw 'No color is selected'
+      if (!updatedTagColor) throw "No color is selected";
 
       const payload = {
         name: updatedTagName,
@@ -52,33 +52,36 @@ const EditTagView = () => {
 
       if (!data) throw "There was an issue parsing /tags/edit response";
 
-      console.log(data.justModifiedTag)
+      console.log(data.justModifiedTag);
 
       dispatch(editTag(data.justModifiedTag));
       dispatch(deselectTag());
     } catch (e) {
       if (typeof e === "string") {
         console.error(e);
+        setError(e);
       } else if (e instanceof Error) {
         console.error("ERROR: " + e.message);
+        setError(e.message);
       }
     }
   }
 
   async function handleSubmit(e: FormEvent) {}
 
+  function handleClose() {
+    dispatch(setNewTagFormToggled(false));
+    dispatch(deselectTag());
+    setUpdatedTagColor(null);
+    setUpdatedTagName("");
+  }
+
+
+
   return (
     <div className="tag-form-container">
       <div className="cancel-and-done-btns">
-        <button
-          onClick={() => {
-            dispatch(setNewTagFormToggled(false));
-            dispatch(deselectTag());
-            setUpdatedTagColor(null);
-            setUpdatedTagName("");
-          }}
-          title="Cancel / Discard Edit"
-        >
+        <button onClick={handleClose} title="Cancel / Discard Edit">
           Cancel
         </button>
         <button

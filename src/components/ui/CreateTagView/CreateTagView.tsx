@@ -7,7 +7,7 @@ import { getApiUrl } from "../../../utils/getUrl";
 import { isValidColor, isValidTagName } from "../../../utils/usefulFunctions";
 import { RootState } from "../../../redux/store";
 
-const CreateTagView = () => {
+const CreateTagView = ({setError}) => {
   const dispatch = useDispatch();
   const tags = useSelector((state: RootState) => state.tags);
 
@@ -54,8 +54,10 @@ const CreateTagView = () => {
     } catch (e) {
       if (typeof e === "string") {
         console.error(e);
+        setError(e)
       } else if (e instanceof Error) {
         console.error("ERROR: " + e.message);
+        setError(e.message)
       }
     }
   }
