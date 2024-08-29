@@ -213,16 +213,16 @@ const ItemList = ({
     pagesAndFolders = pagesAndFolders.map((item, i) => {
       return {
         ...item,
-        ORDER: i,
+        order: i,
       };
     });
 
     dispatch(setCombined(pagesAndFolders));
   }, [folders.list, pages.list]);
 
-  const favoritesList = pages.list.filter((page) => page.IS_FAVORITE && page.eff_status);
+  const favoritesList = pages.list.filter((page) => page.is_favorite && page.eff_status);
 
-  const allList = combined?.filter((folder) => folder?.VISIBLE && !folder.IS_FAVORITE);
+  const allList = combined?.filter((folder) => folder?.visible && !folder.is_favorite);
 
   return (
     <div
@@ -237,9 +237,9 @@ const ItemList = ({
             <ItemListItem
               item={{
                 ...item,
-                TIER: 1,
-                EXPANDED_STATUS: false,
-                ORDER: favoritesList.length + 1,
+                tier: 1,
+                expanded_status: false,
+                order: favoritesList.length + 1,
                 parent_folder_id: item.folder_id,
               }}
               handleFolderClick={handleFolderClick}
@@ -321,7 +321,7 @@ const ItemList = ({
         onDragOver={(e) => e.preventDefault()}
         style={{
           height: `calc(100% - ${
-            combined?.filter((folder) => folder?.VISIBLE).length * 26 + 40 + 115
+            combined?.filter((folder) => folder?.visible).length * 26 + 40 + 115
           }px)`,
         }}
       >

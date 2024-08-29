@@ -317,8 +317,10 @@ function Sidebar() {
         pagesResponse.json(),
       ]);
 
-      let formattedFolders = formatFolders(foldersData.folders, folders.list);
-      let formattedPages = formatPages(pagesData.pages, formattedFolders);
+      console.log(foldersData, pagesData)
+
+      let formattedFolders = formatFolders(foldersData, folders.list);
+      let formattedPages = formatPages(pagesData, formattedFolders);
 
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
@@ -354,7 +356,7 @@ function Sidebar() {
         },
         credentials: "include",
         body: JSON.stringify({
-          favoriteStatus: item.IS_FAVORITE ? 0 : 1,
+          favoriteStatus: item.is_favorite ? 0 : 1,
           pageId: item.page_id,
         }),
       });
@@ -367,7 +369,7 @@ function Sidebar() {
 
       if (item.is_page)
         dispatch(
-          setFavoriteStatus({ favoriteStatus: item.IS_FAVORITE ? 0 : 1, page: item })
+          setFavoriteStatus({ favoriteStatus: item.is_favorite ? 0 : 1, page: item })
         );
       resetContextMenu();
     } catch (e) {
@@ -690,14 +692,14 @@ function Sidebar() {
           {
             text: "New Page",
             icon: "📄",
-            active: !pages.selected?.IS_FAVORITE && sidebar.shiftClickItems.end === null,
+            active: !pages.selected?.is_favorite && sidebar.shiftClickItems.end === null,
             onClick: handleNewPage,
             isSpacer: false,
           },
           {
             text: "New Folder",
             icon: "📁",
-            active: !pages.selected?.IS_FAVORITE && sidebar.shiftClickItems.end === null,
+            active: !pages.selected?.is_favorite && sidebar.shiftClickItems.end === null,
             onClick: handleNewFolder,
             isSpacer: false,
           },
@@ -706,13 +708,13 @@ function Sidebar() {
             icon: "",
             onClick: () => null,
             active:
-              !pages.selected?.IS_FAVORITE &&
+              !pages.selected?.is_favorite &&
               sidebar.shiftClickItems.end === null &&
               sidebar.inputPosition.referenceId !== 0,
             isSpacer: true,
           },
           {
-            text: "Add Tags",
+            text: "Add Tag",
             icon: "#️⃣",
             active:
               sidebar.shiftClickItems.end === null &&
@@ -724,7 +726,7 @@ function Sidebar() {
             text: "Add To Favorites",
             icon: "⭐️",
             active:
-              !pages.active?.IS_FAVORITE &&
+              !pages.active?.is_favorite &&
               sidebar.shiftClickItems.end === null &&
               sidebar.inputPosition.referenceId !== 0,
             onClick: handleAddToFavorites,
@@ -734,7 +736,7 @@ function Sidebar() {
             text: "Remove From Favorites",
             icon: "⭐️",
             active:
-              (pages.active?.IS_FAVORITE &&
+              (pages.active?.is_favorite &&
                 sidebar.shiftClickItems.end === null &&
                 sidebar.inputPosition.referenceId !== 0) ||
               false,

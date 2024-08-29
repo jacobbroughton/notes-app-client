@@ -88,8 +88,8 @@ const sidebarSlice = createSlice({
       if (payload.end !== null) {
         list = payload.list.filter(
           (item: SidebarItemState) =>
-            (item.ORDER >= payload.start && item.ORDER <= payload.end) ||
-            (item.ORDER >= payload.end && item.ORDER <= payload.start)
+            (item.order >= payload.start && item.order <= payload.end) ||
+            (item.order >= payload.end && item.order <= payload.start)
         );
       }
 

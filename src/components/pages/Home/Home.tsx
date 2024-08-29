@@ -46,8 +46,6 @@ const Home = () => {
   const folders = useSelector((state: RootState) => state.folders);
   const modals = useSelector((state: RootState) => state.modals);
 
-
-
   async function getData() {
     try {
       dispatch(setSidebarLoading(true));
@@ -64,14 +62,14 @@ const Home = () => {
         }),
       ]);
 
-      if (foldersResponse.status !== 200) {
+      if (!foldersResponse.ok) {
         dispatch(setSidebarLoading(false));
-        throw foldersResponse.statusText;
+        throw "There was a problem getting folders";
       }
 
-      if (pagesResponse.status !== 200) {
+      if (!pagesResponse.ok) {
         dispatch(setSidebarLoading(false));
-        throw pagesResponse.statusText;
+        throw "There was a problem getting pages";
       }
 
       const [foldersData, pagesData] = await Promise.all([
@@ -79,8 +77,8 @@ const Home = () => {
         pagesResponse.json(),
       ]);
 
-      let formattedFolders = formatFolders(foldersData.folders, folders.list);
-      let formattedPages = formatPages(pagesData.pages, formattedFolders);
+      let formattedFolders = formatFolders(foldersData, folders.list);
+      let formattedPages = formatPages(pagesData, formattedFolders);
 
       dispatch(setFolders(formattedFolders));
       dispatch(setPages(formattedPages));
@@ -93,8 +91,6 @@ const Home = () => {
       }
     }
   }
-
-  
 
   function handleSubmit(e: React.FormEvent | null) {
     e?.preventDefault();
@@ -278,7 +274,6 @@ const Home = () => {
       );
     }
   }
-
 
   async function getTags() {
     try {
@@ -471,7 +466,7 @@ const Home = () => {
         </>
       )}
       {modals.deleteModal && <DeleteModal />}
-      {modals.tagsModal && <TagsModal />}
+      {modals.tagsModal && (pages.selected || folders.selected) && <TagsModal />}
       <OpenPageNavigation />
       {!pages.active && (
         <form className="editor-form" onSubmit={handleNewPageSubmit}>

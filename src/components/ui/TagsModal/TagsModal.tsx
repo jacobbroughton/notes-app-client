@@ -20,7 +20,7 @@ const TagsModal = () => {
   const [tagSearchValue, setTagSearchValue] = useState("");
   const [tagColor, setTagColor] = useState<ColorState | null>(null);
 
-  const selectedItem = pages.selected! || folders.selected!;
+  const selectedItem = pages.selected || folders.selected;
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -78,9 +78,9 @@ const TagsModal = () => {
     setTagColor(color);
   }
 
-  async function handleTagClick(item: FolderState | PageState, tag: TagState) {
+  async function handleFolderTagClick(item: PageState, tag: TagState) {
     try {
-      const response = await fetch(`${getApiUrl()}/tags/tag-item/`, {
+      const response = await fetch(`${getApiUrl()}/tags/tag-folder/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -90,7 +90,7 @@ const TagsModal = () => {
         body: JSON.stringify({
           tag,
           item,
-          toggleState: item.TAGS.includes(tag.id) ? 0 : 1,
+          toggleState: item.tag_id === tag.id ? 0 : 1,
         }),
       });
 
@@ -100,49 +100,27 @@ const TagsModal = () => {
 
       if (!data) throw "There was an issue parsing /tags/tag-item response";
 
-      if (item.is_page) {
-        if (item.TAGS.includes(tag.id)) {
-          dispatch(removeTagFromPage({ item, tag }));
-        } else {
-          dispatch(addTagToPage({ item, tag }));
+      let allChildPages: Array<PageState> = [];
+
+      getChildrenOfFolder(allChildPages, item.id);
+
+      // * Remove tag
+      if (item.tag_id === tag.id) {
+        dispatch(removeTagFromFolder({ item, tag }));
+
+        if (allChildPages.length > 0) {
+          allChildPages.forEach((page) => {
+            dispatch(removeTagFromPage({ item: page, tag }));
+          });
         }
+        // * Add Tag
       } else {
-        let allChildPages: Array<PageState> = [];
+        dispatch(addTagToFolder({ item, tag }));
 
-        function getChildren(folderIdToCheck: number | null) {
-          const childPages = pages.list.filter(
-            (page: PageState) => page.folder_id === folderIdToCheck
-          );
-
-          allChildPages.push(...childPages);
-
-          const childrenFolders = folders.list
-            .filter((folder: FolderState) => folder.parent_folder_id === folderIdToCheck)
-            .map((folder: FolderState) => folder.id);
-
-          if (childrenFolders.length === 0) return;
-
-          childrenFolders.forEach((folderId: number) => getChildren(folderId));
-        }
-
-        getChildren(item.id);
-
-        if (item.TAGS.includes(tag.id)) {
-          dispatch(removeTagFromFolder({ item, tag }));
-
-          if (allChildPages.length > 0) {
-            allChildPages.forEach((page) => {
-              dispatch(removeTagFromPage({ item: page, tag }));
-            });
-          }
-        } else {
-          dispatch(addTagToFolder({ item, tag }));
-
-          if (allChildPages.length > 0) {
-            allChildPages.forEach((page) => {
-              dispatch(addTagToPage({ item: page, tag }));
-            });
-          }
+        if (allChildPages.length > 0) {
+          allChildPages.forEach((page) => {
+            dispatch(addTagToPage({ item: page, tag }));
+          });
         }
       }
     } catch (e) {
@@ -154,10 +132,62 @@ const TagsModal = () => {
     }
   }
 
+  async function handlePageTagClick(item: PageState, tag: TagState) {
+    try {
+      const response = await fetch(`${getApiUrl()}/tags/tag-page/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          tag,
+          item,
+          toggleState: item.tag_id === tag.id ? 0 : 1,
+        }),
+      });
+
+      if (response.status !== 200) throw response.statusText;
+
+      const data = await response.json();
+
+      if (!data) throw "There was an issue parsing /tags/tag-item response";
+
+      if (item.tag_id === tag.id) {
+        dispatch(removeTagFromPage(item));
+      } else {
+        dispatch(addTagToPage({ item, tag }));
+      }
+    } catch (e) {
+      if (typeof e === "string") {
+        console.error(e);
+      } else if (e instanceof Error) {
+        console.error("ERROR: " + e.message);
+      }
+    }
+  }
+
+  function getChildrenOfFolder(allChildPages: PageState[], folderIdToCheck: number | null) {
+    const childPages = pages.list.filter(
+      (page: PageState) => page.folder_id === folderIdToCheck
+    );
+
+    allChildPages.push(...childPages);
+
+    const childrenFolders = folders.list
+      .filter((folder: FolderState) => folder.parent_folder_id === folderIdToCheck)
+      .map((folder: FolderState) => folder.id);
+
+    if (childrenFolders.length === 0) return;
+
+    childrenFolders.forEach((folderId: number) => getChildrenOfFolder(allChildPages, folderId));
+  }
+
   return (
     <>
       <div className="tags-modal" ref={tagsModalRef}>
-        <div className='heading'>
+        <div className="heading">
           <p>
             Select tag for {selectedItem.is_page && "page"} '{selectedItem.name}'
             {!selectedItem.is_page && " and it's contents"}
@@ -185,14 +215,23 @@ const TagsModal = () => {
         )} */}
         <div className="tag-buttons">
           {tags.list
-            ?.filter((tag: TagState) => tag.name.toLowerCase().includes(tagSearchValue.toLowerCase()))
+            ?.filter((tag: TagState) =>
+              tag.name.toLowerCase().includes(tagSearchValue.toLowerCase())
+            )
             .map((tag: TagState, index: number) => {
               return (
                 <button
                   className={`tag-button ${
-                    selectedItem?.TAGS?.includes(tag.id) ? "added" : ""
+                    selectedItem?.tag_id === tag.id ? "added" : ""
                   }`}
-                  onClick={(e) => handleTagClick(selectedItem, tag)}
+                  onClick={(e) => {
+                    if (!selectedItem) return;
+                    if (selectedItem.is_page) {
+                      handlePageTagClick(selectedItem, tag);
+                    } else {
+                      handleFolderTagClick(selectedItem, tag);
+                    }
+                  }}
                   key={index}
                 >
                   {" "}

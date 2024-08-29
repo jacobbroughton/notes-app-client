@@ -88,7 +88,7 @@ const PageSearch = () => {
           return (
             <div
               draggable="true"
-              className={`page-container hoverable ${page.SELECTED ? "selected" : ""}`}
+              className={`page-container hoverable ${page.selected ? "selected" : ""}`}
               key={i}
               onClick={() => handlePageClick(page)}
             >

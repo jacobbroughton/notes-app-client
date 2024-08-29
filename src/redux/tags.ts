@@ -20,7 +20,7 @@ const tagsSlice = createSlice({
         list: payload.map((tag: TagState) => {
           return {
             ...tag,
-            SELECTED: false,
+            selected: false,
           };
         }),
       };
@@ -31,8 +31,8 @@ const tagsSlice = createSlice({
         list: state.list.map((tag) => {
           return {
             ...tag,
-            ...(tag.id === payload.id && { SELECTED: true }),
-            ...(tag.id !== payload.id && tag.SELECTED && { SELECTED: false }),
+            ...(tag.id === payload.id && { selected: true }),
+            ...(tag.id !== payload.id && tag.selected && { selected: false }),
           };
         }),
         selected: payload,
@@ -44,7 +44,7 @@ const tagsSlice = createSlice({
         list: state.list.map((tag) => {
           return {
             ...tag,
-            ...(tag.SELECTED && { SELECTED: false }),
+            ...(tag.selected && { selected: false }),
           };
         }),
         selected: null,

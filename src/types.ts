@@ -3,13 +3,15 @@ export type FolderState = {
   parent_folder_id: number | null;
   name: string;
   eff_status: number;
-  TAGS: Array<number>;
-  TIER: number;
-  ORDER: number;
-  VISIBLE: boolean;
-  SELECTED: boolean;
+  tag_id: number | null;
+  tag_color_code: string | null;
+  tag_name: string | null;
+  tier: number;
+  order: number;
+  visible: boolean;
+  selected: boolean;
   is_page: boolean;
-  EXPANDED_STATUS: boolean;
+  expanded_status: boolean;
   created_dttm: string;
   modified_dttm: string | null;
   created_by_id: number;
@@ -26,14 +28,14 @@ export type TagState = {
   created_by_id: number;
   modified_by_id: number | null;
   color_code: string;
-  SELECTED: boolean;
+  selected: boolean;
 };
 
 export type UntitledPageState = {
   name: string;
   body: string;
-  IS_UNTITLED: boolean;
-  IS_INITIAL: boolean;
+  is_untitled: boolean;
+  is_initial: boolean;
 };
 
 export type PageState = {
@@ -41,26 +43,28 @@ export type PageState = {
   page_id: number;
   folder_id: number | null;
   name: string;
-  TITLE: string;
+  title: string;
   body: string;
-  IS_FAVORITE: boolean;
+  is_favorite: boolean;
   eff_status: number;
   created_dttm: string;
   modified_dttm: string | null;
   created_by_id: number;
   modified_by_id: number | null;
-  TAGS: Array<number>;
+  tag_id: number | null;
+  tag_color_code: string | null;
+  tag_name: string | null;
   is_page: boolean;
-  TIER: number;
-  VISIBLE: boolean;
-  SELECTED: boolean;
-  DRAFT_TITLE: string;
+  tier: number;
+  visible: boolean;
+  selected: boolean;
+  draft_title: string;
   draft_name: string;
   draft_body: string;
-  OPEN: boolean;
-  ACTIVE: boolean;
+  open: boolean;
+  active: boolean;
   is_modified: boolean;
-  IS_UNTITLED: boolean;
+  is_untitled: boolean;
 };
 
 export type FoldersState = {
@@ -79,8 +83,8 @@ export type PagesState = {
   untitledPage: {
     name: string;
     body: string;
-    IS_UNTITLED: boolean;
-    IS_INITIAL: boolean;
+    is_untitled: boolean;
+    is_initial: boolean;
   };
 };
 
@@ -100,11 +104,13 @@ export type SidebarItemState = {
   modified_dttm: string | null;
   created_by_id: number;
   modified_by_id: number | null;
-  TAGS: Array<number>;
-  TIER: number;
-  ORDER: number;
-  VISIBLE: boolean;
-  SELECTED: boolean;
+  tag_id: number | null;
+  tag_color_code: string | null;
+  tag_name: string | null;
+  tier: number;
+  order: number;
+  visible: boolean;
+  selected: boolean;
   is_page: boolean;
 };
 
@@ -145,27 +151,29 @@ export type ItemState = {
   page_id: number | null;
   folder_id: number | null;
   name: string;
-  TITLE: string | null;
+  title: string | null;
   body: string | null;
-  IS_FAVORITE: boolean;
+  is_favorite: boolean;
   eff_status: number;
   created_dttm: string;
   modified_dttm: string | null;
   created_by_id: number;
   modified_by_id: number | null;
   is_modified: boolean | null;
-  EXPANDED_STATUS: boolean;
-  TAGS: Array<number>;
+  expanded_status: boolean;
+  tag_id: number | null;
+  tag_color_code: string | null;
+  tag_name: string | null;
   is_page: boolean;
-  TIER: number;
-  VISIBLE: boolean;
-  SELECTED: boolean;
-  DRAFT_TITLE: string | null;
+  tier: number;
+  visible: boolean;
+  selected: boolean;
+  draft_title: string | null;
   draft_name: string | null;
   draft_body: string;
-  OPEN: boolean;
-  ACTIVE: boolean;
-  ORDER: number;
+  open: boolean;
+  active: boolean;
+  order: number;
   parent_folder_id: number | null;
 };
 

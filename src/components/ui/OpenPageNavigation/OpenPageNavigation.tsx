@@ -7,7 +7,7 @@ import "./OpenPageNavigation.css";
 const OpenPageNavigation = () => {
   const pages = useSelector((state: RootState) => state.pages);
 
-  const openPages = pages.list.filter((page: PageState) => page.OPEN);
+  const openPages = pages.list.filter((page: PageState) => page.open);
 
   return (
     <div className="open-page-navigation">

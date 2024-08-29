@@ -86,7 +86,7 @@ const TagsSidebarView = () => {
               return (
                 <button
                   onClick={() => dispatch(selectTag(tag))}
-                  className={`tag-button ${tag.SELECTED ? "selected" : ""}`}
+                  className={`tag-button ${tag.selected ? "selected" : ""}`}
                   key={i}
                   title={`Tag: ${tag.name}`}
                 >
