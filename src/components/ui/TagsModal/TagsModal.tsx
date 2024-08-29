@@ -78,7 +78,7 @@ const TagsModal = () => {
     setTagColor(color);
   }
 
-  async function handleFolderTagClick(item: PageState, tag: TagState) {
+  async function handleFolderTagClick(item: PageState | FolderState, tag: TagState) {
     try {
       const response = await fetch(`${getApiUrl()}/tags/tag-folder/`, {
         method: "POST",
@@ -106,7 +106,7 @@ const TagsModal = () => {
 
       // * Remove tag
       if (item.tag_id === tag.id) {
-        dispatch(removeTagFromFolder({ item, tag }));
+        dispatch(removeTagFromFolder(item));
 
         if (allChildPages.length > 0) {
           allChildPages.forEach((page) => {
@@ -132,7 +132,7 @@ const TagsModal = () => {
     }
   }
 
-  async function handlePageTagClick(item: PageState, tag: TagState) {
+  async function handlePageTagClick(item: PageState | FolderState, tag: TagState) {
     try {
       const response = await fetch(`${getApiUrl()}/tags/tag-page/`, {
         method: "POST",
@@ -168,7 +168,10 @@ const TagsModal = () => {
     }
   }
 
-  function getChildrenOfFolder(allChildPages: PageState[], folderIdToCheck: number | null) {
+  function getChildrenOfFolder(
+    allChildPages: PageState[],
+    folderIdToCheck: number | null
+  ) {
     const childPages = pages.list.filter(
       (page: PageState) => page.folder_id === folderIdToCheck
     );
@@ -181,28 +184,32 @@ const TagsModal = () => {
 
     if (childrenFolders.length === 0) return;
 
-    childrenFolders.forEach((folderId: number) => getChildrenOfFolder(allChildPages, folderId));
+    childrenFolders.forEach((folderId: number) =>
+      getChildrenOfFolder(allChildPages, folderId)
+    );
   }
 
   return (
     <>
       <div className="tags-modal" ref={tagsModalRef}>
-        <div className="heading">
-          <p>
-            Select tag for {selectedItem.is_page && "page"} '{selectedItem.name}'
-            {!selectedItem.is_page && " and it's contents"}
-          </p>
-          <form onSubmit={handleTagInputSubmit}>
-            <input
-              value={tagSearchValue}
-              onChange={(e) => setTagSearchValue(e.target.value)}
-              placeholder="Type to search or add a tag"
-              autoComplete="off"
-            />
-          </form>
-        </div>
-
-        {/* {tagSearchValue && !tags.list.find((tag) => tag.name === tagSearchValue) && (
+        {selectedItem ? (
+          <>
+            {" "}
+            <div className="heading">
+              <p>
+                Select tag for {selectedItem.is_page && "page"} '{selectedItem.name}'
+                {!selectedItem.is_page && " and it's contents"}
+              </p>
+              <form onSubmit={handleTagInputSubmit}>
+                <input
+                  value={tagSearchValue}
+                  onChange={(e) => setTagSearchValue(e.target.value)}
+                  placeholder="Type to search or add a tag"
+                  autoComplete="off"
+                />
+              </form>
+            </div>
+            {/* {tagSearchValue && !tags.list.find((tag) => tag.name === tagSearchValue) && (
           <button className="tag-button" type="button">
             <span
               className="color-span"
@@ -213,39 +220,43 @@ const TagsModal = () => {
             {tagSearchValue}
           </button>
         )} */}
-        <div className="tag-buttons">
-          {tags.list
-            ?.filter((tag: TagState) =>
-              tag.name.toLowerCase().includes(tagSearchValue.toLowerCase())
-            )
-            .map((tag: TagState, index: number) => {
-              return (
-                <button
-                  className={`tag-button ${
-                    selectedItem?.tag_id === tag.id ? "added" : ""
-                  }`}
-                  onClick={(e) => {
-                    if (!selectedItem) return;
-                    if (selectedItem.is_page) {
-                      handlePageTagClick(selectedItem, tag);
-                    } else {
-                      handleFolderTagClick(selectedItem, tag);
-                    }
-                  }}
-                  key={index}
-                >
-                  {" "}
-                  <span
-                    className="color-span"
-                    style={{ backgroundColor: tag.color_code }}
-                  >
-                    &nbsp;
-                  </span>{" "}
-                  <p>{tag.name}</p>
-                </button>
-              );
-            })}
-        </div>
+            <div className="tag-buttons">
+              {tags.list
+                ?.filter((tag: TagState) =>
+                  tag.name.toLowerCase().includes(tagSearchValue.toLowerCase())
+                )
+                .map((tag: TagState, index: number) => {
+                  return (
+                    <button
+                      className={`tag-button ${
+                        selectedItem?.tag_id === tag.id ? "added" : ""
+                      }`}
+                      onClick={(e) => {
+                        if (!selectedItem) return;
+                        if (selectedItem.is_page) {
+                          handlePageTagClick(selectedItem, tag);
+                        } else {
+                          handleFolderTagClick(selectedItem, tag);
+                        }
+                      }}
+                      key={index}
+                    >
+                      {" "}
+                      <span
+                        className="color-span"
+                        style={{ backgroundColor: tag.color_code }}
+                      >
+                        &nbsp;
+                      </span>{" "}
+                      <p>{tag.name}</p>
+                    </button>
+                  );
+                })}
+            </div>
+          </>
+        ) : (
+          <p>No item selected</p>
+        )}
       </div>
       <Overlay />
     </>

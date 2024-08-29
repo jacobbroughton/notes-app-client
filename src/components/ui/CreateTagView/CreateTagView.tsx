@@ -7,7 +7,11 @@ import { getApiUrl } from "../../../utils/getUrl";
 import { isValidColor, isValidTagName } from "../../../utils/usefulFunctions";
 import { RootState } from "../../../redux/store";
 
-const CreateTagView = ({setError}) => {
+const CreateTagView = ({
+  setError,
+}: {
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+}) => {
   const dispatch = useDispatch();
   const tags = useSelector((state: RootState) => state.tags);
 
@@ -44,7 +48,7 @@ const CreateTagView = ({setError}) => {
 
       const justCreatedTag = data.justCreatedTag;
 
-      console.log(justCreatedTag)
+      console.log(justCreatedTag);
 
       dispatch(addTag(justCreatedTag));
       dispatch(deselectTag());
@@ -54,10 +58,10 @@ const CreateTagView = ({setError}) => {
     } catch (e) {
       if (typeof e === "string") {
         console.error(e);
-        setError(e)
+        setError(e);
       } else if (e instanceof Error) {
         console.error("ERROR: " + e.message);
-        setError(e.message)
+        setError(e.message);
       }
     }
   }

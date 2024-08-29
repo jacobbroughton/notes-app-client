@@ -248,9 +248,9 @@ const ItemListItem = ({
           <div className="tags">
             <span
               className="tag-color"
-              style={{ backgroundColor: item.tag_color_code }}
+              style={{ backgroundColor: item.tag_color_code || "" }}
               key={index}
-              title={item.tag_name}
+              title={item.tag_name || ""}
             >
               &nbsp;
             </span>
