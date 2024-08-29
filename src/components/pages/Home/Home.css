@@ -125,7 +125,7 @@
   text-decoration: underline;
 }
 
-.home-view .heading {
+.home-view .editor-form .heading {
   width: 100%;
   display: flex;
   gap: 5px;
@@ -133,7 +133,7 @@
 }
 
 .home-view .editor-form textarea,
-.home-view .heading input {
+.home-view .editor-form .heading input {
   transition: border-color 0.15s ease;
   box-shadow: var(--container-shadow);
   width: 100%;
@@ -150,22 +150,22 @@
 }
 
 .home-view .editor-form textarea::placeholder,
-.home-view .heading input::placeholder,
+.home-view .editor-form .heading input::placeholder,
 .home-view .editor-form textarea::-ms-input-placeholder,
-.home-view .heading input::-ms-input-placeholder {
+.home-view .editor-form .heading input::-ms-input-placeholder {
   color: var(--color-input-placeholder);
 }
 
-.home-view .heading input {
+.home-view .editor-form .heading input {
   width: 100%;
   font-size: 1.25rem;
   font-weight: 600;
 }
 
-.home-view .heading input:focus,
-.home-view .heading input:active,
-.home-view .heading input:focus-within,
-.home-view .heading input:focus-visible,
+.home-view .editor-form .heading input:focus,
+.home-view .editor-form .heading input:active,
+.home-view .editor-form .heading input:focus-within,
+.home-view .editor-form .heading input:focus-visible,
 .home-view .editor-form textarea:not(.error):focus,
 .home-view .editor-form textarea:not(.error):active,
 .home-view .editor-form textarea:not(.error):focus-within,
@@ -173,11 +173,11 @@
   border: 1px solid var(--tertiary-bg) !important;
 }
 
-.home-view .heading input.error,
-.home-view .heading input:focus.error,
-.home-view .heading input:active.error,
-.home-view .heading input:focus-within.error,
-.home-view .heading input:focus-visible.error,
+.home-view .editor-form .heading input.error,
+.home-view .editor-form .heading input:focus.error,
+.home-view .editor-form .heading input:active.error,
+.home-view .editor-form .heading input:focus-within.error,
+.home-view .editor-form .heading input:focus-visible.error,
 .home-view textarea.error,
 .home-view textarea:focus.error,
 .home-view textarea:active.error,
@@ -187,7 +187,7 @@
   outline: none;
 }
 
-.home-view .heading .no-title-warning {
+.home-view .editor-form .heading .no-title-warning {
   background: var(--secondary-bg);
   color: var(--color-text-primary);
   border: crimson 1px solid;
@@ -200,7 +200,7 @@
   z-index: 3;
 }
 
-.home-view .heading .status-indicator {
+.home-view .editor-form .heading .status-indicator {
   min-width: 10px;
   width: 10px;
   height: 100%;
@@ -210,11 +210,11 @@
   box-shadow: var(--container-shadow);
 }
 
-.home-view .heading .status-indicator.unsaved {
+.home-view .editor-form .heading .status-indicator.unsaved {
   background-color: var(--color-unsaved);
 }
 
-.home-view .heading .status-indicator.saved {
+.home-view .editor-form .heading .status-indicator.saved {
   background-color: var(--color-saved);
 }
 
@@ -270,7 +270,7 @@
 
 .home-view .save-button:disabled {
   color: var(--tertiary-bg);
-  background-color: white;
+  background-color: var(--tertiary-bg-disabled);
   border-color: var(--tertiary-bg);
   text-shadow: none;
   cursor: not-allowed;

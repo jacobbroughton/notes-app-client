@@ -1,14 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { TagState, TagsState } from "../types";
 
-
 const initialState: TagsState = {
   list: [],
   selected: null,
-  colorOptions: {
-    default: [],
-    userCreated: [],
-  },
+  colorOptions: [],
 };
 
 const tagsSlice = createSlice({
@@ -16,7 +12,7 @@ const tagsSlice = createSlice({
   initialState,
   reducers: {
     resetTagsState: () => {
-      return initialState
+      return initialState;
     },
     setTags: (state, { payload }) => {
       return {
@@ -24,7 +20,7 @@ const tagsSlice = createSlice({
         list: payload.map((tag: TagState) => {
           return {
             ...tag,
-            SELECTED: false,
+            selected: false,
           };
         }),
       };
@@ -35,8 +31,8 @@ const tagsSlice = createSlice({
         list: state.list.map((tag) => {
           return {
             ...tag,
-            ...(tag.id === payload.id && { SELECTED: true }),
-            ...(tag.id !== payload.id && tag.SELECTED && { SELECTED: false }),
+            ...(tag.id === payload.id && { selected: true }),
+            ...(tag.id !== payload.id && tag.selected && { selected: false }),
           };
         }),
         selected: payload,
@@ -48,22 +44,21 @@ const tagsSlice = createSlice({
         list: state.list.map((tag) => {
           return {
             ...tag,
-            ...(tag.SELECTED && { SELECTED: false }),
+            ...(tag.selected && { selected: false }),
           };
         }),
         selected: null,
       };
     },
     editTag: (state, { payload }) => {
+      console.log(payload);
       return {
         ...state,
         list: state.list.map((tag) => {
           return {
             ...tag,
             ...(tag.id === payload.id && {
-              COLOR_CODE: payload.color.COLOR_CODE,
-              color_id: payload.color.id,
-              name: payload.name,
+              ...payload
             }),
           };
         }),
@@ -86,20 +81,7 @@ const tagsSlice = createSlice({
     setColorOptions: (state, { payload }) => {
       return {
         ...state,
-        colorOptions: {
-          default: payload.defaultOptions,
-          userCreated: payload.userCreatedOptions,
-        },
-      };
-    },
-    addCustomColorOption: (state, { payload }) => {
-      if (!payload) return state;
-      return {
-        ...state,
-        colorOptions: {
-          ...state.colorOptions,
-          userCreated: [...state.colorOptions.userCreated, payload],
-        },
+        colorOptions: payload,
       };
     },
   },
@@ -115,5 +97,4 @@ export const {
   deleteTag,
   addTag,
   setColorOptions,
-  addCustomColorOption,
 } = tagsSlice.actions;

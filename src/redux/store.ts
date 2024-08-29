@@ -1,13 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "./user";
-import { foldersReducer } from "./folders";
-import sidebarReducer from "./sidebar";
-import { pagesReducer } from "./pages";
-import modalsReducer from "./modals";
-import themeReducer from "./theme";
 import combinedReducer from "./combined";
+import { foldersReducer } from "./folders";
+import modalsReducer from "./modals";
+import { pagesReducer } from "./pages";
+import sidebarReducer from "./sidebar";
 import tagsReducer from "./tags";
-import colorPickerMenuReducer from "./colorPickerMenu";
+import themeReducer from "./theme";
+import userReducer from "./user";
 
 const store = configureStore({
   reducer: {
@@ -18,7 +17,6 @@ const store = configureStore({
     combined: combinedReducer,
     sidebar: sidebarReducer,
     modals: modalsReducer,
-    colorPickerMenu: colorPickerMenuReducer,
     theme: themeReducer,
   },
 });

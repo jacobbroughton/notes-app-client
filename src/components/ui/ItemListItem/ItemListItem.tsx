@@ -1,5 +1,7 @@
+import { ChangeEvent, MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "./ItemListItem.css";
+import { renameFolder } from "../../../redux/folders";
+import { renamePage } from "../../../redux/pages";
 import {
   setGrabbedItem,
   setNewFolderName,
@@ -8,14 +10,12 @@ import {
   setRenameInputToggled,
   setShiftClickItems,
 } from "../../../redux/sidebar";
-import Caret from "../Icons/Caret";
-import PageIcon from "../Icons/PageIcon";
-import { renameFolder } from "../../../redux/folders";
-import { renamePage } from "../../../redux/pages";
 import { RootState } from "../../../redux/store";
 import { ItemState } from "../../../types";
-import { ChangeEvent, MouseEvent } from "react";
 import { getApiUrl } from "../../../utils/getUrl";
+import Caret from "../Icons/Caret";
+import PageIcon from "../Icons/PageIcon";
+import "./ItemListItem.css";
 
 const ItemListItem = ({
   item,
@@ -65,7 +65,7 @@ const ItemListItem = ({
           credentials: "include",
           headers: {
             "content-type": "application/json;charset=UTF-8",
-            "Access-Control-Allow-Origin": "http://localhost:3000"
+            "Access-Control-Allow-Origin": "http://localhost:3000",
           },
           body: JSON.stringify(pageInfo),
         });
@@ -88,7 +88,7 @@ const ItemListItem = ({
           credentials: "include",
           headers: {
             "content-type": "application/json;charset=UTF-8",
-            "Access-Control-Allow-Origin": "http://localhost:3000" 
+            "Access-Control-Allow-Origin": "http://localhost:3000",
           },
           body: JSON.stringify(folderInfo),
         });
@@ -135,13 +135,13 @@ const ItemListItem = ({
     }
 
     if (
-      itemFromList.SELECTED ||
+      itemFromList.selected ||
       (sidebar.shiftClickItems.start !== null &&
         sidebar.shiftClickItems.end !== null &&
-        ((itemFromList.ORDER >= sidebar.shiftClickItems.start &&
-          itemFromList.ORDER <= sidebar.shiftClickItems.end) ||
-          (itemFromList.ORDER >= sidebar.shiftClickItems.end &&
-            itemFromList.ORDER <= sidebar.shiftClickItems.start)))
+        ((itemFromList.order >= sidebar.shiftClickItems.start &&
+          itemFromList.order <= sidebar.shiftClickItems.end) ||
+          (itemFromList.order >= sidebar.shiftClickItems.end &&
+            itemFromList.order <= sidebar.shiftClickItems.start)))
     ) {
       className += " selected";
     }
@@ -173,7 +173,7 @@ const ItemListItem = ({
         dispatch(
           setShiftClickItems({
             ...sidebar.shiftClickItems,
-            end: item.ORDER,
+            end: item.order,
             list: combined,
           })
         );
@@ -181,7 +181,7 @@ const ItemListItem = ({
     } else {
       dispatch(
         setShiftClickItems({
-          start: item.ORDER,
+          start: item.order,
           end: null,
           list: combined,
         })
@@ -210,7 +210,7 @@ const ItemListItem = ({
       onClick={(e) => handleItemClick(e, item)}
     >
       <div className="tier-blocks">
-        {[...Array(item.TIER)].map((tierNum, index) => (
+        {[...Array(item.tier)].map((tierNum, index) => (
           <div key={index} className="tier-block">
             &nbsp;
           </div>
@@ -218,12 +218,12 @@ const ItemListItem = ({
       </div>
       <div
         className={`name-and-buttons`}
-        data-tier={`${item.TIER ? `TIER-${item.TIER}` : "null"}`}
+        data-tier={`${item.tier ? `tier-${item.tier}` : "null"}`}
       >
         <div className="name-and-caret">
           <div className="caret-container">
             {!item.is_page && (
-              <Caret direction={item.EXPANDED_STATUS ? "down" : "right"} />
+              <Caret direction={item.expanded_status ? "down" : "right"} />
             )}
             {item.is_page && <PageIcon />}
           </div>
@@ -244,34 +244,16 @@ const ItemListItem = ({
             <p>{item.name}</p>
           )}
         </div>
-        {item.TAGS && tags.list && (
+        {item.tag_id && (
           <div className="tags">
-            {item.TAGS.map((tagId, index) => {
-              const tag = tags.list?.find((tag) => tag.id === tagId);
-
-              if (!tag)
-                return (
-                  <span
-                    className="tag-color"
-                    style={{ backgroundColor: "black" }}
-                    key={index}
-                    title="Unknown Color (something happened)"
-                  >
-                    &nbsp;
-                  </span>
-                );
-
-              return (
-                <span
-                  className="tag-color"
-                  style={{ backgroundColor: tag.COLOR_CODE }}
-                  key={index}
-                  title={tag.name}
-                >
-                  &nbsp;
-                </span>
-              );
-            })}
+            <span
+              className="tag-color"
+              style={{ backgroundColor: item.tag_color_code }}
+              key={index}
+              title={item.tag_name}
+            >
+              &nbsp;
+            </span>
           </div>
         )}
       </div>
@@ -284,7 +266,7 @@ const ItemListItem = ({
               handleNewPageSubmit(e);
             }
           }}
-          style={{ paddingLeft: `calc(${item.TIER} * 10px)` }}
+          style={{ paddingLeft: `calc(${item.tier} * 10px)` }}
           className="new-folder-form"
         >
           <input

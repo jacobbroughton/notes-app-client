@@ -3,13 +3,15 @@ export type FolderState = {
   parent_folder_id: number | null;
   name: string;
   eff_status: number;
-  TAGS: Array<number>;
-  TIER: number;
-  ORDER: number;
-  VISIBLE: boolean;
-  SELECTED: boolean;
+  tag_id: number | null;
+  tag_color_code: string | null;
+  tag_name: string | null;
+  tier: number;
+  order: number;
+  visible: boolean;
+  selected: boolean;
   is_page: boolean;
-  EXPANDED_STATUS: boolean;
+  expanded_status: boolean;
   created_dttm: string;
   modified_dttm: string | null;
   created_by_id: number;
@@ -20,21 +22,20 @@ export type TagState = {
   id: number;
   name: string;
   color_id: number;
-  HAS_DEFAULT_COLOR: boolean;
   eff_status: number;
   created_dttm: string;
   modified_dttm: string | null;
   created_by_id: number;
   modified_by_id: number | null;
-  COLOR_CODE: string;
-  SELECTED: boolean;
+  color_code: string;
+  selected: boolean;
 };
 
 export type UntitledPageState = {
   name: string;
   body: string;
-  IS_UNTITLED: boolean;
-  IS_INITIAL: boolean;
+  is_untitled: boolean;
+  is_initial: boolean;
 };
 
 export type PageState = {
@@ -42,26 +43,28 @@ export type PageState = {
   page_id: number;
   folder_id: number | null;
   name: string;
-  TITLE: string;
+  title: string;
   body: string;
-  IS_FAVORITE: boolean;
+  is_favorite: boolean;
   eff_status: number;
   created_dttm: string;
   modified_dttm: string | null;
   created_by_id: number;
   modified_by_id: number | null;
-  TAGS: Array<number>;
+  tag_id: number | null;
+  tag_color_code: string | null;
+  tag_name: string | null;
   is_page: boolean;
-  TIER: number;
-  VISIBLE: boolean;
-  SELECTED: boolean;
-  DRAFT_TITLE: string;
+  tier: number;
+  visible: boolean;
+  selected: boolean;
+  draft_title: string;
   draft_name: string;
   draft_body: string;
-  OPEN: boolean;
-  ACTIVE: boolean;
+  open: boolean;
+  active: boolean;
   is_modified: boolean;
-  IS_UNTITLED: boolean;
+  is_untitled: boolean;
 };
 
 export type FoldersState = {
@@ -80,18 +83,15 @@ export type PagesState = {
   untitledPage: {
     name: string;
     body: string;
-    IS_UNTITLED: boolean;
-    IS_INITIAL: boolean;
+    is_untitled: boolean;
+    is_initial: boolean;
   };
 };
 
 export type TagsState = {
   list: Array<TagState>;
   selected: TagState | null;
-  colorOptions: {
-    default: Array<ColorState>;
-    userCreated: Array<ColorState>;
-  };
+  colorOptions: Array<ColorState>;
 };
 
 export type SidebarItemState = {
@@ -104,11 +104,13 @@ export type SidebarItemState = {
   modified_dttm: string | null;
   created_by_id: number;
   modified_by_id: number | null;
-  TAGS: Array<number>;
-  TIER: number;
-  ORDER: number;
-  VISIBLE: boolean;
-  SELECTED: boolean;
+  tag_id: number | null;
+  tag_color_code: string | null;
+  tag_name: string | null;
+  tier: number;
+  order: number;
+  visible: boolean;
+  selected: boolean;
   is_page: boolean;
 };
 
@@ -120,25 +122,20 @@ export type ModalsState = {
 
 export type UserState = {
   id: number;
-  USERNAME: string;
-  ADMIN: boolean;
-  HASH: string;
-  SALT: string;
+  username: string;
+  admin: boolean;
+  hash: string;
+  salt: string;
   created_dttm: string;
   modified_dttm: string | null;
 };
 
 export type ColorState = {
   id: number;
-  COLOR_CODE: string;
+  color_code: string;
   eff_status: number;
   created_dttm: string;
   modified_dttm: string;
-  IS_DEFAULT_COLOR: number;
-};
-
-export type ColorPickerState = {
-  toggled: boolean;
 };
 
 export type ContextMenuButton = {
@@ -154,27 +151,29 @@ export type ItemState = {
   page_id: number | null;
   folder_id: number | null;
   name: string;
-  TITLE: string | null;
+  title: string | null;
   body: string | null;
-  IS_FAVORITE: boolean;
+  is_favorite: boolean;
   eff_status: number;
   created_dttm: string;
   modified_dttm: string | null;
   created_by_id: number;
   modified_by_id: number | null;
   is_modified: boolean | null;
-  EXPANDED_STATUS: boolean;
-  TAGS: Array<number>;
+  expanded_status: boolean;
+  tag_id: number | null;
+  tag_color_code: string | null;
+  tag_name: string | null;
   is_page: boolean;
-  TIER: number;
-  VISIBLE: boolean;
-  SELECTED: boolean;
-  DRAFT_TITLE: string | null;
+  tier: number;
+  visible: boolean;
+  selected: boolean;
+  draft_title: string | null;
   draft_name: string | null;
   draft_body: string;
-  OPEN: boolean;
-  ACTIVE: boolean;
-  ORDER: number;
+  open: boolean;
+  active: boolean;
+  order: number;
   parent_folder_id: number | null;
 };
 
@@ -188,7 +187,7 @@ export type SidebarState = {
     id: number;
     name: string;
   }>;
-  toggled: boolean,
+  toggled: boolean;
   searchValue: string;
   shiftClickItems: {
     start: number | null;
@@ -211,6 +210,6 @@ export type SidebarState = {
   newNameForRename: string;
   newPageName: string;
   newFolderName: string;
-  loading: boolean,
-  floating: boolean
+  loading: boolean;
+  floating: boolean;
 };

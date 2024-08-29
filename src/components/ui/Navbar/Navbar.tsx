@@ -1,13 +1,11 @@
-import { useState, useRef, useEffect, MouseEvent } from "react";
-import { Link } from "react-router-dom";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../../../redux/store";
-import Caret from "../Icons/Caret";
 import { setUser } from "../../../redux/user";
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import "./Navbar.css";
-import { FormEvent } from "react";
 import { getApiUrl } from "../../../utils/getUrl";
+import Caret from "../Icons/Caret";
+import "./Navbar.css";
 
 const Navbar = () => {
   const navDropdownRef = useRef<HTMLDivElement>(null);
@@ -78,10 +76,10 @@ const Navbar = () => {
                 className="nav-dropdown-toggle"
               >
                 <img
-                  src={`https://avatars.dicebear.com/api/initials/${user.USERNAME}.svg?backgroundColor=%23646cff`}
+                  src={`https://avatars.dicebear.com/api/initials/${user.username}.svg?backgroundColor=%23646cff`}
                 />
-                {user.USERNAME[0].toUpperCase() +
-                  user.USERNAME.slice(1, user.USERNAME.length)}{" "}
+                {user.username[0].toUpperCase() +
+                  user.username.slice(1, user.username.length)}{" "}
                 <Caret direction={navDropdownToggled ? "up" : "down"} />
               </button>
               {navDropdownToggled && (

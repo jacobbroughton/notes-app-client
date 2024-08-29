@@ -149,8 +149,8 @@
 }
 
 .items-list .caret-container .page-icon {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   fill: var(--color-accent-secondary);
 }
 

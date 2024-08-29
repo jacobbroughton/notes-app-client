@@ -1,164 +1,27 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteTag, deselectTag, editTag, selectTag, addTag } from "../../../redux/tags";
+import { RootState } from "../../../redux/store";
+import {
+  deleteTag,
+  deselectTag,
+  selectTag,
+  setColorOptions,
+  setTags,
+} from "../../../redux/tags";
+import { getApiUrl } from "../../../utils/getUrl";
+import CreateTagView from "../CreateTagView/CreateTagView";
+import EditTagView from "../EditTagView/EditTagView";
 import TrashIcon from "../Icons/TrashIcon";
-import DownArrow from "../Icons/DownArrow";
 import "./TagsSidebarView.css";
 import { setNewTagFormToggled } from "../../../redux/sidebar";
-import ColorPicker from "../ColorPicker/ColorPicker";
-import Tag from "../Tag/Tag";
-import { RootState } from "../../../redux/store";
-import { TagState, ColorState } from "../../../types";
-import { getApiUrl } from "../../../utils/getUrl";
 
 const TagsSidebarView = () => {
   const dispatch = useDispatch();
   const tags = useSelector((state: RootState) => state.tags);
   const sidebar = useSelector((state: RootState) => state.sidebar);
   const [tagSearchValue, setTagSearchValue] = useState<string>("");
-  const [newTagColor, setNewTagColor] = useState<ColorState | null>(null);
-  const [newTagName, setNewTagName] = useState<string>("");
-  const [updatedTagColor, setUpdatedTagColor] = useState<ColorState | null>(null);
-  const [updatedTagName, setUpdatedTagName] = useState<string>(tags.selected?.name || "");
   const [deleteWarningToggled, setDeleteWarningToggled] = useState<boolean>(false);
-
-  function determineDefaultColor(tag: TagState): ColorState {
-    let matchingDefaultColor: ColorState | undefined;
-
-    if (tag.HAS_DEFAULT_COLOR) {
-      matchingDefaultColor = tags.colorOptions.default.find(
-        (color) => color.id === tag.color_id
-      );
-    } else {
-      matchingDefaultColor = tags.colorOptions.userCreated.find(
-        (color) => color.id === tag.color_id
-      );
-    }
-
-    if (matchingDefaultColor) return matchingDefaultColor;
-    return {
-      id: -1,
-      COLOR_CODE: "#000000",
-      eff_status: 1,
-      created_dttm: `${new Date()}`,
-      modified_dttm: "",
-      IS_DEFAULT_COLOR: 1,
-    };
-  }
-
-  function handleTagClick(tag: TagState) {
-    dispatch(selectTag(tag));
-    setUpdatedTagName(tag.name);
-    setUpdatedTagColor(determineDefaultColor(tag));
-  }
-
-  function handleUpdatedColorChange(color: ColorState) {
-    setUpdatedTagColor(color);
-  }
-
-  function handleNewColorChange(color: ColorState) {
-    setNewTagColor(color);
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-  }
-
-  function isValidColor(strColor: string | undefined): boolean {
-    if (!strColor) return false;
-
-    const s = new Option().style;
-    s.color = strColor;
-    return s.color !== "";
-  }
-
-  function isValidTagName(strName: string, canBeEmpty: boolean) {
-    if (canBeEmpty) return true;
-    return strName !== "";
-  }
-
-  async function handleTagEdit(
-    updatedTagName: string,
-    updatedTagColor: ColorState | null,
-    tagId: number
-  ) {
-    try {
-      const payload = {
-        name: updatedTagName,
-        color: updatedTagColor,
-        id: tagId,
-      };
-
-      const response = await fetch(`${getApiUrl()}/tags/edit/`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.status !== 200) throw response.statusText;
-
-      const data = await response.json();
-
-      if (!data) throw "There was an issue parsing /tags/edit response";
-
-      dispatch(editTag(payload));
-      dispatch(deselectTag());
-    } catch (e) {
-      if (typeof e === "string") {
-        console.error(e);
-      } else if (e instanceof Error) {
-        console.error("ERROR: " + e.message);
-      }
-    }
-  }
-
-  async function handleNewTag(
-    newTagName: string,
-    newColor: ColorState | null,
-    tagId?: number
-  ) {
-    try {
-      const payload = {
-        name: newTagName,
-        color: newColor,
-        id: tagId,
-      };
-
-      const response = await fetch(`${getApiUrl()}/tags/new/`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.status !== 200) throw response.statusText;
-
-      const data = await response.json();
-
-      if (!data) throw "There was an issue parsing /tags/new response";
-
-      const justCreatedTag = data.justCreatedTag;
-
-      dispatch(addTag(justCreatedTag));
-      dispatch(deselectTag());
-      setNewTagColor(null);
-      setNewTagName("");
-      dispatch(setNewTagFormToggled(false));
-    } catch (e) {
-      if (typeof e === "string") {
-        console.error(e);
-      } else if (e instanceof Error) {
-        console.error("ERROR: " + e.message);
-      }
-    }
-  }
+  const [error, setError] = useState<null | string>(null);
 
   async function handleTagDelete(tagId: number) {
     try {
@@ -195,11 +58,15 @@ const TagsSidebarView = () => {
   }
 
   useEffect(() => {
-    if (tags.selected) setUpdatedTagColor(determineDefaultColor(tags.selected));
-  }, [tags.selected]);
+    return () => {
+      dispatch(setNewTagFormToggled(false));
+      dispatch(deselectTag());
+    };
+  }, []);
 
   return (
     <div className="tags-sidebar-view">
+      {error && <p className="error-text">{error.toString()}</p>}
       {tags.selected === null && !sidebar.newTagFormToggled && (
         <>
           <form className="tag-search-form">
@@ -210,21 +77,23 @@ const TagsSidebarView = () => {
               autoComplete="off"
             />
           </form>
-          {tags.list.length === 0 && <p className="no-tags-found">No tags found</p>}
+          {tags.list.length === 0 && <p className="no-tags-found">No tags found...</p>}
           {tags.list
-            ?.filter((tag) => tag.name.includes(tagSearchValue))
+            ?.filter((tag) =>
+              tag.name.toLowerCase().includes(tagSearchValue.toLowerCase())
+            )
             .map((tag, i) => {
               return (
                 <button
-                  onClick={() => handleTagClick(tag)}
-                  className={`tag-button ${tag.SELECTED ? "selected" : ""}`}
+                  onClick={() => dispatch(selectTag(tag))}
+                  className={`tag-button ${tag.selected ? "selected" : ""}`}
                   key={i}
                   title={`Tag: ${tag.name}`}
                 >
                   <span
                     className="color-span"
-                    style={{ backgroundColor: tag.COLOR_CODE }}
-                    title={`Color: ${tag.COLOR_CODE}`}
+                    style={{ backgroundColor: tag.color_code }}
+                    title={`Color: ${tag.color_code}`}
                   >
                     &nbsp;
                   </span>
@@ -234,139 +103,8 @@ const TagsSidebarView = () => {
             })}
         </>
       )}
-      {sidebar.newTagFormToggled && (
-        <div className="tag-form-container">
-          <div className="cancel-and-done-btns">
-            <button
-              onClick={() => {
-                dispatch(setNewTagFormToggled(false));
-                setNewTagColor(null);
-                setNewTagName("");
-              }}
-              title="Cancel / Discard New Tag"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={(e) => handleNewTag(newTagName, newTagColor)}
-              disabled={
-                !isValidTagName(newTagName, false) ||
-                !isValidColor(newTagColor?.COLOR_CODE)
-              }
-              title="Done / Confirm New Tag"
-            >
-              Done
-            </button>
-          </div>
-          <form className="tag-form" onSubmit={handleSubmit}>
-            <p className="new-tag-header">Create a tag</p>
-            <div className="tag-name">
-              <label>Tag Name</label>
-              <input
-                placeholder='"Expenses", "High Priority", etc.'
-                value={newTagName}
-                onChange={(e) => setNewTagName(e.target.value)}
-                className={isValidTagName(newTagName, true) ? "" : "invalid"}
-                autoComplete="off"
-              />
-              {!isValidTagName(newTagName, true) && (
-                <p className="invalid-text">Invalid name</p>
-              )}
-            </div>
-            <div className="tag-color">
-              <label>Tag Color</label>
-              <div className="inputs">
-                <ColorPicker
-                  onColorSelect={handleNewColorChange}
-                  selectedColor={newTagColor}
-                  showColorCode={true}
-                />
-              </div>
-              {newTagColor && !isValidColor(newTagColor?.COLOR_CODE) && (
-                <p className="invalid-text">Invalid color</p>
-              )}
-            </div>
-          </form>
-          <Tag name={newTagName ? newTagName : "-"} color={newTagColor} />
-        </div>
-      )}
-      {tags.selected && (
-        <div className="tag-form-container">
-          <div className="cancel-and-done-btns">
-            <button
-              onClick={() => {
-                setDeleteWarningToggled(false);
-                dispatch(setNewTagFormToggled(false));
-                dispatch(deselectTag());
-                setUpdatedTagColor(null);
-                setUpdatedTagName("");
-              }}
-              title="Cancel / Discard Edit"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() =>
-                handleTagEdit(updatedTagName, updatedTagColor, tags.selected?.id!)
-              }
-              disabled={
-                (updatedTagName === tags.selected?.name &&
-                  updatedTagColor?.COLOR_CODE === tags.selected?.COLOR_CODE) ||
-                !isValidTagName(updatedTagName, false) ||
-                !isValidColor(updatedTagColor?.COLOR_CODE)
-              }
-              title="Done / Confirm Edit"
-            >
-              Done
-            </button>
-          </div>
-          <form onSubmit={handleSubmit} className="tag-form">
-            <p className="new-tag-header">Edit tag</p>
-            <div className="tag-name">
-              <label>Tag Name</label>
-              <input
-                value={updatedTagName}
-                onChange={(e) => setUpdatedTagName(e.target.value)}
-                className={isValidTagName(updatedTagName, false) ? "" : "invalid"}
-                autoComplete="off"
-              />
-              {!isValidTagName(updatedTagName, false) && (
-                <p className="invalid-text">Invalid name</p>
-              )}
-            </div>
-            <div className="tag-color">
-              <label>Tag Color</label>
-              <div className="inputs">
-                <ColorPicker
-                  onColorSelect={handleUpdatedColorChange}
-                  selectedColor={updatedTagColor}
-                  showColorCode={true}
-                />
-              </div>
-              {!isValidColor(updatedTagColor?.COLOR_CODE) && (
-                <p className="invalid-text">Invalid color</p>
-              )}
-            </div>
-          </form>
-          <Tag name={tags.selected.name} color={determineDefaultColor(tags.selected)} />
-
-          <DownArrow />
-          {updatedTagName !== tags.selected.name ||
-          updatedTagColor?.COLOR_CODE !==
-            determineDefaultColor(tags.selected)?.COLOR_CODE ? (
-            <Tag
-              name={updatedTagName ? updatedTagName : "-"}
-              color={
-                isValidColor(updatedTagColor?.COLOR_CODE)
-                  ? updatedTagColor
-                  : determineDefaultColor(tags.selected)
-              }
-            />
-          ) : (
-            <p className="no-changes">No changes made yet</p>
-          )}
-        </div>
-      )}
+      {sidebar.newTagFormToggled && <CreateTagView setError={setError} />}
+      {tags.selected && <EditTagView setError={setError} />}
 
       {tags.selected && (
         <div className="tag-controls">
@@ -377,20 +115,26 @@ const TagsSidebarView = () => {
               onClick={() => setDeleteWarningToggled(true)}
             >
               <TrashIcon />
+              Delete Tag
             </button>
           )}
           {deleteWarningToggled && (
             <div className="are-you-sure-container">
               <p>Are you sure?</p>
-              <button
-                onClick={() => handleTagDelete(tags.selected!.id)}
-                className="confirm"
-              >
-                Yes
-              </button>
-              <button onClick={(e) => setDeleteWarningToggled(false)} className="cancel">
-                Cancel
-              </button>
+              <div className="buttons">
+                <button
+                  onClick={() => handleTagDelete(tags.selected!.id)}
+                  className="confirm"
+                >
+                  Yes, delete
+                </button>
+                <button
+                  onClick={(e) => setDeleteWarningToggled(false)}
+                  className="cancel"
+                >
+                  No, cancel
+                </button>
+              </div>
             </div>
           )}
         </div>

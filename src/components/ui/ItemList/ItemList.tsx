@@ -1,6 +1,8 @@
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { setExpandedStatus, selectFolder, renameFolder } from "../../../redux/folders";
+import React, { MouseEvent, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setCombined } from "../../../redux/combined";
+import { selectFolder, setExpandedStatus } from "../../../redux/folders";
+import { selectPage, updateParentFolderId } from "../../../redux/pages";
 import {
   setDraggedOverItem,
   setGrabbedItem,
@@ -9,13 +11,11 @@ import {
   setNewPageName,
   setShiftClickItems,
 } from "../../../redux/sidebar";
-import { selectPage, updateParentFolderId } from "../../../redux/pages";
-import { setCombined } from "../../../redux/combined";
-import ItemListItem from "../ItemListItem/ItemListItem";
 import { RootState } from "../../../redux/store";
-import { SidebarItemState, ItemState, FolderState, PageState } from "../../../types";
-import "./ItemList.css";
+import { FolderState, ItemState, PageState, SidebarItemState } from "../../../types";
 import { getApiUrl } from "../../../utils/getUrl";
+import ItemListItem from "../ItemListItem/ItemListItem";
+import "./ItemList.css";
 
 const ItemList = ({
   setContextMenu,
@@ -213,16 +213,16 @@ const ItemList = ({
     pagesAndFolders = pagesAndFolders.map((item, i) => {
       return {
         ...item,
-        ORDER: i,
+        order: i,
       };
     });
 
     dispatch(setCombined(pagesAndFolders));
   }, [folders.list, pages.list]);
 
-  const favoritesList = pages.list.filter((page) => page.IS_FAVORITE && page.eff_status);
+  const favoritesList = pages.list.filter((page) => page.is_favorite && page.eff_status);
 
-  const allList = combined?.filter((folder) => folder?.VISIBLE && !folder.IS_FAVORITE);
+  const allList = combined?.filter((folder) => folder?.visible && !folder.is_favorite);
 
   return (
     <div
@@ -230,40 +230,40 @@ const ItemList = ({
         sidebar.inputPosition.referenceId === 0 ? "selected" : ""
       }`}
     >
-      {favoritesList.length !== 0 && (
-        <p className="item-list-heading favorites">Favorites</p>
+      {favoritesList?.length !== 0 && (
+        <>
+          <p className="item-list-heading favorites">Favorites</p>
+          {favoritesList.map((item, index) => (
+            <ItemListItem
+              item={{
+                ...item,
+                tier: 1,
+                expanded_status: false,
+                order: favoritesList.length + 1,
+                parent_folder_id: item.folder_id,
+              }}
+              handleFolderClick={handleFolderClick}
+              handlePageClick={handlePageClick}
+              handleOnContextMenu={handleOnContextMenu}
+              handleRename={handleRename}
+              handleDragEnter={handleDragEnter}
+              handleDragStart={handleDragStart}
+              handleDrop={handleDrop}
+              handleNewPageSubmit={handleNewPageSubmit}
+              handleNewFolderSubmit={handleNewFolderSubmit}
+              renameInputRef={renameInputRef}
+              inputPositionRef={inputPositionRef}
+              index={index}
+              key={index}
+            />
+          ))}
+          <div className="item-list-heading-and-spinner">
+            <p className="item-list-heading all">All </p>
+            {/* {sidebar.loading && <LoadingSpinner />} */}
+          </div>
+        </>
       )}
-      {favoritesList.map((item, index) => (
-        <ItemListItem
-          item={{
-            ...item,
-            TIER: 1,
-            EXPANDED_STATUS: false,
-            ORDER: favoritesList.length + 1,
-            parent_folder_id: item.folder_id,
-          }}
-          handleFolderClick={handleFolderClick}
-          handlePageClick={handlePageClick}
-          handleOnContextMenu={handleOnContextMenu}
-          handleRename={handleRename}
-          handleDragEnter={handleDragEnter}
-          handleDragStart={handleDragStart}
-          handleDrop={handleDrop}
-          handleNewPageSubmit={handleNewPageSubmit}
-          handleNewFolderSubmit={handleNewFolderSubmit}
-          renameInputRef={renameInputRef}
-          inputPositionRef={inputPositionRef}
-          index={index}
-          key={index}
-        />
-      ))}
-      {favoritesList.length !== 0 && <div className="spacer"></div>}
-      <div className="item-list-heading-and-spinner">
-        <p className="item-list-heading all">All </p>
-        {/* {sidebar.loading && <LoadingSpinner />} */}
-      </div>
       {allList.length === 0 && <p className="no-items-found">No items found</p>}
-
       {allList.map((item, index) => {
         let hasChildren =
           folders.list.filter((innerFolder) => innerFolder.parent_folder_id === item.id)
@@ -321,7 +321,7 @@ const ItemList = ({
         onDragOver={(e) => e.preventDefault()}
         style={{
           height: `calc(100% - ${
-            combined?.filter((folder) => folder?.VISIBLE).length * 26 + 40 + 115
+            combined?.filter((folder) => folder?.visible).length * 26 + 40 + 115
           }px)`,
         }}
       >

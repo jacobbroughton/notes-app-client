@@ -1,9 +1,8 @@
-import { RefObject, forwardRef } from "react";
+import { RefObject } from "react";
 import {
   ContextMenuButton,
-  SidebarItemState,
-  PageState,
   FolderState,
+  PageState
 } from "../../../types";
 import "./ContextMenu.css";
 
