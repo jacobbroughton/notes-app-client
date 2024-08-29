@@ -189,9 +189,8 @@ const foldersSlice = createSlice({
 
           return {
             ...folder,
-            ...((isSameFolder 
+            ...(isSameFolder &&
               // || childFolderIds.includes(folder.id)
-          ) &&
               folder.tag_id !== clickedTag.id && {
                 tag_id: clickedTag.id,
                 tag_color_code: clickedTag.color_code,
@@ -207,14 +206,7 @@ const foldersSlice = createSlice({
         } as FolderState | null | null,
       };
     },
-    removeTagFromFolder: (state, { payload }): FoldersState => {
-      const { item, tag } = payload;
-
-      const removeTag = (folder: FolderState | null, tagId: number) => {
-        if (!folder) return [];
-        return folder.tags.filter((innerTag) => innerTag !== tagId);
-      };
-
+    removeTagFromFolder: (state, { payload: item }): FoldersState => {
       let childFolderIds: Array<number> = [];
 
       function getChildren(folderIdToCheck: number) {
@@ -239,23 +231,31 @@ const foldersSlice = createSlice({
           return {
             ...folder,
             ...(folder.id === item.id && {
-              tags: removeTag(folder, tag.id),
+              tag_id: null,
+              tag_color_code: null,
+              tag_name: null,
             }),
             ...(childFolderIds.includes(folder.id) && {
-              tags: removeTag(folder, tag.id),
+              tag_id: null,
+              tag_color_code: null,
+              tag_name: null,
             }),
           };
         }),
         active: {
           ...state.active,
           ...(state.active?.id === item.id && {
-            tags: removeTag(state.active, tag.id),
+            tag_id: null,
+            tag_color_code: null,
+            tag_name: null,
           }),
         } as FolderState | null,
         selected: {
           ...state.selected,
           ...(state.selected?.id === item.id && {
-            tags: removeTag(state.selected, tag.id),
+            tag_id: null,
+            tag_color_code: null,
+            tag_name: null,
           }),
         } as FolderState | null,
       };

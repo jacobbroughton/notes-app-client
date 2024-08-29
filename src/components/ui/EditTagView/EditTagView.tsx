@@ -7,7 +7,11 @@ import { getApiUrl } from "../../../utils/getUrl";
 import { isValidTagName } from "../../../utils/usefulFunctions";
 import { RootState } from "../../../redux/store";
 
-const EditTagView = ({ setError }) => {
+const EditTagView = ({
+  setError,
+}: {
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+}) => {
   const dispatch = useDispatch();
   const tags = useSelector((state: RootState) => state.tags);
 
@@ -75,8 +79,6 @@ const EditTagView = ({ setError }) => {
     setUpdatedTagColor(null);
     setUpdatedTagName("");
   }
-
-
 
   return (
     <div className="tag-form-container">

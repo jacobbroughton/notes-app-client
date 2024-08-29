@@ -27,8 +27,6 @@ import { ItemState } from "../../../types";
 import { formatFolders, formatPages } from "../../../utils/formatData";
 import { getApiUrl } from "../../../utils/getUrl";
 import ContextMenu from "../ContextMenu/ContextMenu";
-import DoubleArrowLeft from "../Icons/DoubleArrowLeft";
-import DoubleArrowRight from "../Icons/DoubleArrowRight";
 import PageIcon from "../Icons/PageIcon";
 import SearchIcon from "../Icons/SearchIcon";
 import TagIcon from "../Icons/TagIcon";
@@ -44,7 +42,6 @@ function Sidebar() {
   const sidebarRef = useRef<HTMLDivElement | null>(null);
   const inputPositionRef = useRef<HTMLInputElement | null>(null);
   const contextMenuRef = useRef<HTMLMenuElement | null>(null);
-  const draggableRef = useRef<HTMLMenuElement | null>(null);
   const renameInputRef = useRef<HTMLInputElement | null>(null);
   const [contextMenu, setContextMenu] = useState<{
     position: {
@@ -317,7 +314,7 @@ function Sidebar() {
         pagesResponse.json(),
       ]);
 
-      console.log(foldersData, pagesData)
+      console.log(foldersData, pagesData);
 
       let formattedFolders = formatFolders(foldersData, folders.list);
       let formattedPages = formatPages(pagesData, formattedFolders);
