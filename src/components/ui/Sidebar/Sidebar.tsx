@@ -546,7 +546,7 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-nav">
-        <button
+        {/* <button
           onClick={() => {
             dispatch(setSidebarToggled(!sidebar.toggled));
           }}
@@ -554,7 +554,7 @@ function Sidebar() {
           title={`Toggle Sidebar ${sidebar.toggled ? "Off" : "On"}`}
         >
           {sidebar.toggled ? <DoubleArrowLeft /> : <DoubleArrowRight />}
-        </button>
+        </button> */}
 
         {sidebar.viewOptions.map((viewOption, index) => (
           <button
@@ -562,6 +562,9 @@ function Sidebar() {
               dispatch(setSidebarView(viewOption));
               if (!sidebar.toggled) dispatch(setSidebarToggled(true));
               if (sidebar.width <= 60) dispatch(setSidebarWidth(275));
+              if (viewOption.id === 1 && sidebar.view.id === 1) {
+                dispatch(setSidebarToggled(!sidebar.toggled));
+              }
               if (viewOption.id === 3 && tags.selected) {
                 dispatch(setNewTagFormToggled(false));
                 dispatch(deselectTag());

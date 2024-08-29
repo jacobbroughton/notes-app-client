@@ -17,7 +17,7 @@ const foldersSlice = createSlice({
       return initialState;
     },
     setFolders: (state, { payload }: PayloadAction<Array<FolderState>>) => {
-      console.log(payload)
+      console.log(payload);
       const folders = payload.map((folder: FolderState) => {
         return {
           ...folder,
@@ -182,15 +182,6 @@ const foldersSlice = createSlice({
 
       getChildren(item.id);
 
-      let selectedFolderTags: Array<number> = [];
-
-      if (state.selected) {
-        selectedFolderTags = [...state.selected.tags];
-        if (state.selected.id === item.id && state.selected.tag_id !== clickedTag.id) {
-          selectedFolderTags = [...selectedFolderTags, clickedTag.id];
-        }
-      }
-
       return {
         ...state,
         list: state.list.map((folder: FolderState) => {
@@ -198,7 +189,9 @@ const foldersSlice = createSlice({
 
           return {
             ...folder,
-            ...((isSameFolder || childFolderIds.includes(folder.id)) &&
+            ...((isSameFolder 
+              // || childFolderIds.includes(folder.id)
+          ) &&
               folder.tag_id !== clickedTag.id && {
                 tag_id: clickedTag.id,
                 tag_color_code: clickedTag.color_code,

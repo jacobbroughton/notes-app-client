@@ -117,11 +117,11 @@ const TagsModal = () => {
       } else {
         dispatch(addTagToFolder({ item, tag }));
 
-        if (allChildPages.length > 0) {
-          allChildPages.forEach((page) => {
-            dispatch(addTagToPage({ item: page, tag }));
-          });
-        }
+        // if (allChildPages.length > 0) {
+        //   allChildPages.forEach((page) => {
+        //     dispatch(addTagToPage({ item: page, tag }));
+        //   });
+        // }
       }
     } catch (e) {
       if (typeof e === "string") {
