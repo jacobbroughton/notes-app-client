@@ -15,7 +15,6 @@
   color: var(--color-text-primary);
   box-shadow: var(--large-shadow);
   /* gap: 5px; */
-
   max-height: 500px;
   height: 100%;
   overflow: auto;

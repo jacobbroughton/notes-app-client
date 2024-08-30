@@ -64,11 +64,11 @@ const tagsSlice = createSlice({
         }),
       };
     },
-    deleteTag: (state, { payload }) => {
+    deleteTag: (state, { payload: id }) => {
       return {
         ...state,
         list: state.list.filter((tag) => {
-          return tag.id !== payload.id;
+          return tag.id !== id;
         }),
       };
     },

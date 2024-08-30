@@ -16,6 +16,7 @@ import {
   setNewPageName,
   setNewTagFormToggled,
   setRenameInputToggled,
+  setSidebarFloating,
   setSidebarLoading,
   setSidebarToggled,
   setSidebarView,
@@ -37,6 +38,7 @@ import TagsSidebarView from "../TagsSidebarView/TagsSidebarView";
 import UserMenu from "../UserMenu/UserMenu";
 import "./Sidebar.css";
 import { deselectTag } from "../../../redux/tags";
+import FloatingWindowsIcon from "../Icons/FloatingWindowsIcon";
 
 function Sidebar() {
   const sidebarRef = useRef<HTMLDivElement | null>(null);
@@ -593,15 +595,15 @@ function Sidebar() {
         >
           <UserIcon />
         </button>
-        {/* <button
+        <button
           className={`floating-sidebar-button ${sidebar.floating ? "toggled" : ""}`}
           onClick={() => {
             dispatch(setSidebarFloating(!sidebar.floating));
           }}
           title="Set Sidebar to 'Floating' Mode"
         >
-          <FloatingWindowsIcon />
-        </button> */}
+          <FloatingWindowsIcon/>
+        </button>
       </div>
       {userMenuToggled && <UserMenu setUserMenuToggled={setUserMenuToggled} />}
       {sidebar.toggled && (

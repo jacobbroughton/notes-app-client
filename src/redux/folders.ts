@@ -31,8 +31,7 @@ const foldersSlice = createSlice({
         selected: folders.find((folder: FolderState) => folder.selected) || null,
       };
     },
-    setExpandedStatus: (state, { payload }) => {
-      const expandedFolder = payload;
+    setExpandedStatus: (state, { payload: expandedFolder }) => {
       const folders = [...state?.list];
 
       let idsToUpdateVisibility: Array<number> = [];
@@ -161,9 +160,7 @@ const foldersSlice = createSlice({
         }),
       };
     },
-    addTagToFolder: (state, { payload }): FoldersState => {
-      const { item, tag: clickedTag } = payload;
-
+    addTagToFolder: (state, { payload: { item, tag: clickedTag } }): FoldersState => {
       let childFolderIds: Array<number> = [];
 
       function getChildren(folderIdToCheck: number) {

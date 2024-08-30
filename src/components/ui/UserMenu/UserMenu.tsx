@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { resetCombinedState } from "../../../redux/combined";
 import { resetFoldersState } from "../../../redux/folders";
@@ -12,6 +12,7 @@ import { resetUserState } from "../../../redux/user";
 import { getApiUrl } from "../../../utils/getUrl";
 import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
 import "./UserMenu.css";
+import { RootState } from "../../../redux/store";
 
 const UserMenu = ({
   setUserMenuToggled,
@@ -22,6 +23,7 @@ const UserMenu = ({
   const navigate = useNavigate();
   const userMenuRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
+  const user = useSelector((state: RootState) => state.user);
 
   async function handleLogout(e: FormEvent) {
     e.preventDefault();
@@ -77,6 +79,7 @@ const UserMenu = ({
 
   return (
     <div className="user-menu" ref={userMenuRef}>
+      <p className='username'>u/{user?.username}</p>
       <button className="logout-btn" onClick={handleLogout}>
         Logout
       </button>
