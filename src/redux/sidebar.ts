@@ -7,10 +7,10 @@ const viewOptionsForState = [
     id: 1,
     name: "Notes",
   },
-  {
-    id: 2,
-    name: "Search",
-  },
+  // {
+  //   id: 2,
+  //   name: "Search",
+  // },
   {
     id: 3,
     name: "Tags",

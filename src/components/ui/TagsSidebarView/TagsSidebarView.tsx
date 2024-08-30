@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { setNewTagFormToggled } from "../../../redux/sidebar";
 import { RootState } from "../../../redux/store";
 import {
   deleteTag,
   deselectTag,
   selectTag,
-  setColorOptions,
-  setTags,
 } from "../../../redux/tags";
 import { getApiUrl } from "../../../utils/getUrl";
 import CreateTagView from "../CreateTagView/CreateTagView";
 import EditTagView from "../EditTagView/EditTagView";
 import TrashIcon from "../Icons/TrashIcon";
 import "./TagsSidebarView.css";
-import { setNewTagFormToggled } from "../../../redux/sidebar";
 
 const TagsSidebarView = () => {
   const dispatch = useDispatch();
@@ -45,7 +43,9 @@ const TagsSidebarView = () => {
 
       if (!data) throw "There was an issue parsing /tags/delete response";
 
+
       dispatch(deleteTag(payload));
+      // Remove tag from items
       dispatch(deselectTag());
       setDeleteWarningToggled(false);
     } catch (e) {

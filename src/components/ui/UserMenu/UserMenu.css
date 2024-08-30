@@ -32,3 +32,12 @@
     background-color: var(--color-accent-primary); 
     color: white;
 }
+
+.user-menu .username {
+  padding: 5px 8px 7px 8px;
+  font-weight: 500;
+  opacity: 0.8;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 5px;
+
+}

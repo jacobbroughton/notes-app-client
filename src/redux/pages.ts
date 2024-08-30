@@ -211,7 +211,7 @@ const pagesSlice = createSlice({
     addTagToPage: (state, { payload }): PagesState => {
       const { item, tag } = payload;
 
-      console.log({item, tag})
+      console.log({ item, tag });
 
       return {
         ...state,
@@ -248,9 +248,7 @@ const pagesSlice = createSlice({
         }),
       };
     },
-    removeTagFromPage: (state, { payload }): PagesState => {
-      const item = payload;
-
+    removeTagFromPage: (state, { payload: item }): PagesState => {
       return {
         ...state,
         list: state.list.map((page) => {

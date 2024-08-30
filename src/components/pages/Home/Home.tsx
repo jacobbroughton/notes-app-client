@@ -45,6 +45,7 @@ const Home = () => {
   const pages = useSelector((state: RootState) => state.pages);
   const folders = useSelector((state: RootState) => state.folders);
   const modals = useSelector((state: RootState) => state.modals);
+  const tags = useSelector((state: RootState) => state.tags);
 
   async function getData() {
     try {
@@ -105,6 +106,8 @@ const Home = () => {
 
     editPage();
   }
+
+
 
   async function editPage() {
     try {
