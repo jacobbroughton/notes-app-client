@@ -53,7 +53,7 @@ body[data-theme="light"] {
   --primary-bg: #f0f2f6;
   --loading-dot-color: #515151;
   --secondary-bg: #fff;
-  --tertiary-bg: #dadce0;
+  --tertiary-bg: #dadce065;
   --tertiary-bg-disabled: rgba(250, 251, 255, 0.754);
   --color-text-primary: #181818;
   --color-text-secondary: #fff;
@@ -121,7 +121,7 @@ main {
 input,
 textarea {
   border: 1px solid transparent;
-  outline-color: var(--tertiary-bg);
+  outline: var(--tertiary-bg);
   background-color: var(--secondary-bg);
   padding: 3px;
   border-radius: 3px;
