@@ -124,6 +124,10 @@
   overflow: hidden;
 }
 
+.items-list .name-and-buttons.is-folder {
+  padding-left: 0;
+}
+
 .items-list .tags {
   position: absolute;
   right: 10px;

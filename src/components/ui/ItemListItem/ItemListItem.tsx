@@ -223,7 +223,7 @@ const ItemListItem = ({
         ))}
       </div>
       <div
-        className={`name-and-buttons`}
+        className={`name-and-buttons ${!item.page_id ? 'is-folder' : ''}`}
         data-tier={`${item.tier ? `tier-${item.tier}` : "null"}`}
       >
         <div className="name-and-caret">
