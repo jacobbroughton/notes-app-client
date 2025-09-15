@@ -86,6 +86,7 @@
   height: 10px;
   border-radius: 100px;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+  border: 1px solid #444;
 }
 
 .tags-sidebar-view {
@@ -142,19 +143,19 @@
   border: 1px solid var(--tertiary-bg);
 }
 
-.tags-sidebar-view form .tag-color,
+/* .tags-sidebar-view form .tag-color, */
 .tags-sidebar-view form .tag-name {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 
-.tags-sidebar-view form .tag-color label,
+/* .tags-sidebar-view form .tag-color label, */
 .tags-sidebar-view form .tag-name label {
   font-size: 0.875rem;
   font-weight: 500;
 }
-
+/* 
 .tags-sidebar-view form .tag-color .tag-color-options {
   display: flex;
   flex-wrap: wrap;
@@ -196,7 +197,7 @@
   display: flex;
   height: 12px;
   width: 12px;
-}
+} */
 
 .tags-sidebar-view form .inputs {
   background-color: transparent;
@@ -215,7 +216,7 @@
   transition: background-color ease 0.1s;
 }
 
-.tags-sidebar-view form .tag-color .inputs > input[type="color"] {
+/* .tags-sidebar-view form .tag-color .inputs > input[type="color"] {
   position: absolute;
   z-index: 2;
   right: 0;
@@ -226,7 +227,7 @@
 
 .tags-sidebar-view form .tag-color .inputs > input[type="text"] {
   width: calc(100% - 20px);
-}
+} */
 
 .tags-sidebar-view form input.invalid {
   border: 1px solid crimson !important;
@@ -278,9 +279,4 @@
 
 .tags-sidebar-view .tag-controls .are-you-sure-container button.confirm:hover {
   background-color: crimson;
-}
-
-.tags-sidebar-view .new-tag-header {
-  font-weight: 600;
-  /* text-decoration: underline; */
 }

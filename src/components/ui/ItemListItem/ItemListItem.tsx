@@ -199,7 +199,7 @@ const ItemListItem = ({
       onDragEnter={(e) => handleDragEnter(e, item)}
       onDrop={(e) => handleDrop(e, sidebar.grabbedItem, item)}
       onDragOver={(e) => e.preventDefault()}
-      onDoubleClick={(e) => (item.is_page ? handleRename(e, item) : null)}
+      // onTripleClick={(e) => (item.is_page ? handleRename(e, item) : null)}
       className={determineFolderContainerClass(item)}
       style={{
         ...(sidebar.inputPosition.referenceId === item.id &&
@@ -207,7 +207,14 @@ const ItemListItem = ({
       }}
       key={index}
       onContextMenu={(e) => handleOnContextMenu(e, item)}
-      onClick={(e) => handleItemClick(e, item)}
+      onClick={(e) =>{
+        if (e.detail === 3) {
+          if (item.is_page) handleRename(e, item)
+          return
+        }
+
+       handleItemClick(e, item)
+        }}
     >
       <div className="tier-blocks">
         {[...Array(item.tier)].map((tierNum, index) => (
@@ -244,7 +251,7 @@ const ItemListItem = ({
             <p>{item.name}</p>
           )}
         </div>
-        {item.tag_id && (
+        {/* {item.tag_id && (
           <div className="tags">
             <span
               className="tag-color"
@@ -255,7 +262,7 @@ const ItemListItem = ({
               &nbsp;
             </span>
           </div>
-        )}
+        )} */}
       </div>
       {sidebar.inputPosition.referenceId === item.id && sidebar.inputPosition.toggled && (
         <form

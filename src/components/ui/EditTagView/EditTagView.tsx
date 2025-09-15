@@ -101,9 +101,8 @@ const EditTagView = ({
         </button>
       </div>
       <form onSubmit={handleSubmit} className="tag-form">
-        <p className="new-tag-header">Edit tag</p>
         <div className="tag-name">
-          <label>Tag Name</label>
+          <label>Edit Tag Name</label>
           <input
             value={updatedTagName}
             onChange={(e) => setUpdatedTagName(e.target.value)}
@@ -115,7 +114,7 @@ const EditTagView = ({
           )}
         </div>
 
-        <div className="tag-color">
+        {/* <div className="tag-color">
           <label>Tag Color</label>
           <div className="tag-color-options">
             {tags.colorOptions?.map((colorOption: ColorState) => (
@@ -138,7 +137,7 @@ const EditTagView = ({
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
       </form>
     </div>
   );
