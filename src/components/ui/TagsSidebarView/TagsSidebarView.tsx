@@ -90,13 +90,6 @@ const TagsSidebarView = () => {
                   key={i}
                   title={`Tag: ${tag.name}`}
                 >
-                  <span
-                    className="color-span"
-                    style={{ backgroundColor: tag.color_code }}
-                    title={`Color: ${tag.color_code}`}
-                  >
-                    &nbsp;
-                  </span>
                   <p>{tag.name}</p>
                 </button>
               );

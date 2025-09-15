@@ -94,9 +94,8 @@ const CreateTagView = ({
         </button>
       </div>
       <form className="tag-form" onSubmit={handleSubmit}>
-        <p className="new-tag-header">Create a tag</p>
         <div className="tag-name">
-          <label>Tag Name</label>
+          <label>New Tag Name</label>
           <input
             placeholder='"Expenses", "High Priority", etc.'
             value={newTagName}
@@ -107,29 +106,6 @@ const CreateTagView = ({
           {!isValidTagName(newTagName, true) && (
             <p className="invalid-text">Invalid name</p>
           )}
-        </div>
-        <div className="tag-color">
-          <label>Tag Color</label>
-          <div className="tag-color-options">
-            {tags.colorOptions?.map((colorOption: ColorState) => (
-              <button
-                type="button"
-                className={`color-button ${
-                  colorOption.id === newTagColor?.id ? "selected" : ""
-                }`}
-                onClick={() => setNewTagColor(colorOption)}
-              >
-                <span
-                  className="color-span"
-                  style={{
-                    backgroundColor: colorOption.color_code,
-                  }}
-                >
-                  &nbsp;
-                </span>
-              </button>
-            ))}
-          </div>
         </div>
       </form>
     </div>

@@ -663,6 +663,7 @@ function Sidebar() {
                             : sidebar.newPageName
                         }
                         autoComplete="off"
+                        placeholder={`Enter ${sidebar.inputPosition.forFolder ? 'folder' : 'page'} name`}
                       />
                     </form>
                   )}

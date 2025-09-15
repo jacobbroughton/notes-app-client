@@ -58,6 +58,7 @@
 
 .items-list .folder-container.selected {
   background-color: var(--tertiary-bg);
+  font-weight: strong;
 }
 
 .items-list .folder-container.selected .tier-block:first-child {
