@@ -26,3 +26,5 @@ build
 
 # Local Netlify folder
 .netlify
+src/._.DS_Store
+._.DS_Store

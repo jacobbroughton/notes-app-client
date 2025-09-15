@@ -199,7 +199,6 @@ const ItemListItem = ({
       onDragEnter={(e) => handleDragEnter(e, item)}
       onDrop={(e) => handleDrop(e, sidebar.grabbedItem, item)}
       onDragOver={(e) => e.preventDefault()}
-      // onTripleClick={(e) => (item.is_page ? handleRename(e, item) : null)}
       className={determineFolderContainerClass(item)}
       style={{
         ...(sidebar.inputPosition.referenceId === item.id &&
@@ -232,7 +231,7 @@ const ItemListItem = ({
             {!item.is_page && (
               <Caret direction={item.expanded_status ? "down" : "right"} />
             )}
-            {item.is_page && <PageIcon />}
+            {/* {item.is_page && <PageIcon />} */}
           </div>
           {sidebar.renameInputToggled &&
           sidebar.inputPosition.referenceId === (item.page_id || item.id) ? (

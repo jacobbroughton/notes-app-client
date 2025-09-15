@@ -1,2 +1,3 @@
 - make borders more subtle on textarea (for dark & light)
 - make page-navigation bar have draggable elements
+- add rename to folders on sidebar menu
