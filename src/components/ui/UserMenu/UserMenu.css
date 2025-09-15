@@ -39,5 +39,5 @@
   opacity: 0.8;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 5px;
-
+  color: var(--color-text-primary);
 }

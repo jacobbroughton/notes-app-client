@@ -112,21 +112,13 @@ const PageSearch = () => {
 
                   return (
                     <p key={i}>
-                      {/* {[...body].map((char, charIndex) => { */}
                       {slicedBody.map((char, charIndex) => {
                         const compedBodyIndex = bodyLength - slicedBodyLength + charIndex;
 
                         let matching = false;
 
                         if (compedBodyIndex === match.startingIndex) matching = true;
-                        // if (compedBodyIndex === charIndex) matching = true;
-
-                        // let matchingCharacter = match.matchingCharacters[charIndex];
-
-                        // if (matchingCharacter?.index == compedBodyIndex) {
-                        //   matching = true;
-                        // }
-
+    
                         return (
                           <span className={matching ? "matching" : ""} key={charIndex}>
                             {char}

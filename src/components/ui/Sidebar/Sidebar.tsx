@@ -316,8 +316,6 @@ function Sidebar() {
         pagesResponse.json(),
       ]);
 
-      console.log(foldersData, pagesData);
-
       let formattedFolders = formatFolders(foldersData, folders.list);
       let formattedPages = formatPages(pagesData, formattedFolders);
 
